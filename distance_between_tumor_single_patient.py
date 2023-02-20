@@ -9,6 +9,7 @@ Created on Fri Feb 17 08:49:23 2023
 import SimpleITK as sitk
 import numpy as np
 import os
+from medpy import metric
 
 
 
@@ -36,14 +37,12 @@ for pathstr in CT_filelist:
 
 #Assumes the last file in list is the last GTV
 
-T2_gtv = sitk.ReadImage(gtvlist[-2])
-T3_gtv = sitk.ReadImage(gtvlist[-1])
+T2_gtv = sitk.GetArrayFromImage(sitk.ReadImage(gtvlist[-2]))
+T3_gtv = sitk.GetArrayFromImage(sitk.ReadImage(gtvlist[-1]))
 
 
-hausdorff_distance_filter = sitk.HausdorffDistanceImageFilter()
 
 
-hausdorff_distance_filter.Execute(T2_gtv, T3_gtv)
-
+metric.hd(T3_gtv, T2_gtv)
 
 
