@@ -8,6 +8,8 @@ Created on Thu Feb 16 11:16:29 2023
 import SimpleITK as sitk
 import numpy as np
 import os
+from medpy import metric
+
 
 
 
@@ -59,12 +61,17 @@ rec = sitk.Resample(rec,dose)
 
 
 
-volume_mask(dose*rec)
 
 
-#Overlap
+#Overlap 
 print(volume_mask(dose*rec)/(volume_mask(rec)))
 
+
+dose = sitk.GetArrayFromImage(dose)
+rec = sitk. GetArrayFromImage(rec)
+
+
+metric.jc(rec,dose)
 
 
 
