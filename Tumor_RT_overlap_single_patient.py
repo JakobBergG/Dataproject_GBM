@@ -8,14 +8,9 @@ Created on Thu Feb 16 11:16:29 2023
 import SimpleITK as sitk
 import numpy as np
 import os
+import metrics
+import utils
 from medpy import metric
-
-
-
-
-def volume_mask (image: sitk.Image) -> int:
-    im = sitk.GetArrayViewFromImage(image)
-    return np.count_nonzero(im)
 
 
 basepath = os.path.join('data')
@@ -53,25 +48,23 @@ rec = sitk.ReadImage(gtvlist[-1])
 
 
 #Read dose and convert to 0.95-mask assuming dose=60
-dose = sitk.ReadImage(dose_file)>60*0.95
-
+dose_image = sitk.ReadImage(dose_file)
+dose_95 = metrics.dose_percentage_region(dose_image, 60.0, 0.95)
 
 #Resample GTV to match dose mask dimensions (MIGHT NEED MORE ARGUMENTS)
-rec = sitk.Resample(rec,dose)
-
-
-
+rec = utils.reslice_image(rec, dose_95, is_label = True)
 
 
 #Overlap 
-print(volume_mask(dose*rec)/(volume_mask(rec)))
+
+print(f"Percentage of gtv in 95% dose area: {metrics.mask_overlap(rec, dose_95)}")
 
 
-dose = sitk.GetArrayFromImage(dose)
-rec = sitk. GetArrayFromImage(rec)
+dose = sitk.GetArrayViewFromImage(dose_95)
+rec = sitk.GetArrayViewFromImage(rec)
 
 
-metric.jc(rec,dose)
+print(f"Jaccard coefficent: {metric.jc(rec,dose)}")
 
 
 
