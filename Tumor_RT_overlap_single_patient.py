@@ -8,14 +8,9 @@ Created on Thu Feb 16 11:16:29 2023
 import SimpleITK as sitk
 import numpy as np
 import os
+import metrics
+import utils
 from medpy import metric
-
-
-
-
-def volume_mask (image: sitk.Image) -> int:
-    im = sitk.GetArrayViewFromImage(image)
-    return np.count_nonzero(im)
 
 
 basepath = os.path.join('data')
@@ -57,14 +52,12 @@ dose = sitk.ReadImage(dose_file)>60*0.95
 
 
 #Resample GTV to match dose mask dimensions (MIGHT NEED MORE ARGUMENTS)
-rec = sitk.Resample(rec,dose)
-
-
-
+rec = utils.reslice_image(rec, dose, is_label = True)
 
 
 #Overlap 
-print(volume_mask(dose*rec)/(volume_mask(rec)))
+
+print(metrics.mask_overlap(rec, dose))
 
 
 dose = sitk.GetArrayFromImage(dose)
