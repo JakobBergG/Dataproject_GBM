@@ -48,23 +48,23 @@ rec = sitk.ReadImage(gtvlist[-1])
 
 
 #Read dose and convert to 0.95-mask assuming dose=60
-dose = sitk.ReadImage(dose_file)>60*0.95
-
+dose_image = sitk.ReadImage(dose_file)
+dose_95 = metrics.dose_percentage_region(dose_image, 60.0, 0.95)
 
 #Resample GTV to match dose mask dimensions (MIGHT NEED MORE ARGUMENTS)
-rec = utils.reslice_image(rec, dose, is_label = True)
+rec = utils.reslice_image(rec, dose_95, is_label = True)
 
 
 #Overlap 
 
-print(metrics.mask_overlap(rec, dose))
+print(f"Percentage of gtv in 95% dose area: {metrics.mask_overlap(rec, dose_95)}")
 
 
-dose = sitk.GetArrayFromImage(dose)
-rec = sitk. GetArrayFromImage(rec)
+dose = sitk.GetArrayViewFromImage(dose_95)
+rec = sitk.GetArrayViewFromImage(rec)
 
 
-metric.jc(rec,dose)
+print(f"Jaccard coefficent: {metric.jc(rec,dose)}")
 
 
 
