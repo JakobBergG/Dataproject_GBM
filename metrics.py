@@ -20,5 +20,6 @@ def mask_overlap(gtv : sitk.Image, dose : sitk.Image) -> float:
 
 
 def dose_percentage_region(dose_image : sitk.Image, target_intensity : float, percentage : float = 0.95) -> float:
-    '''Create a mask of where the dose is above a certain percentage (e.g. 95%)'''
+    '''Create a mask of where the dose is above a certain percentage of the
+      target intensity (e.g. 95% of 60 Gy)'''
     return dose_image > target_intensity * percentage
