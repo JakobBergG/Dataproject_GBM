@@ -3,9 +3,10 @@
 import SimpleITK as sitk
 import numpy as np
 import os
+import utils
 
 run_Registration = True
-run_nnUNet = True
+run_nnUNet = False
 
 
 #you do not have access to the nnUNet model yet, so lets skip this part
@@ -28,18 +29,6 @@ def calcMI(fixed, moving):
     except:
         print('failed')
     return score
-
-#this function can be used to slice one image to the grid of another image (when they are registered)
-def reslice_image(itk_image, itk_ref, is_label=False):
-    resample = sitk.ResampleImageFilter()
-    resample.SetReferenceImage(itk_ref)
-
-    if is_label:
-        resample.SetInterpolator(sitk.sitkNearestNeighbor)
-    else:
-        resample.SetInterpolator(sitk.sitkBSpline)
-
-    return resample.Execute(itk_image)
 
 
 #this function finds the minimum cropbox of a scan to exclude the background (assuming that the background is set to 0)
@@ -103,8 +92,9 @@ dilate_filter.SetKernelRadius((5,5,2))
 dilate_filter.SetForegroundValue(1)
 
 
-dirname = 'e:\\'
-basepath = os.path.join(dirname, 'Jasper', 'Software', 'Glioblastoma_Proj', 'data')
+# dirname = 'e:\\'
+# basepath = os.path.join(dirname, 'Jasper', 'Software', 'Glioblastoma_Proj', 'data')
+basepath = 'data'
 logfilepath = os.path.join(basepath, 'CT_to_MR.txt')
 patientfolders = [ f.path for f in os.scandir(basepath) if f.is_dir() ]
 
@@ -154,6 +144,7 @@ for patient in patientfolders:
             continue
         print('ctfile = ', ct_file)
         print('brainfile = ', brain_file)
+
         print(mrlist)
 
         parameterMapRigid= rigidParameterMap()
@@ -167,7 +158,7 @@ for patient in patientfolders:
             gtvmask = dilate_filter.Execute(gtvmask)
             brainmask = sitk.Clamp(brainmask + gtvmask,upperBound=1)
             dilate_filter.SetKernelRadius((5,5,2)) 
-        brainmask = reslice_image(brainmask, moving,True)
+        brainmask = utils.reslice_image(brainmask, moving,True)
         for mr in mrlist:
             fixed = sitk.Cast(sitk.ReadImage(mr),sitk.sitkFloat32)
             fixedfilename = os.path.basename(mr)
@@ -246,7 +237,7 @@ for patient in patientfolders:
             f.write(println)
             print(println)
             BrainImage = dilate_filter.Execute(BrainImage)
-            BrainImage = reslice_image(BrainImage, fixed,True)
+            BrainImage = utils.reslice_image(BrainImage, fixed,True)
 
             fixed = fixed * sitk.Cast(BrainImage,sitk.sitkFloat32)
             ss_filename =fixedfilename.replace('MR_res', 'MR_GTV_0000')  
