@@ -49,7 +49,7 @@ rec = sitk.ReadImage(gtvlist[-1])
 
 #Read dose and convert to 0.95-mask 
 dose_image = sitk.ReadImage(dose_file)
-target metrics.get_target_dose(dose_image) 
+target = metrics.get_target_dose(dose_image) 
 dose_95 = metrics.dose_percentage_region(dose_image, target, 0.95)
 
 #Resample GTV to match dose mask dimensions (MIGHT NEED MORE ARGUMENTS)
