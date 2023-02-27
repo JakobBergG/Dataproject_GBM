@@ -22,3 +22,13 @@ def mask_overlap(gtv : sitk.Image, dose : sitk.Image) -> float:
 def dose_percentage_region(dose_image : sitk.Image, target_intensity : float, percentage : float = 0.95) -> float:
     '''Create a mask of where the dose is above a certain percentage (e.g. 95%)'''
     return dose_image > target_intensity * percentage
+
+
+def get_target_dose (image: sitk.Image) -> int:
+    '''Get target dose (54 or 60)'''
+    MinMax = sitk.MinimumMaximumImageFilter()
+    MinMax.Execute(image)
+    if MinMax.GetMaximum()>60:
+        return 60
+    else:
+        return 54
