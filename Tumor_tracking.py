@@ -11,7 +11,8 @@ import SimpleITK as sitk
 import numpy as np
 import os
 from medpy import metric
-
+import metrics
+import utils
 
 
 
@@ -36,32 +37,30 @@ for pathstr in CT_filelist:
     if os.path.basename(pathstr).endswith('_MR_GTV.nii.gz'):
          gtvlist.append(pathstr)
          
-gtv1 = sitk.ReadImage(gtvlist[0])
-gtv2 = sitk.ReadImage(gtvlist[1])
+baseline = sitk.ReadImage(gtvlist[-2])
+rec = sitk.ReadImage(gtvlist[-1])
+
+
+
+total_volume_baseline = metrics.volume_mask_cc(baseline)
+
+
+baseline_component = sitk.ConnectedComponent()
+baseline_component = sitk.RelabelComponent(baseline_component,10)
+
+
+volume_pr_lession_baseline = metrics.volume_component_cc(baseline)
 
 
 
 
-component_image = sitk.ConnectedComponent(gtv1)
-
-
-
-#component_image = sitk.RelabelComponent(component_image,1, sortByObjectSize=True)
 
 
 
 
-stats = sitk.LabelShapeStatisticsImageFilter()
-stats.Execute(component_image)
 
-
-label_sizes = [stats.GetNumberOfPixels(l) for l in stats.GetLabels() ]
               
 
 
 
-
-outfile = os.path.join(patient,"COMPONENT_GTV.nii.gz")
-
-sitk.WriteImage(component_image, outfile)
 
