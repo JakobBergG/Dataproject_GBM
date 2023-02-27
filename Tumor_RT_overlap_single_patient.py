@@ -67,8 +67,6 @@ rec = sitk.GetArrayViewFromImage(rec)
 
 print(f"Jaccard coefficent: {metric.jc(rec,dose)}")
 
-
-
 #Saving dose mask in patient folder
 #outfile = dose_file.replace('RTDOSE_', 'DOSEMASK_')
 
