@@ -1,5 +1,6 @@
 data/
 *.DS_store
+Tumor_tracking_stupid.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
