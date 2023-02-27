@@ -12,7 +12,16 @@ def volume_mask_cc(image : sitk.Image) -> float:
     '''Get volume of mask in cubic centimetres'''
     spacing = image.GetSpacing()
     return spacing[0] * spacing[1] * spacing[2] * volume_mask(image) / 1000.0
+
+
+def volume_component_cc(image : sitk.Image) -> float:
+    '''Get volume pr. lession from component image in cubic centimetres'''
+    spacing = image.GetSpacing()
     
+    stats = sitk.LabelShapeStatisticsImageFilter()
+    stats.Execute(image)
+    component_sizes = [spacing[0] * spacing[1] * spacing[2] * stats.GetNumberOfPixels(l) /1000 for l in stats.GetLabels()]
+    return component_sizes
 
 def mask_overlap(gtv : sitk.Image, dose : sitk.Image) -> float:
     '''Get percentage of overlap between gtv and (95%) dose'''
@@ -32,3 +41,5 @@ def get_target_dose (image: sitk.Image) -> int:
         return 60
     else:
         return 54
+    
+
