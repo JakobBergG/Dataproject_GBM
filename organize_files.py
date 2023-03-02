@@ -86,21 +86,17 @@ for timepoint in TIME_POINTS:
 
     # volume cc
     timepoint_info["volume_cc"] = metrics.volume_mask_cc(gtv)
-
-    # target dose. TODO: Check against database
-    target_dose = metrics.get_target_dose(gtv)
-    timepoint_info["target_dose"] = target_dose
-
-    # 95% percentage overlap (if time is time3)
+    
     if timepoint == "time3":
+        # target dose. TODO: Check against database
+        target_dose = metrics.get_target_dose(gtv)
+        timepoint_info["target_dose"] = target_dose
+
+        # 95% percentage overlap (if time is time3)
         rtdose = sitk.ReadImage(info["rtdose_filename"])
         gtv_resliced = utils.reslice_image(gtv, rtdose, is_label = True)
         dose_95 = metrics.dose_percentage_region(rtdose, target_dose, 0.95)
         percentage = metrics.mask_overlap(gtv_resliced, dose_95)
         timepoint_info["percent_overlap_95_isodose"] = percentage
     
-
-
-    
-
 print(info)
