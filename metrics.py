@@ -35,7 +35,7 @@ def dose_percentage_region(dose_image : sitk.Image, target_intensity : float, pe
 
 
 def get_target_dose (image: sitk.Image) -> int:
-    '''Get target dose (54 or 60)'''
+    '''Guess target dose from maximum value in dose image (54 or 60)'''
     MinMax = sitk.MinimumMaximumImageFilter()
     MinMax.Execute(image)
     if MinMax.GetMaximum()>60:
@@ -44,3 +44,27 @@ def get_target_dose (image: sitk.Image) -> int:
         return 54
     
 
+def label_image_connected_components(gtv_image : sitk.Image, minimum_lesion_size : int = 0):
+    '''Create label image by calculating connected components from GTV.
+    If minimum_lesion_size is specified, will remove any lesions with fewer voxels
+    than minimum_lesion_size.
+    Returns tuple (label_image, n_normal_lesions, n_tiny_lesions),
+    where n_normal_lesions is the number of lesions with a size greater than
+    minimum_lesion_size, and n_tiny lesions is the number of lesions with a size
+    smaller than minimum_lesions_size.
+    '''
+    # get connected components
+    connected_component = sitk.ConnectedComponentImageFilter()
+    component_image = connected_component.Execute(gtv_image)
+    n_lesions_complete = connected_component.GetObjectCount()
+
+    # remove lesions that are too small
+    label_component = sitk.RelabelComponentImageFilter()
+    label_component.SetMinimumObjectSize(minimum_lesion_size)
+    label_component.SetSortByObjectSize(True)
+    label_image = label_component.Execute(component_image)
+
+    n_normal_lesions = label_component.GetNumberOfObjects()
+    n_tiny_lesions = n_lesions_complete - n_normal_lesions
+    
+    return  label_image, n_normal_lesions, n_tiny_lesions
