@@ -6,6 +6,9 @@ import metrics
 import json
 
 SAVE_AS_JSON = True
+MINIMUM_VOXELS_LESION = 20 # if lesions contain fewer voxels than this, do not
+                           # per-lesion metrics.   
+
 TIME_POINTS = ("time0", "time1", "time2", "time3")
 
 basepath = os.path.join('data')
@@ -85,7 +88,7 @@ def get_patient_metrics(patientfolder) -> dict:
         timepoint_info["total_volume_cc"] = metrics.volume_mask_cc(gtv)
 
         # number of lesions
-        label_image, n_normal_lesions, n_tiny_lesions = metrics.label_image_connected_components(gtv, 10)
+        label_image, n_normal_lesions, n_tiny_lesions = metrics.label_image_connected_components(gtv, MINIMUM_VOXELS_LESION)
         timepoint_info["n_normal_lesions"] = n_normal_lesions
         timepoint_info["n_tiny_lesions"] = n_tiny_lesions
 
