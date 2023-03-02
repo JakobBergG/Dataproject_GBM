@@ -114,8 +114,8 @@ dilate_filter.SetKernelType(sitk.sitkBall)
 dilate_filter.SetKernelRadius((10,10,5))
 dilate_filter.SetForegroundValue(1)
 
-dirname = 'e:\\'
-basepath = os.path.join(dirname, 'Jasper', 'Software', 'Glioblastoma_Proj', 'data')
+os.chdir("D:\\GBM")
+basepath = os.path.join("nii_prepared")
 
 patientfolders = [ f.path for f in os.scandir(basepath) if f.is_dir() ]
 logfilepath = os.path.join(basepath, 'log_MR_to_CT.txt')
