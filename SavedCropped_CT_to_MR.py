@@ -5,7 +5,7 @@ import numpy as np
 import os
 
 run_Registration = True
-run_nnUNet = True
+run_nnUNet = False
 
 
 #you do not have access to the nnUNet model yet, so lets skip this part
@@ -103,7 +103,7 @@ dilate_filter.SetKernelRadius((5,5,2))
 dilate_filter.SetForegroundValue(1)
 
 os.chdir("D:\\GBM")
-basepath = os.path.join("nii_prepared")
+basepath = os.path.join("nii_preprocessed")
 logfilepath = os.path.join(basepath, 'CT_to_MR.txt')
 patientfolders = [ f.path for f in os.scandir(basepath) if f.is_dir() ]
 

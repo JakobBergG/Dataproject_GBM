@@ -115,7 +115,7 @@ dilate_filter.SetKernelRadius((10,10,5))
 dilate_filter.SetForegroundValue(1)
 
 os.chdir("D:\\GBM")
-basepath = os.path.join("nii_prepared")
+basepath = os.path.join("nii_preprocessed")
 
 patientfolders = [ f.path for f in os.scandir(basepath) if f.is_dir() ]
 logfilepath = os.path.join(basepath, 'log_MR_to_CT.txt')
