@@ -81,8 +81,16 @@ def get_patient_metrics(patientfolder) -> dict:
         timepoint_info = info[timepoint]
         gtv = sitk.ReadImage(timepoint_info["filename"])
 
-        # volume cc
-        timepoint_info["volume_cc"] = metrics.volume_mask_cc(gtv)
+        # total volume cc
+        timepoint_info["total_volume_cc"] = metrics.volume_mask_cc(gtv)
+
+        # number of lesions
+        label_image, n_normal_lesions, n_tiny_lesions = metrics.label_image_connected_components(gtv, 10)
+        timepoint_info["n_normal_lesions"] = n_normal_lesions
+        timepoint_info["n_tiny_lesions"] = n_tiny_lesions
+
+        # volume per lesion
+        timepoint_info["lesion_volumes"] = metrics.volume_component_cc(label_image)
         
         if timepoint == "time3":
             # target dose. TODO: Check against database
@@ -99,8 +107,7 @@ def get_patient_metrics(patientfolder) -> dict:
     return info
     
 
-patientfolders = [ f.path for f in os.scandir(basepath) if f.is_dir() ]
-
+patientfolders = [f.path for f in os.scandir(basepath) if f.is_dir()]
 
 info_patients = {} # create dictionary to hold metrics for all patients
 for patient in patientfolders:
