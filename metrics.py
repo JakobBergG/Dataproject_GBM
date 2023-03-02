@@ -68,3 +68,32 @@ def label_image_connected_components(gtv_image : sitk.Image, minimum_lesion_size
     n_tiny_lesions = n_lesions_complete - n_normal_lesions
     
     return  label_image, n_normal_lesions, n_tiny_lesions
+
+
+
+def type_reccurence(label_image : sitk.Image, dose_mask : sitk.Image):
+    '''Get type of reccurence. 
+    Type1: All reccurence tumors has 80% or more overlap with 95% dose (Local reccurence)
+    Type3: All reccurence tumors has less than 20% overlap  with 95% dose (Distant reccurence)
+    Type2: Both local and distant reccurence
+    '''
+    stats = sitk.LabelShapeStatisticsImageFilter()
+    stats.Execute(label_image)
+    labels = stats.GetLabels()
+    tumors = [label_image == l for l in labels]
+    local = 0
+    distant = 0
+    for t in tumors:
+        if mask_overlap(t,dose_mask)<0.2:
+            distant += 1
+        else:
+            local += 1
+    if distant > 0 and local > 0:
+        return 2
+    elif distant > 0:
+        return 3
+    elif local > 0:
+        return 1
+        
+
+

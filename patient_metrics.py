@@ -5,13 +5,17 @@ import SimpleITK as sitk
 import metrics
 import json
 
-SAVE_AS_JSON = True
+SAVE_AS_JSON = False
 MINIMUM_VOXELS_LESION = 20 # if lesions contain fewer voxels than this, do not
                            # per-lesion metrics.   
 
 TIME_POINTS = ("time0", "time1", "time2", "time3")
 
 basepath = os.path.join('data')
+
+
+
+        
 
 def get_patient_metrics(patientfolder) -> dict:
     '''Returns dictionary with metrics calculated for all time points'''
@@ -106,7 +110,11 @@ def get_patient_metrics(patientfolder) -> dict:
             dose_95 = metrics.dose_percentage_region(rtdose, target_dose, 0.95)
             percentage = metrics.mask_overlap(gtv_resliced, dose_95)
             timepoint_info["percent_overlap_95_isodose"] = percentage
-    
+            
+            # Type of reccurence
+            label_image_resliced = utils.reslice_image(label_image, rtdose, is_label = True)
+            reccurence_type = metrics.type_reccurence(label_image_resliced, dose_95)
+            timepoint_info["reccurence_type"] = reccurence_type
     return info
     
 
@@ -119,7 +127,9 @@ for patient in patientfolders:
     info_patients[patient_id] = get_patient_metrics(patient)
 
 print("All done.")
-# print(info_patients)
+print(info_patients)
+
+
 
 if SAVE_AS_JSON:
     with open("patient_metrics.json", "w", encoding="utf-8") as f:
