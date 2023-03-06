@@ -77,7 +77,7 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
 
     base_date = info["time2"]["time"]
 
-    # now match times with time0 and/or time1 from journal if the exist (and if journal exists)
+    # now match times with time0 and/or time1 from journal, if they exist (and if journal exists)
 
     if journal_info is None: # add warning if missing journal info
         print(f"Warning: missing journal info for patient {patient_id}")
@@ -102,6 +102,12 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
         else:
             print(f"Warning: missing time point {timepoint} for patient {patient_id}")
             info["flags"].append(f"no_{timepoint}")
+
+    # save information from journal info
+    if journal_info is not None:
+        for key, value in journal_info.items():
+            info[key] = value
+    
 
     # -----------------------------
     # CALCULATE METRICS FOR PATIENT
