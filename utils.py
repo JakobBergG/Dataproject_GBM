@@ -26,6 +26,6 @@ def parse_filename(filename : str) -> tuple:
     return patient_id, date, scantype, datatype
 
 
-def date_to_relative_time(date, base_date):
+def date_to_relative_time(date, base_date) -> float:
     '''Returns date with relative time in days relative to base date'''
     return (date - base_date).total_seconds() / 86400
