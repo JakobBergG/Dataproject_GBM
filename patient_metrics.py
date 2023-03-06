@@ -5,20 +5,22 @@ import SimpleITK as sitk
 import metrics
 import json
 
-SAVE_AS_JSON = False
+SAVE_AS_JSON = True
 MINIMUM_VOXELS_LESION = 20 # if lesions contain fewer voxels than this, do not
                            # per-lesion metrics.   
 
 TIME_POINTS = ("time0", "time1", "time2", "time3")
 
+JOURNAL_INFO_PATH = "gbm_treatment_info.csv"
+
 basepath = os.path.join('data')
 
 
 
-        
-
-def get_patient_metrics(patientfolder) -> dict:
-    '''Returns dictionary with metrics calculated for all time points'''
+def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
+    '''Returns dictionary with metrics calculated for all time points
+    Dictionary journal_info should contain information read from the .csv file
+    '''
     # Load all GTVs in MR_TO_CT folder
     
     CT_path = os.path.join(patientfolder, "MR_TO_CT")
@@ -42,38 +44,62 @@ def get_patient_metrics(patientfolder) -> dict:
     # -----------------------------
 
     # Extract date information from filenames
-    dates = []
+    scans = {}
     for gtv in gtvlist:
         filename = os.path.basename(gtv)
         patient_id, date, scantype, datatype = utils.parse_filename(filename)
-        dates.append(date)
+        scans[date] = gtv #save the path for the date
 
     # sort based on dates (first scan first)
-    dates_names = sorted(zip(dates, gtvlist))
+    dates = sorted(scans.keys())
 
     info = {
         "rtdose_filename": rtdose_filename,
         "flags": [] # warning messages etc. can be appended to this list
     }
 
+    def write_timepoint(timepoint, date):
+        if date in scans:
+            filename = scans[date]
+            info[timepoint] = {
+                "time": date,
+                "filename": filename
+            }
+        else:
+            print(f"Warning: Date for {timepoint} does not have matching scan")
+            info["flags"].append("date_bad_match")
+
     # add subdictionary for each time point which can be filled with metric values
     # assign a timepoint to each date (we assume we have time3 and time2 always,
-    # so fill out in reverse order. Time1 and time0 may be wrong)
-    for timepoint, date_file in zip(reversed(TIME_POINTS), reversed(dates_names)):
-        date, filename = date_file
-        info[timepoint] = {
-            "time": date,
-            "filename": filename
-        }
+    # so fill these out first
+    for timepoint, date in zip(reversed(TIME_POINTS[2:]), reversed(dates)):
+        write_timepoint(timepoint, date)
 
     base_date = info["time2"]["time"]
+
+    # now match times with time0 and/or time1 from journal if the exist (and if journal exists)
+
+    if journal_info is None: # add warning if missing journal info
+        print(f"Warning: missing journal info for patient {patient_id}")
+        info["flags"].append("no_journal")
+    else:
+        time0_date = journal_info["MRIDiagDate_checked"]
+        time1_date = journal_info["MRIPostopDate_checked"]
+        
+        if time0_date != "#NULL!":
+            date0 = datetime.strptime(time0_date, "%d.%m.%Y")
+            write_timepoint("time0", date0)
+        if time1_date != "#NULL!":
+            date1 = datetime.strptime(time1_date , "%d.%m.%Y")
+            write_timepoint("time1", date1)
+            
 
     # for each time point, update time value to use relative time to time2 (in days)
     # warning if we are missing time 0 or time1
     for timepoint in TIME_POINTS:
         if timepoint in info:
             info[timepoint]["time"] = utils.date_to_relative_time(info[timepoint]["time"], base_date)
-        if timepoint not in info:
+        else:
             print(f"Warning: missing time point {timepoint} for patient {patient_id}")
             info["flags"].append(f"no_{timepoint}")
 
@@ -118,18 +144,22 @@ def get_patient_metrics(patientfolder) -> dict:
     return info
     
 
+# load journal info for patiens
+journal_info_patients = utils.load_journal_info_patients(JOURNAL_INFO_PATH)
 patientfolders = [f.path for f in os.scandir(basepath) if f.is_dir()]
 
 info_patients = {} # create dictionary to hold metrics for all patients
 for patient in patientfolders:
     patient_id = os.path.basename(patient)
-    print(f"Calculating metrics for patient {patient_id}")
-    info_patients[patient_id] = get_patient_metrics(patient)
+    print(f"\n------ Calculating metrics for patient {patient_id} ------")
+    if patient_id in journal_info_patients:
+        journal_info = journal_info_patients[patient_id]
+    else:
+        journal_info = None
+
+    info_patients[patient_id] = get_patient_metrics(patient, journal_info)
 
 print("All done.")
-print(info_patients)
-
-
 
 if SAVE_AS_JSON:
     with open("patient_metrics.json", "w", encoding="utf-8") as f:
