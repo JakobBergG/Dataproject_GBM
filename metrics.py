@@ -44,7 +44,7 @@ def get_target_dose (image: sitk.Image) -> int:
         return 54
     
 
-def label_image_connected_components(gtv_image : sitk.Image, minimum_lesion_size : int = 0):
+def label_image_connected_components(gtv_image : sitk.Image, minimum_lesion_size : int = 0) -> tuple:
     '''Create label image by calculating connected components from GTV.
     If minimum_lesion_size is specified, will remove any lesions with fewer voxels
     than minimum_lesion_size.
@@ -71,7 +71,7 @@ def label_image_connected_components(gtv_image : sitk.Image, minimum_lesion_size
 
 
 
-def type_reccurence(label_image : sitk.Image, dose_mask : sitk.Image):
+def type_reccurence(label_image : sitk.Image, dose_mask : sitk.Image) -> int:
     '''Get type of reccurence. 
     Type1: All reccurence tumors has 80% or more overlap with 95% dose (Local reccurence)
     Type3: All reccurence tumors has less than 20% overlap  with 95% dose (Distant reccurence)
