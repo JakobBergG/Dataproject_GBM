@@ -6,7 +6,7 @@ import os
 import utils
 
 run_Registration = True
-run_nnUNet = False
+run_nnUNet = True
 
 
 #you do not have access to the nnUNet model yet, so lets skip this part
