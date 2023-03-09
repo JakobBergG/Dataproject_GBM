@@ -5,7 +5,7 @@ import SimpleITK as sitk
 import metrics
 import json
 
-SAVE_AS_JSON = True
+SAVE_AS_JSON = False
 MINIMUM_VOXELS_LESION = 20 # if lesions contain fewer voxels than this, do not
                            # per-lesion metrics.   
 
@@ -148,6 +148,17 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
             label_image_resliced = utils.reslice_image(label_image, rtdose, is_label = True)
             reccurence_type = metrics.type_reccurence(label_image_resliced, dose_95)
             timepoint_info["reccurence_type"] = reccurence_type
+            
+            # Hausdorff
+            gtv_baseline = sitk.ReadImage(info["time2"]["filename"])
+            
+            hd, hd95 = metrics.get_hd(gtv_baseline, gtv)
+            timepoint_info["hd"] = hd
+            timepoint_info["hd95"] = hd95
+        
+    
+    info = metrics.growth(info)
+    
     return info
     
 

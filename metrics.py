@@ -1,6 +1,6 @@
 import SimpleITK as sitk
 import numpy as np
-
+import medpy
 
 def volume_mask(image : sitk.Image) -> int:
     '''Count the number of voxels in a mask'''
@@ -95,5 +95,52 @@ def type_reccurence(label_image : sitk.Image, dose_mask : sitk.Image) -> int:
     elif local > 0:
         return 1
         
+
+def get_hd(baseline : sitk.Image,rec : sitk.Image):
+    '''Get hausdorff distance between tumor area at baseline and tumor area at reccurrence'''
+    baseline = sitk.GetArrayFromImage(baseline)
+    rec = sitk.GetArrayFromImage(rec)
+
+    hd=medpy.metric.binary.hd(baseline,rec)
+    hd95=medpy.metric.binary.hd95(baseline,rec)
+    
+    return hd, hd95
+
+def growth(dic):
+    
+    timepoints= ["time3","time2"]
+    
+    
+    if "no_time1" not in dic["flags"]:
+        timepoints.append("time1")
+    
+    if "no_time0" not in dic["flags"]:
+        timepoints.append("time0")
+    
+    
+    first_time = timepoints[-1]
+    first_time_stamp = dic[first_time]["time"]
+    first_cc = dic[first_time]["total_volume_cc"]
+    baseline_cc = dic["time2"]["total_volume_cc"]
+    
+    
+    for i in timepoints:
+        stamp= dic[i]["time"]
+        time_dif = stamp - first_time_stamp
+        cc = dic[i]["total_volume_cc"]
+        if time_dif > 0: 
+            growth_since_first_scan = (cc-first_cc)/first_cc
+            daily_growth_since_first_scan = growth_since_first_scan/time_dif
+            dic[i]["growth_since_first_scan"] = growth_since_first_scan
+            dic[i]["daily_growth_since_first_scan"] = daily_growth_since_first_scan
+
+            
+            
+        if stamp != 0.0:
+            growth_since_baseline = (cc-baseline_cc)/baseline_cc
+            daily_growth_since_baseline = growth_since_baseline/stamp
+            dic[i]["growth_since_baseline"] = growth_since_baseline
+            dic[i]["daily_growth_since_baseline"] = daily_growth_since_baseline
+    return dic
 
 
