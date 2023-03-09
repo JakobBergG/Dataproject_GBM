@@ -1,8 +1,9 @@
 data/
+info/
+output/
 *.DS_store
 Tumor_tracking_stupid.py
-patient_metrics.json
-gbm_treatment_info.csv
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
