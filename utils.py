@@ -1,4 +1,6 @@
 import SimpleITK as sitk
+import os
+import json
 from datetime import datetime
 import re
 import csv
@@ -65,3 +67,27 @@ def load_journal_info_patients(path : str) -> dict:
             journal_info_patients[study_id] = patient_dict
     
     return journal_info_patients
+
+
+def get_path(location_name : str) -> str:
+    '''Given location_name (e.g. data, output), returns path given in settings.json
+    If no settings.json, use defaut values'''
+    default_paths = {
+        "path_data": "data/",
+        "path_info": "info/",
+        "path_output": "output/",
+        "local_path_gtv": ""
+    }
+    assert location_name in default_paths, f"Location name {location_name} not valid"
+
+    if not os.path.isfile("settings.json"):
+        print("Warning: No settings.json, using default settings")
+        return default_paths[location_name]
+
+    with open("settings.json", "r") as f:
+        settings : dict = json.load(f)
+    
+    # if path exists in settings, return path given there. Else, return default path
+    return settings.get(location_name, default_paths[location_name])
+
+
