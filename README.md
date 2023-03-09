@@ -12,3 +12,8 @@ Example of settings.json:
     "path_output": "metrics_output"
 }
 ```
+
+
+## Conda environment student pc
+
+The conda environment on the student pc is called `data_sciene_project`.
