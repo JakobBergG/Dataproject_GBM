@@ -11,10 +11,10 @@ MINIMUM_VOXELS_LESION = 20 # if lesions contain fewer voxels than this, do not
 
 TIME_POINTS = ("time0", "time1", "time2", "time3")
 
-JOURNAL_INFO_PATH = "info/gbm_treatment_info.csv"
-OUTPUT_PATH = "output/patient_metrics.json"
+JOURNAL_INFO_PATH = os.path.join(utils.get_path("info"), "gbm_treatment_info.csv")
+OUTPUT_PATH = os.path.join(utils.get_path("output"), "patient_metrics.json")
 
-basepath = os.path.join('data')
+basepath = utils.get_path("data")
 
 
 
