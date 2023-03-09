@@ -11,7 +11,8 @@ MINIMUM_VOXELS_LESION = 20 # if lesions contain fewer voxels than this, do not
 
 TIME_POINTS = ("time0", "time1", "time2", "time3")
 
-JOURNAL_INFO_PATH = "gbm_treatment_info.csv"
+JOURNAL_INFO_PATH = "info/gbm_treatment_info.csv"
+OUTPUT_PATH = "output/patient_metrics.json"
 
 basepath = os.path.join('data')
 
@@ -168,5 +169,5 @@ for patient in patientfolders:
 print("All done.")
 
 if SAVE_AS_JSON:
-    with open("patient_metrics.json", "w", encoding="utf-8") as f:
+    with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
         json.dump(info_patients, f, ensure_ascii=False, indent = 4)
