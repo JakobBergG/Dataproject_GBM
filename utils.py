@@ -6,6 +6,28 @@ import re
 import csv
 
 
+def get_path(location_name : str) -> str:
+    '''Given location_name (e.g. data, output), returns path given in settings.json
+    If no settings.json, use defaut values'''
+    default_paths = {
+        "path_data": "data/",
+        "path_info": "info/",
+        "path_output": "output/",
+        "local_path_gtv": ""
+    }
+    assert location_name in default_paths, f"Location name {location_name} not valid"
+
+    if not os.path.isfile("settings.json"):
+        print("Warning: No settings.json, using default settings")
+        return default_paths[location_name]
+
+    with open("settings.json", "r") as f:
+        settings : dict = json.load(f)
+    
+    # if path exists in settings, return path given there. Else, return default path
+    return settings.get(location_name, default_paths[location_name])
+
+
 def reslice_image(itk_image : sitk.Image, itk_ref : sitk.Image , is_label : bool = False) -> sitk.Image:
     '''Reslice one image to the grid of another image (when they are registered)'''
     resample = sitk.ResampleImageFilter()
@@ -69,25 +91,5 @@ def load_journal_info_patients(path : str) -> dict:
     return journal_info_patients
 
 
-def get_path(location_name : str) -> str:
-    '''Given location_name (e.g. data, output), returns path given in settings.json
-    If no settings.json, use defaut values'''
-    default_paths = {
-        "path_data": "data/",
-        "path_info": "info/",
-        "path_output": "output/",
-        "local_path_gtv": ""
-    }
-    assert location_name in default_paths, f"Location name {location_name} not valid"
-
-    if not os.path.isfile("settings.json"):
-        print("Warning: No settings.json, using default settings")
-        return default_paths[location_name]
-
-    with open("settings.json", "r") as f:
-        settings : dict = json.load(f)
-    
-    # if path exists in settings, return path given there. Else, return default path
-    return settings.get(location_name, default_paths[location_name])
 
 
