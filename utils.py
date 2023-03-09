@@ -73,9 +73,10 @@ def get_path(location_name : str) -> str:
     '''Given location_name (e.g. data, output), returns path given in settings.json
     If no settings.json, use defaut values'''
     default_paths = {
-        "data": "data/",
-        "info": "info/",
-        "output": "output/"
+        "path_data": "data/",
+        "path_info": "info/",
+        "path_output": "output/",
+        "local_path_gtv": ""
     }
     assert location_name in default_paths, f"Location name {location_name} not valid"
 
@@ -85,10 +86,8 @@ def get_path(location_name : str) -> str:
 
     with open("settings.json", "r") as f:
         settings : dict = json.load(f)
-
-    settings_key = "path_" + location_name
     
     # if path exists in settings, return path given there. Else, return default path
-    return settings.get(settings_key, default_paths[location_name])
+    return settings.get(location_name, default_paths[location_name])
 
 
