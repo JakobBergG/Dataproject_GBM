@@ -18,8 +18,6 @@ local_path_gtv = utils.get_path("local_path_gtv") #points to gtv subfolder start
 
 basepath = utils.get_path("path_data")
 
-
-
 def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
     '''Returns dictionary with metrics calculated for all time points
     Dictionary journal_info should contain information read from the .csv file
