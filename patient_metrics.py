@@ -154,9 +154,9 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
             # Hausdorff
             gtv_baseline = sitk.ReadImage(info["time2"]["filename"])
             
-            #hd, hd95 = metrics.get_hd(gtv_baseline, gtv)
-            #timepoint_info["hd"] = hd
-            #timepoint_info["hd95"] = hd95
+            hd, hd95 = metrics.get_hd(gtv_baseline, gtv)
+            timepoint_info["hd"] = hd
+            timepoint_info["hd95"] = hd95
         
     
     info = metrics.growth(info)
@@ -171,8 +171,6 @@ patientfolders = [f.path for f in os.scandir(basepath) if f.is_dir()]
 info_patients = {} # create dictionary to hold metrics for all patients
 for patient in patientfolders:
     patient_id = os.path.basename(patient)
-    if patient_id != "0114":
-        continue
     print(f"\n------ Calculating metrics for patient {patient_id} ------")
     if patient_id in journal_info_patients:
         journal_info = journal_info_patients[patient_id]
