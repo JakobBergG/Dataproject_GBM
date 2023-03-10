@@ -13,7 +13,7 @@ def get_path(location_name : str) -> str:
         "path_data": "data/",
         "path_info": "info/",
         "path_output": "output/",
-        "local_path_gtv": ""
+        "local_path_gtv": "MR_TO_CT"
     }
     assert location_name in default_paths, f"Location name {location_name} not valid"
 

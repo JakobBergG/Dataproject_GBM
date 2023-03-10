@@ -1,6 +1,6 @@
-import SimpleITK as sitk
 import numpy as np
 import medpy
+import SimpleITK as sitk
 
 def volume_mask(image : sitk.Image) -> int:
     '''Count the number of voxels in a mask'''
@@ -100,9 +100,8 @@ def get_hd(baseline : sitk.Image,rec : sitk.Image):
     '''Get hausdorff distance between tumor area at baseline and tumor area at reccurrence'''
     baseline = sitk.GetArrayFromImage(baseline)
     rec = sitk.GetArrayFromImage(rec)
-
-    hd=medpy.metric.binary.hd(baseline,rec)
-    hd95=medpy.metric.binary.hd95(baseline,rec)
+    hd = medpy.metric.binary.hd(baseline,rec)
+    hd95 = medpy.metric.binary.hd95(baseline,rec)
     
     return hd, hd95
 

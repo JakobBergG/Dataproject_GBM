@@ -5,16 +5,18 @@ import SimpleITK as sitk
 import metrics
 import json
 
-SAVE_AS_JSON = False
+SAVE_AS_JSON = True
 MINIMUM_VOXELS_LESION = 20 # if lesions contain fewer voxels than this, do not
                            # per-lesion metrics.   
 
 TIME_POINTS = ("time0", "time1", "time2", "time3")
 
-JOURNAL_INFO_PATH = os.path.join(utils.get_path("info"), "gbm_treatment_info.csv")
-OUTPUT_PATH = os.path.join(utils.get_path("output"), "patient_metrics.json")
+JOURNAL_INFO_PATH = os.path.join(utils.get_path("path_info"), "gbm_treatment_info.csv")
+OUTPUT_PATH = os.path.join(utils.get_path("path_output"), "patient_metrics.json")
 
-basepath = utils.get_path("data")
+local_path_gtv = utils.get_path("local_path_gtv") #points to gtv subfolder starting from patient folder
+
+basepath = utils.get_path("path_data")
 
 
 
@@ -24,7 +26,7 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
     '''
     # Load all GTVs in MR_TO_CT folder
     
-    CT_path = os.path.join(patientfolder, "MR_TO_CT")
+    CT_path = os.path.join(patientfolder, local_path_gtv)
     CT_filelist =[ f.path for f in os.scandir(CT_path) if f.is_file() ]
     gtvlist = []
 
@@ -152,9 +154,9 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
             # Hausdorff
             gtv_baseline = sitk.ReadImage(info["time2"]["filename"])
             
-            hd, hd95 = metrics.get_hd(gtv_baseline, gtv)
-            timepoint_info["hd"] = hd
-            timepoint_info["hd95"] = hd95
+            #hd, hd95 = metrics.get_hd(gtv_baseline, gtv)
+            #timepoint_info["hd"] = hd
+            #timepoint_info["hd95"] = hd95
         
     
     info = metrics.growth(info)
@@ -169,6 +171,8 @@ patientfolders = [f.path for f in os.scandir(basepath) if f.is_dir()]
 info_patients = {} # create dictionary to hold metrics for all patients
 for patient in patientfolders:
     patient_id = os.path.basename(patient)
+    if patient_id != "0114":
+        continue
     print(f"\n------ Calculating metrics for patient {patient_id} ------")
     if patient_id in journal_info_patients:
         journal_info = journal_info_patients[patient_id]
