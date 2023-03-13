@@ -1,6 +1,7 @@
 import numpy as np
-import medpy
+import medpy.metric
 import SimpleITK as sitk
+
 
 def volume_mask(image : sitk.Image) -> int:
     '''Count the number of voxels in a mask'''
