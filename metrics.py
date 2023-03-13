@@ -1,6 +1,7 @@
 import numpy as np
 import medpy.metric
 import SimpleITK as sitk
+import utils
 
 
 def volume_mask(image : sitk.Image) -> int:
@@ -97,12 +98,14 @@ def type_reccurence(label_image : sitk.Image, dose_mask : sitk.Image) -> int:
         return 1
         
 
-def get_hd(baseline : sitk.Image,rec : sitk.Image):
-    '''Get hausdorff distance between tumor area at baseline and tumor area at reccurrence'''
-    baseline = sitk.GetArrayFromImage(baseline)
-    rec = sitk.GetArrayFromImage(rec)
-    hd = medpy.metric.binary.hd(baseline,rec)
-    hd95 = medpy.metric.binary.hd95(baseline,rec)
+def get_hd(baseline : sitk.Image,rec : sitk.Image) -> tuple:
+    '''Get hausdorff distance between tumor area at baseline and tumor area at reccurrence
+    Returns tuple (hd, hd95)'''
+    rec = utils.reslice_image(rec, baseline, is_label=True)
+    baseline_array = sitk.GetArrayFromImage(baseline)
+    rec_array = sitk.GetArrayFromImage(rec)
+    hd = medpy.metric.binary.hd(baseline_array, rec_array)
+    hd95 = medpy.metric.binary.hd95(baseline_array ,rec_array )
     
     return hd, hd95
 
