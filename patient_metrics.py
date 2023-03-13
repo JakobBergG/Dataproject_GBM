@@ -28,22 +28,12 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
     CT_filelist =[ f.path for f in os.scandir(CT_path) if f.is_file() ]
     gtvlist = []
 
-
-
     for pathstr in CT_filelist:
         if os.path.basename(pathstr).endswith('_MR_GTV.nii.gz'):
             gtvlist.append(pathstr)
 
     # check if no CT scan. if this is the case, stop
     has_CT = False
-    base_files =[ f.path for f in os.scandir(patientfolder) if f.is_file() ]
-    for pathstr in base_files:
-        if os.path.basename(pathstr).endswith('CT_res.nii.gz'):
-            has_CT = True
-    if not has_CT:
-        print("Warning: No CT scans")
-        return "no_ct_scan"
-
     # also get rtdose filename
     rtdose_filename = ""
 
@@ -51,6 +41,12 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
     for pathstr in base_filelist:
         if os.path.basename(pathstr).endswith('_RTDOSE_res.nii.gz'):
             rtdose_filename = pathstr
+        if os.path.basename(pathstr).endswith('CT_brain.nii.gz'):
+            has_CT = True
+
+    if not has_CT:
+        print("Warning: No CT scans")
+        return "no_ct_scan"
 
     # -----------------------------
     # CREATE DICTIONARY FOR PATIENT
