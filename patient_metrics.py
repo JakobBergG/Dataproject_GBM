@@ -169,6 +169,8 @@ patientfolders = [f.path for f in os.scandir(basepath) if f.is_dir()]
 info_patients = {} # create dictionary to hold metrics for all patients
 for patient in patientfolders:
     patient_id = os.path.basename(patient)
+    if patient_id not in ("0114", "2080", "3117"):
+        continue
     print(f"\n------ Calculating metrics for patient {patient_id} ------")
     if patient_id in journal_info_patients:
         journal_info = journal_info_patients[patient_id]
