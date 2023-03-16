@@ -155,7 +155,10 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
             # Type of reccurence
             label_image_resliced = utils.reslice_image(label_image, rtdose, is_label = True)
             reccurence_type = metrics.type_reccurence(label_image_resliced, dose_95)
-            timepoint_info["reccurence_type"] = reccurence_type
+            info["reccurence_type_guess"] = reccurence_type
+            # see if matches with Anouks progression type
+            if "ProgressionType" in info:
+                info["reccurence_type_correct"] = reccurence_type == info["ProgressionType"]
             
             # Hausdorff
             gtv_baseline = sitk.ReadImage(info["time2"]["filename"])
@@ -185,8 +188,9 @@ for patient in patientfolders:
 
     info_patients[patient_id] = get_patient_metrics(patient, journal_info)
 
+    if SAVE_AS_JSON: # overwrite with new information
+        with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
+            json.dump(info_patients, f, ensure_ascii=False, indent = 4)
+
 print("All done.")
 
-if SAVE_AS_JSON:
-    with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
-        json.dump(info_patients, f, ensure_ascii=False, indent = 4)
