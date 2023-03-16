@@ -10,7 +10,7 @@ scans = ["0114","0540"]
 
 data_path=os.path.join("../nii_preprocessed")
 
-outpath=os.path.join("E:","Jasper","nnUNet","nnUNet_raw_data")
+outpath=os.path.join("e:\\","Jasper","nnUNet","nnUNet_raw_data")
 
 outpath_CT=os.path.join(outpath,"Task800_GBM")
 outpath_MR=os.path.join(outpath,"Task801_GBM")
