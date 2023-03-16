@@ -60,14 +60,15 @@ def load_journal_info_patients(path : str) -> dict:
     '''Loads .csv file with info about patient. Returns dictionary
     with key for each patient'''
 
-    # these following columns should be read
+    # these following columns should be read, and the following functions should be called
     to_read = {
-        "Study_ID",
-        "MRIDiagDate_checked",
-        "MRIPostopDate_checked",
-        "RT_MRIDate",
-        "Age_at_diagn",
-        "Sex"
+        "Study_ID": str,
+        "MRIDiagDate_checked": str,
+        "MRIPostopDate_checked": str,
+        "RT_MRIDate": str,
+        "Age_at_diagn": lambda x : float(re.sub(",", ".", x)),
+        "Sex" : str,
+        "ProgressionType": int
     }
 
     # create dict to hold all patients
@@ -85,7 +86,8 @@ def load_journal_info_patients(path : str) -> dict:
                 if name == "Study_ID":
                     study_id = f"{row[i]:>04}" #pad with 4 zeros
                 elif name in to_read:
-                    patient_dict[name] = row[i]
+                    func = to_read[name]
+                    patient_dict[name] = func(row[i])
             journal_info_patients[study_id] = patient_dict
     
     return journal_info_patients
