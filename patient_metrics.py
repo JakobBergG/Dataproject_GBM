@@ -4,6 +4,7 @@ import utils
 import SimpleITK as sitk
 import metrics
 import json
+import objgraph
 
 SAVE_AS_JSON = True
 MINIMUM_VOXELS_LESION = 20 # if lesions contain fewer voxels than this, do not
@@ -186,7 +187,11 @@ for patient in patientfolders:
     else:
         journal_info = None
 
+
+    
     info_patients[patient_id] = get_patient_metrics(patient, journal_info)
+    print("New objects in memory:")
+    objgraph.show_growth()  
 
     if SAVE_AS_JSON: # overwrite with new information
         with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
