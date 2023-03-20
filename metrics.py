@@ -27,7 +27,12 @@ def volume_component_cc(image : sitk.Image) -> float:
 
 def mask_overlap(gtv : sitk.Image, dose : sitk.Image) -> float:
     '''Get percentage of overlap between gtv and (95%) dose'''
-    return volume_mask(dose*gtv) / volume_mask(gtv)
+    gtv_vol = volume_mask(gtv)
+    if gtv_vol == 0:
+        print("Error: GTV volume is 0")
+        return -1.0
+    else:
+        return volume_mask(dose*gtv) / gtv_vol
 
 
 def dose_percentage_region(dose_image : sitk.Image, target_intensity : float, percentage : float = 0.95) -> float:
@@ -110,23 +115,27 @@ def get_hd(baseline : sitk.Image,rec : sitk.Image) -> tuple:
     return hd, hd95
 
 def growth(dic):
-    
     timepoints= ["time3","time2"]
-    
-    
     if "no_time1" not in dic["flags"]:
         timepoints.append("time1")
     
     if "no_time0" not in dic["flags"]:
         timepoints.append("time0")
     
-    
     first_time = timepoints[-1]
     first_time_stamp = dic[first_time]["time"]
     first_cc = dic[first_time]["total_volume_cc"]
     baseline_cc = dic["time2"]["total_volume_cc"]
     
-    
+    if first_cc == 0.0:
+        print("Warning: first_cc is 0")
+        dic["flags"].append("first_cc_zero")
+        return dic
+    if first_cc == 0.0:
+        print("Warning: baseline_cc is 0")
+        dic["flags"].append("baseline_cc_zero")
+        return dic
+
     for i in timepoints:
         stamp= dic[i]["time"]
         time_dif = stamp - first_time_stamp
@@ -137,8 +146,6 @@ def growth(dic):
             dic[i]["growth_since_first_scan"] = growth_since_first_scan
             dic[i]["daily_growth_since_first_scan"] = daily_growth_since_first_scan
 
-            
-            
         if stamp != 0.0:
             growth_since_baseline = (cc-baseline_cc)/baseline_cc
             daily_growth_since_baseline = growth_since_baseline/stamp

@@ -138,7 +138,7 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
         timepoint_info["n_normal_lesions"] = n_normal_lesions
         timepoint_info["n_tiny_lesions"] = n_tiny_lesions
 
-        # volume per lesion
+        # volume per lesion.
         timepoint_info["lesion_volumes"] = metrics.volume_component_cc(label_image)
         
         if timepoint == "time3":
@@ -151,7 +151,11 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
             gtv_resliced = utils.reslice_image(gtv, rtdose, is_label = True)
             dose_95 = metrics.dose_percentage_region(rtdose, target_dose, 0.95)
             percentage = metrics.mask_overlap(gtv_resliced, dose_95)
-            timepoint_info["percent_overlap_95_isodose"] = percentage
+            if percentage == -1.0:
+                print(f"Warning: gtvvolume is 0 at time 3")
+                info["flags"].append(f"empty_gtv_time3")
+            else:
+                timepoint_info["percent_overlap_95_isodose"] = percentage
             
             # Type of reccurence
             label_image_resliced = utils.reslice_image(label_image, rtdose, is_label = True)
