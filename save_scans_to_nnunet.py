@@ -7,6 +7,11 @@ import utils
 
 scans = ["0114","0540"]
 
+# check for duplicate scans
+if len(scans) != len(set(scans)):
+    print("Error: Duplicate scans in input list, quitting")
+    quit()
+
 
 data_path=os.path.join("../nii_preprocessed")
 
