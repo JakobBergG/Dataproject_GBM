@@ -5,12 +5,30 @@ import SimpleITK as sitk
 import utils
 
 
-scans = ["0114","0540"]
-
-# check for duplicate scans
-if len(scans) != len(set(scans)):
-    print("Error: Duplicate scans in input list, quitting")
-    quit()
+scans_int = [4733, 3770, 540, 4786, 5166,
+4409, 4081, 3462, 3856, 3424,
+4225, 1400, 3249, 3728, 4361,
+3862, 4191, 1702, 3743, 4404,
+3445, 4120, 3459, 3322, 4385,
+5075, 3334, 4537, 4040, 5094,
+1838, 4630, 4234, 5071, 5061,
+5497, 4542, 315, 3886, 5171,
+3755, 4809, 4665, 5302, 4462,
+2080, 4788, 3442, 4625, 4285,
+3136, 4630, 3791, 4850, 4057,
+3686, 4233, 3287, 4234, 5068,
+3931, 4223, 1124, 5265, 4114,
+3989, 4150, 4215, 4548, 4147, 
+3525, 4018, 4147, 5274, 5399, 
+4713, 3402, 4939, 3433, 4975, 
+4099, 4267, 4435, 5412, 4761,
+5373, 4498, 4106, 4787, 4748, 
+5214, 4375, 5250, 4722, 3212, 
+3657, 3719, 5038, 3823, 4340
+]
+scans=[]
+for scan in scans_int:
+    scans.append("{:04d}".format(scan))
 
 
 data_path=os.path.join("../nii_preprocessed")
@@ -24,13 +42,17 @@ outpath_MR=os.path.join(outpath,"Task801_GBM")
 
 dilate_filter = sitk.BinaryDilateImageFilter()
 dilate_filter.SetKernelType(sitk.sitkBall)
-dilate_filter.SetKernelRadius((2,2,2))
+dilate_filter.SetKernelRadius((5,5,2))
 dilate_filter.SetForegroundValue(1)
 
 erode_filter=sitk.BinaryErodeImageFilter()
 erode_filter.SetKernelType(sitk.sitkBall)
-erode_filter.SetKernelRadius((2,2,2))
+erode_filter.SetKernelRadius((5,5,2))
 erode_filter.SetForegroundValue(1)
+
+fillholl_filter=sitk.BinaryFillholeImageFilter()
+
+
 
 
 i=1
@@ -58,10 +80,14 @@ for s in scans:
     
     CT_brain=dilate_filter.Execute(CT_brain)
     CT_brain=erode_filter.Execute(CT_brain)
+    CT_brain=fillholl_filter.Execute(CT_brain)
+    
+   
     
     MR_brain=dilate_filter.Execute(MR_brain)
     MR_brain=erode_filter.Execute(MR_brain)
-    
+    MR_brain=fillholl_filter.Execute(MR_brain)
+
     
     
     
