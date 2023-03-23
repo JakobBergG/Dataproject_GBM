@@ -14,8 +14,10 @@ def get_path(location_name : str) -> str:
         "path_info": "info/",
         "path_output": "output/",
         "local_path_gtv": "MR_TO_CT",
-        "local_path_brain_mr": "nnunet_brain_mr",
-        "local_path_brain_ct": "nnunet_brain_ct"
+        "local_path_brain_mr": "brain_mr",
+        "local_path_brain_ct": "brain_ct",
+        "local_path_brainmasks_mr": "brain_mr/output_brains",
+        "local_path_brainmasks_ct": "brain_ct/output_brains",
     }
     assert location_name in default_paths, f"Location name {location_name} not valid"
 
