@@ -98,7 +98,7 @@ if args.mr:
             os.mkdir(output_dest)
         
         # now run prediction
-        #predict_brain_mask(MR_TASK_ID, input_dest, output_dest)
+        predict_brain_mask(MR_TASK_ID, input_dest, output_dest)
     
 
 if args.ct:
@@ -127,6 +127,6 @@ if args.ct:
             os.mkdir(output_dest)
         
         # now run prediction
-        #predict_brain_mask(CT_TASK_ID, input_dest, output_dest)
+        predict_brain_mask(CT_TASK_ID, input_dest, output_dest)
 
     
