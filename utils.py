@@ -68,6 +68,8 @@ def load_journal_info_patients(path : str) -> dict:
         "MRIDiagDate_checked": str,
         "MRIPostopDate_checked": str,
         "RT_MRIDate": str,
+        "ProgressionDate": str,
+        "RTdoseplan": lambda x : int(float(re.sub(",", ".", x))),
         "Age_at_diagn": lambda x : float(re.sub(",", ".", x)),
         "Sex" : str,
         "ProgressionType": int

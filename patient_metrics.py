@@ -77,24 +77,31 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
             }
         else:
             print(f"Warning: Date for {timepoint} does not have matching scan")
-            info["flags"].append("date_bad_match")
+            info["flags"].append("bad_date_match")
+            
+           
 
     # add subdictionary for each time point which can be filled with metric values
     # assign a timepoint to each date (we assume we have time3 and time2 always,
     # so fill these out first
-    for timepoint, date in zip(reversed(TIME_POINTS[2:]), reversed(dates)):
-        write_timepoint(timepoint, date)
+  
+    # for timepoint, date in zip(reversed(TIME_POINTS[2:]), reversed(dates)):
+    #    write_timepoint(timepoint, date)
 
-    base_date = info["time2"]["time"]
+    
 
-    # now match times with time0 and/or time1 from journal, if they exist (and if journal exists)
+    
 
-    if journal_info is None: # add warning if missing journal info
-        print(f"Warning: missing journal info for patient {patient_id}")
-        info["flags"].append("no_journal")
+    # now match times with dates from journal, if they exist (and if journal exists)
+
+    if journal_info is None: # stop if missing journal info
+        return "no_journal"
     else:
         time0_date = journal_info["MRIDiagDate_checked"]
         time1_date = journal_info["MRIPostopDate_checked"]
+        time2_date = journal_info["RT_MRIDate"]
+        time3_date = journal_info["ProgressionDate"]
+        
         
         if time0_date != "#NULL!":
             date0 = datetime.strptime(time0_date, "%d.%m.%Y")
@@ -102,16 +109,29 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
         if time1_date != "#NULL!":
             date1 = datetime.strptime(time1_date , "%d.%m.%Y")
             write_timepoint("time1", date1)
-            
+        if time2_date != "#NULL!":
+            date2 = datetime.strptime(time2_date, "%d.%m.%Y")
+            write_timepoint("time2", date2)
+        if time3_date != "#NULL!":
+            date3 = datetime.strptime(time3_date , "%d.%m.%Y")
+            write_timepoint("time3", date3)
 
+   
+    # Check if scan exists at time2 and 3
     # for each time point, update time value to use relative time to time2 (in days)
-    # warning if we are missing time 0 or time1
-    for timepoint in TIME_POINTS:
-        if timepoint in info:
-            info[timepoint]["time"] = utils.date_to_relative_time(info[timepoint]["time"], base_date)
-        else:
-            print(f"Warning: missing time point {timepoint} for patient {patient_id}")
-            info["flags"].append(f"no_{timepoint}")
+    # warning if we are missing a time point.
+    if "time3" not in info:
+        return "no_recurrence_scan"
+    elif "time2" not in info:
+        return "no_baseline_scan"
+    else:
+        base_date = info["time2"]["time"]
+        for timepoint in TIME_POINTS:
+            if timepoint in info:
+                info[timepoint]["time"] = utils.date_to_relative_time(info[timepoint]["time"], base_date)
+            else:
+                print(f"Warning: missing time point {timepoint} for patient {patient_id}")
+                info["flags"].append(f"no_{timepoint}")
 
     # save information from journal info
     if journal_info is not None:
@@ -142,10 +162,13 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
         timepoint_info["lesion_volumes"] = metrics.volume_component_cc(label_image)
         
         if timepoint == "time3":
-            # target dose. TODO: Check against database
+            # target dose. 
             target_dose = metrics.get_target_dose(gtv)
-            timepoint_info["target_dose"] = target_dose
-
+            info["target_dose"] = target_dose
+            # Check if target dose matches journal
+            if "RTdoseplan" in info:
+                info["target_dose_correct"] = target_dose == info["RTdoseplan"]
+            
             # 95% percentage overlap (if time is time3)
             rtdose = sitk.ReadImage(info["rtdose_filename"])
             gtv_resliced = utils.reslice_image(gtv, rtdose, is_label = True)
