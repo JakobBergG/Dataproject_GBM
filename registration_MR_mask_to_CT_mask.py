@@ -116,9 +116,9 @@ for patient in patientfolders:
     '''
     #The ct files are already resampled on a 1x1x1 mm grid, but the brain mask is not yet
     #the following 4 lines can be used to slice the mask to the CT grid
-    #ct = sitk.ReadImage(ct_file) 
+    ct = sitk.ReadImage(ct_file) 
     #maskfilename = brain_file
-    #brainmask = sitk.ReadImage(maskfilename)
+    ct_mask = sitk.ReadImage(ct_mask)
     #brainmask = reslice_image(brainmask, ct,True)
 
 
