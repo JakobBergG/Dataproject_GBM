@@ -114,6 +114,18 @@ def get_hd(baseline : sitk.Image,rec : sitk.Image) -> tuple:
     
     return hd, hd95
 
+
+def msd(Image1 : sitk.Image,Image2 : sitk.Image) -> float:
+    '''Calculate Mean Surface Distance between two images.
+    Returns float MSD(Image1, Image2)'''
+    Image2 = utils.reslice_image(Image1, Image2, is_label=True)
+    Image1_array = sitk.GetArrayFromImage(Image1)
+    Image2_array = sitk.GetArrayFromImage(Image2)
+    mean_surface_difference = medpy.metric.binary.asd(Image1_array, Image2_array)
+    
+    return mean_surface_difference
+
+
 def growth(dic):
     timepoints= ["time3","time2"]
     if "no_time1" not in dic["flags"]:
