@@ -6,10 +6,10 @@ import re
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--ct",
-                    help="predict brain masks for ct scans",
+                    help="strip skulls for ct scans",
                     action="store_true")
 parser.add_argument("--mr",
-                    help="predict brain masks for mr scans",
+                    help="strip skullsfor mr scans",
                     action="store_true")
 args = parser.parse_args()
 
