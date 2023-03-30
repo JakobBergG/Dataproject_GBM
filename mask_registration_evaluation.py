@@ -60,6 +60,10 @@ for patient in patientfolders:
     avg_msd = np.mean(patient_dic[patient_id])
     patient_dic[patient_id].append(avg_msd)
 
+# Sort patient dictionary by average MSD
+sorted_patients = sorted(patient_dic.items, key = lambda L: L[1][-1])
+patient_dic = {key : value for key, value in sorted_patients}
+
 if SAVE_AS_JSON:
     with open(os.path.join(utils.get_path("path_output"), "registration_mask_MSD.json") , "w", encoding="utf-8") as f:
         json.dump(patient_dic, f, ensure_ascii=False, indent = 4)
