@@ -13,9 +13,9 @@ def msd(Image1 : sitk.Image,Image2 : sitk.Image) -> float:
     Image2 = utils.reslice_image(Image1, Image2, is_label=True)
     Image1_array = sitk.GetArrayFromImage(Image1)
     Image2_array = sitk.GetArrayFromImage(Image2)
-    mean_surface_difference = medpy.metric.binary.asd(Image1_array, Image2_array)
+    mean_surface_distance = medpy.metric.binary.asd(Image1_array, Image2_array)
     
-    return mean_surface_difference
+    return mean_surface_distance
 
 basepath = utils.get_path("path_data")
 patientfolders = [ f.path for f in os.scandir(basepath) if f.is_dir() ]
