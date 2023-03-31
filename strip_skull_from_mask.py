@@ -28,7 +28,7 @@ if not (args.ct or args.mr):
     quit()
 
 
-def strip_skull_and_save(scan_path : str , mask_path : str, dilation_radius : tuple, data_type, output_path : str):
+def strip_skull_and_save(scan_path : str , mask_path : str, dilation_radius : tuple, output_path : str):
     '''Dilate mask image a little bit and save the file'''
     scan = sitk.ReadImage(scan_path)
     mask = sitk.ReadImage(mask_path)
@@ -39,7 +39,7 @@ def strip_skull_and_save(scan_path : str , mask_path : str, dilation_radius : tu
     dilate_filter.SetKernelRadius(dilation_radius)
     dilate_filter.SetForegroundValue(1) 
     bigger_mask = dilate_filter.Execute(mask)
-
+    data_type = sitk.GetPixelIDValueFromString(sitk.GetPixelIDValueAsString())
     stripped_skull = scan * sitk.Cast(bigger_mask, data_type)
     sitk.WriteImage(stripped_skull, output_path)
 
@@ -63,7 +63,7 @@ if args.mr:
             output_name = re.sub("_MR_res", "_MR_res_stripped", mr_name)
             mask_path = os.path.join(patient, local_path_brainmasks_mr, mask_name)
             output_path = os.path.join(patient, local_path_brainmasks_mr, output_name)
-            strip_skull_and_save(mr, mask_path, MR_DILATION_RADIUS, sitk.sitkUInt16, output_path)
+            strip_skull_and_save(mr, mask_path, MR_DILATION_RADIUS, output_path)
 
 if args.ct:
     for patient in patientfolders:
@@ -83,4 +83,4 @@ if args.ct:
             output_name = re.sub("_CT_res", "_CT_res_stripped", ct_name)
             mask_path = os.path.join(patient, local_path_brainmasks_ct, mask_name)
             output_path = os.path.join(patient, local_path_brainmasks_ct, output_name)
-            strip_skull_and_save(ct, mask_path, CT_DILATION_RADIUS, sitk.sitkInt16, output_path)
+            strip_skull_and_save(ct, mask_path, CT_DILATION_RADIUS, output_path)
