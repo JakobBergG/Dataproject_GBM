@@ -58,7 +58,7 @@ if args.mr:
 
         # now strip skulls
         for mr in mr_list:
-            mr_name = os.path.basename(mr_name)
+            mr_name = os.path.basename(mr)
             mask_name = re.sub("_MR_res", "_MR_res_mask", mr_name)
             output_name = re.sub("_MR_res", "_MR_res_stripped", mr_name)
             mask_path = os.path.join(local_path_brainmasks_mr, mask_name)
@@ -78,7 +78,7 @@ if args.ct:
 
         # now strip skulls
         for ct in ct_list:
-            ct_name = os.path.basename(ct_name)
+            ct_name = os.path.basename(ct)
             mask_name = re.sub("_CT_res", "_CT_res_mask", ct_name)
             output_name = re.sub("_CT_res", "_CT_res_stripped", ct_name)
             mask_path = os.path.join(local_path_brainmasks_ct, mask_name)
