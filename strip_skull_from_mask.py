@@ -39,7 +39,7 @@ def strip_skull_and_save(scan_path : str , mask_path : str, dilation_radius : tu
     dilate_filter.SetKernelRadius(dilation_radius)
     dilate_filter.SetForegroundValue(1) 
     bigger_mask = dilate_filter.Execute(mask)
-    data_type = type(scan)
+    data_type = sitk.GetPixelID(scan)
     stripped_skull = scan * sitk.Cast(bigger_mask, data_type)
     sitk.WriteImage(stripped_skull, output_path)
 
