@@ -41,7 +41,7 @@ def rigidParameterMap():
 
 #this is a 3D binary image filter that you can use to expand a mr mask in 3D
 dilate_filter_mr = sitk.BinaryDilateImageFilter()
-dilate_filter_mr._SetKernelType(sitk.sitkBall)
+dilate_filter_mr.SetKernelType(sitk.sitkBall)
 dilate_filter_mr.SetKernelRadius((10,10,5))
 dilate_filter_mr.SetForegroundValue(1)
 
