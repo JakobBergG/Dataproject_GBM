@@ -47,7 +47,7 @@ dilate_filter_mr.SetForegroundValue(1)
 
 #this is a 3D binary image filter that you can use to expand a ct mask in 3D
 dilate_filter_ct = sitk.BinaryDilateImageFilter()
-dilate_filter_ct._SetKernelType(sitk.sitkBall)
+dilate_filter_ct.SetKernelType(sitk.sitkBall)
 dilate_filter_ct.SetKernelRadius((5,5,5))
 dilate_filter_ct.SetForegroundValue(1)
 
