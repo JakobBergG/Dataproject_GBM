@@ -134,6 +134,7 @@ for patient in patientfolders:
         mr_file = sitk.Cast(sitk.ReadImage(mr_file),sitk.sitkFloat32)
         
         # We now dialte the mr mask
+        mr_mask = sitk.ReadImage(mr_mask)
         mr_mask = dilate_filter_mr.Execute(mr_mask)
 
         #some of the rigid parametermap parameters might change, so we need to make sure these are set to the start settings  
