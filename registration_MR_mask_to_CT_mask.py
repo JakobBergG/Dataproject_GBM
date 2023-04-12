@@ -132,7 +132,6 @@ for patient in patientfolders:
         mr_file_name = os.path.basename(mr_file)
         mr_mask_name = os.path.basename(mr_mask)
         mr_file = sitk.Cast(sitk.ReadImage(mr_file),sitk.sitkFloat32)
-        mr_mask = sitk.Cast(sitk.ReadImage(mr_mask),sitk.sitkFloat32)
         
         # We now dialte the mr mask
         mr_mask = dilate_filter_mr.Execute(mr_mask)
