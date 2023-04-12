@@ -68,11 +68,11 @@ for patient in patientfolders:
 
 
     #loop over all the ct files from the nn-Unet result
-    ct_mask_path = os.path.join(patient, utils.get_path('local_path_brainmask_ct'))
+    ct_mask_path = os.path.join(patient, utils.get_path('local_path_brainmasks_ct'))
     ct_mask_filelist = [ f.path for f in os.scandir(ct_mask_path) if f.is_file() ]
 
     #loop over all the mr files from the nn-Unet result
-    mr_mask_path = os.path.join(patient, utils.get_path('local_path_brainmask_mr'))
+    mr_mask_path = os.path.join(patient, utils.get_path('local_path_brainmasks_mr'))
     mr_mask_filelist = [ f.path for f in os.scandir(mr_mask_path) if f.is_file() ]
 
     # loop over all oroginal scans for the patient
