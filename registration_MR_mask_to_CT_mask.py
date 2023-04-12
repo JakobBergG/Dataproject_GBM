@@ -147,7 +147,7 @@ for patient in patientfolders:
         # sitk.WriteParameterFile(parameterMapRigid, os.path.join(regfolder, 'rigid_params.txt'))
         
         elastix = sitk.ElastixImageFilter()
-        elastix.SetFixedImage(ct_file)
+        elastix.SetFixedImage(ct)
         elastix.SetFixedMask(ct_mask)
         elastix.SetMovingImage(mr_file)
         elastix.SetMovingMask(mr_mask)
