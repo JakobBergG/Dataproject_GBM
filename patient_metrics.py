@@ -23,14 +23,14 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
     '''Returns dictionary with metrics calculated for all time points
     Dictionary journal_info should contain information read from the .csv file
     '''
-    # Load all GTVs in MR_TO_CT folder
+    # Load all GTVs 
     
-    CT_path = os.path.join(patientfolder, local_path_gtv)
-    CT_filelist =[ f.path for f in os.scandir(CT_path) if f.is_file() ]
+    gtv_path = os.path.join(patientfolder, local_path_gtv)
+    gtv_filelist =[ f.path for f in os.scandir(gtv_path) if f.is_file() ]
     gtvlist = []
 
-    for pathstr in CT_filelist:
-        if os.path.basename(pathstr).endswith('_MR_GTV.nii.gz'):
+    for pathstr in gtv_filelist:
+        if os.path.basename(pathstr).endswith('_gtv.nii.gz'):
             gtvlist.append(pathstr)
 
     # check if no CT scan. if this is the case, stop
