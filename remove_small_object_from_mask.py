@@ -32,8 +32,7 @@ for patient in patientfolders:
      
      patient_id = os.path.basename(patient)
      
-     if patient_id != "0114":
-         break
+
      
      # find all masks
      patient_filelist = [f.path for f in os.scandir(patient)]
