@@ -25,7 +25,7 @@ def move_mr_scans(masks_folder : str, destination_folder : str):
     # now copy files, also changing name to comply with nnunet input requirements
     for source in mr_list:
         oldname = os.path.basename(source)
-        newname = re.sub("_MR_res_stripped", "_MR_res_stripped_0000", oldname)
+        newname = re.sub("_MR_res_stripped", "_gtv_0000", oldname)
         dest = os.path.join(destination_folder, newname)
         shutil.copy2(source, dest)
 
