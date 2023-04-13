@@ -64,3 +64,14 @@ def plot_score_to_zero(dic, metric):
     plt.ylabel(f"{metric} score")
     plt.savefig(f'output/pictures/{metric}_scores_vs_fraction_of_zeros.png')
     plt.show()
+
+plot_standardized_boxplots(patient_dic, metriclist)
+
+
+sorted_scores = []
+patients = patient_dic.keys()
+for metric in metriclist:
+    L = [(patient_dic[patient_id][metric][-1], patient_id) for patient_id in patients]
+    sorted_scores.append([metric] + sorted(L))
+    
+    
