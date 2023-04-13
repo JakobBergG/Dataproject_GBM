@@ -89,12 +89,12 @@ for patient in patientfolders:
     
     # define the path for the ct file and mask
     for pathstr in ct_mask_filelist:
-        if os.path.basename(pathstr).endswith('mask.nii.gz'): # FIX NAME !!!!!!!
+        if os.path.basename(pathstr).endswith('mask.nii.gz'): 
             ct_mask = pathstr
 
     # define the path for the mr files and masks
     for pathstr in mr_mask_filelist:
-        if os.path.basename(pathstr).endswith('mask.nii.gz'): # FIX NAME !!!!!!!
+        if os.path.basename(pathstr).endswith('mask_cleaned.nii.gz'): 
             mr_masks.append(pathstr)
             
     
@@ -138,7 +138,7 @@ for patient in patientfolders:
         
         # We now dialte the mr mask
         mr_mask = sitk.ReadImage(mr_mask)
-        mr_mask = dilate_filter_mr.Execute(mr_mask)
+        mr_mask_dilated = dilate_filter_mr.Execute(mr_mask)
 
         #some of the rigid parametermap parameters might change, so we need to make sure these are set to the start settings  
         parameterMapRigid['AutomaticTransformInitialization']= ['true']
@@ -153,7 +153,7 @@ for patient in patientfolders:
         elastix.SetFixedImage(ct)
         elastix.SetFixedMask(ct_mask)
         elastix.SetMovingImage(mr_file)
-        elastix.SetMovingMask(mr_mask)
+        elastix.SetMovingMask(mr_mask_dilated)
         
         # elastix.LogToFileOn()
         elastix.SetOutputDirectory(outfolder)
@@ -178,7 +178,7 @@ for patient in patientfolders:
         transformix.Execute()
         mr_mask_moved = transformix.GetResultImage()
         mr_mask_moved = sitk.Cast(mr_mask_moved,sitk.sitkUInt8)
-        sitk.WriteImage(mr_mask_moved, os.path.join(outfolder, mr_mask_name))
+        sitk.WriteImage(mr_mask_moved, os.path.join(outfolder, mr_mask_name.replace("mask_cleaned", "mask")))
 
     
     # finde the folder with the gtvs from nn-Unet for the patient and loop over all the gtvs
