@@ -60,6 +60,9 @@ for patient in patientfolders:
     avg_msd = np.mean(patient_dic[patient_id])
     patient_dic[patient_id].append(avg_msd)
 
+    print(patient_id)
+    print(patient_dic[patient_id])
+
 # Sort patient dictionary by average MSD
 sorted_patients = sorted(patient_dic.items, key = lambda L: L[1][-1])
 patient_dic = {key : value for key, value in sorted_patients}
