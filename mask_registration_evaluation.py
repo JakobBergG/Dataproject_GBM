@@ -26,7 +26,7 @@ for patient in patientfolders:
     patient_id = os.path.basename(patient)
 
     # Find CT brain file
-    ct_mask_path = os.path.join(patient, utils.get_path('local_path_brainmask_ct'))
+    ct_mask_path = os.path.join(patient, utils.get_path('local_path_brainmasks_ct'))
     ct_mask_filelist = [ f.path for f in os.scandir(ct_mask_path) if f.is_file() ]
     ct_mask = ''
     for pathstr in ct_mask_filelist:
