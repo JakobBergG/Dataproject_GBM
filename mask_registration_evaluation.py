@@ -30,7 +30,7 @@ for patient in patientfolders:
     ct_mask_filelist = [ f.path for f in os.scandir(ct_mask_path) if f.is_file() ]
     ct_mask = ''
     for pathstr in ct_mask_filelist:
-        if os.path.basename(pathstr).endswith('mask.nii.gz'): # FIX NAME !!!!!!!
+        if os.path.basename(pathstr).endswith('mask.nii.gz'):
             ct_mask = pathstr
     
     # Skip patient if there is no CT brain file
@@ -39,11 +39,11 @@ for patient in patientfolders:
         continue
 
     # Find registered MR brain file
-    mr_mask_path = os.path.join(patient, utils.get_path('MR_to_CT_mask'))   # FIX NAME !!!!!!!
+    mr_mask_path = os.path.join(patient, 'MR_to_CT_mask')
     mr_mask_filelist = [ f.path for f in os.scandir(mr_mask_path) if f.is_file() ]
     mr_masks = []
     for pathstr in mr_mask_filelist:
-        if os.path.basename(pathstr).endswith('mask.nii.gz'): # FIX NAME !!!!!!!
+        if os.path.basename(pathstr).endswith('mask.nii.gz'):
             mr_masks.append(pathstr)
 
     # Make a list with Mean Surface Distances for each patient
