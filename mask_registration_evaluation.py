@@ -48,8 +48,14 @@ for patient in patientfolders:
 
     # Make a list with Mean Surface Distances for each patient
     patient_dic[patient_id] = []
+
+    print(patient_id)
+
+    print("CT", ct_mask)
     
     ct_mask = sitk.ReadImage(ct_mask)
+
+    print("MR", mr_masks)
 
     for mr_mask in mr_masks:
         # For each mr mask compute Mean Surface Difference with ct mask
@@ -60,7 +66,6 @@ for patient in patientfolders:
     avg_msd = np.mean(patient_dic[patient_id])
     patient_dic[patient_id].append(avg_msd)
 
-    print(patient_id)
     print(patient_dic[patient_id])
 
 # Sort patient dictionary by average MSD
