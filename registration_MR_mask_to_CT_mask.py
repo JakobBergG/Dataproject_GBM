@@ -60,8 +60,11 @@ logfilepath = os.path.join(basepath, 'log_MR_to_CT_mask.txt')
 for patient in patientfolders:
     patientid = os.path.basename(patient)
     outfolder = os.path.join(patient, 'MR_to_CT_mask')
+    gtvfolder = os.path.join(patient, 'MR_to_CT_gtv')
     if not os.path.isdir(outfolder):
         os.makedirs(outfolder) 
+    if not os.path.isdir(gtvfolder):
+        os.makedirs(gtvfolder) 
         
     # print to show new patient is started
     print(patientid)
@@ -86,12 +89,12 @@ for patient in patientfolders:
     
     # define the path for the ct file and mask
     for pathstr in ct_mask_filelist:
-        if os.path.basename(pathstr).endswith('mask.nii.gz'): # FIX NAME !!!!!!!
+        if os.path.basename(pathstr).endswith('mask.nii.gz'): 
             ct_mask = pathstr
 
     # define the path for the mr files and masks
     for pathstr in mr_mask_filelist:
-        if os.path.basename(pathstr).endswith('mask.nii.gz'): # FIX NAME !!!!!!!
+        if os.path.basename(pathstr).endswith('mask_cleaned.nii.gz'): 
             mr_masks.append(pathstr)
             
     
@@ -135,7 +138,7 @@ for patient in patientfolders:
         
         # We now dialte the mr mask
         mr_mask = sitk.ReadImage(mr_mask)
-        mr_mask = dilate_filter_mr.Execute(mr_mask)
+        mr_mask_dilated = dilate_filter_mr.Execute(mr_mask)
 
         #some of the rigid parametermap parameters might change, so we need to make sure these are set to the start settings  
         parameterMapRigid['AutomaticTransformInitialization']= ['true']
@@ -150,7 +153,7 @@ for patient in patientfolders:
         elastix.SetFixedImage(ct)
         elastix.SetFixedMask(ct_mask)
         elastix.SetMovingImage(mr_file)
-        elastix.SetMovingMask(mr_mask)
+        elastix.SetMovingMask(mr_mask_dilated)
         
         # elastix.LogToFileOn()
         elastix.SetOutputDirectory(outfolder)
@@ -175,29 +178,31 @@ for patient in patientfolders:
         transformix.Execute()
         mr_mask_moved = transformix.GetResultImage()
         mr_mask_moved = sitk.Cast(mr_mask_moved,sitk.sitkUInt8)
-        sitk.WriteImage(mr_mask_moved, os.path.join(outfolder, mr_mask_name))
+        sitk.WriteImage(mr_mask_moved, os.path.join(outfolder, mr_mask_name.replace("mask_cleaned", "mask")))
 
-        '''
-        #now find the GTV segmentation that belongs to the MR image, and apply the best registration to it
-        mr_gtv_file_name = os.path.join(patient, mr_file_name.replace('MR_res', 'MR_gtv'))
+    
+    # finde the folder with the gtvs from nn-Unet for the patient and loop over all the gtvs
+    patient_gtv_folder = os.path.join(patient, utils.get_path('local_path_output_gtvs'))
+    patient_gtvs = [ f.path for f in os.scandir(patient_gtv_folder) if f.is_file() ]     
+    
+    for gtv_file_name in patient_gtvs:
         
         #now if we have a GTV segementation available, we can move it along with the MR to the CT
-        if os.path.exists(mr_gtv_file_name):
-            GTVmask = sitk.ReadImage(mr_gtv_file_name)
+        if os.path.exists(gtv_file_name):
+            gtv_image = sitk.ReadImage(gtv_file_name)
 
             #transformix is a part of Elastix that you can use to apply registrations to scans/segmentations   
             transformix=sitk.TransformixImageFilter()
             transformix.LogToFileOn()
-            transformix.SetOutputDirectory(outfolder)
-            transformix.SetMovingImage(GTVmask)
+            transformix.SetOutputDirectory(gtvfolder)
+            transformix.SetMovingImage(gtv_image)
             transf0[0]['FinalBSplineInterpolationOrder']=['0']
             transformix.SetTransformParameterMap(transf0[0])
             transformix.Execute()
-            mr_gtv_moved = transformix.GetResultImage()
-            mr_gtv_moved = sitk.Cast(mr_gtv_moved,sitk.sitkUInt8)
-            mr_gtv_file_name = mr_file_name.replace('MR_res', 'MR_GTV')
-            sitk.WriteImage(mr_gtv_moved, os.path.join(outfolder, mr_gtv_file_name))
-            '''
+            gtv_moved = transformix.GetResultImage()
+            gtv_moved = sitk.Cast(gtv_moved,sitk.sitkUInt8)
+            sitk.WriteImage(gtv_moved, os.path.join(gtvfolder, gtv_file_name))
+            
             
 print('registration done')
 
