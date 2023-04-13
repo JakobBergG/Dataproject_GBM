@@ -38,12 +38,11 @@ for patient in patientfolders:
      # find all masks
      patient_filelist = [f.path for f in os.scandir(patient)]
      mr_list = []
+     ct_list = []
      for file in patient_filelist:
          if os.path.basename(file).endswith("_MR_res.nii.gz"):
              mr_list.append(file)
-     ct_list = []
-     for file in patient_filelist:
-        if os.path.basename(file).endswith("_CT_res.nii.gz"):
+         if os.path.basename(file).endswith("_CT_res.nii.gz"):
             ct_list.append(file)
      
         
@@ -58,7 +57,7 @@ for patient in patientfolders:
         
      for ct in ct_list:
         ct_name = os.path.basename(ct)
-        mask_name = re.sub("_CT_res", "_CT_res_mask", mr_name)
+        mask_name = re.sub("_CT_res", "_CT_res_mask", ct_name)
         output_name = re.sub("_CT_res_mask", "_CT_res_mask_cleaned", mask_name)
         mask_path = os.path.join(patient, local_path_brainmasks_ct, mask_name)
         output_path = os.path.join(patient, local_path_brainmasks_ct, output_name)
