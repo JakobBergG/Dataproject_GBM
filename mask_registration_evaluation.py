@@ -10,7 +10,7 @@ SAVE_AS_JSON = True
 def msd(Image1 : sitk.Image,Image2 : sitk.Image) -> float:
     '''Calculate Mean Surface Distance between two images.
     Returns float MSD(Image1, Image2)'''
-    Image2 = utils.reslice_image(Image1, Image2, is_label=True)
+    Image1 = utils.reslice_image(Image1, Image2, is_label=True)
     Image1_array = sitk.GetArrayFromImage(Image1)
     Image2_array = sitk.GetArrayFromImage(Image2)
     mean_surface_distance = medpy.metric.binary.asd(Image1_array, Image2_array)
