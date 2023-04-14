@@ -13,7 +13,7 @@ def get_path(location_name : str) -> str:
         "path_data": "data/",
         "path_info": "info/",
         "path_output": "output/",
-        "local_path_gtv": "MR_TO_CT",
+        "local_path_gtv": "predicted_gtvs",
         "local_path_brain_mr": "brain_mr",
         "local_path_brain_ct": "brain_ct",
         "local_path_brainmasks_mr": "brain_mr/output_brains",
