@@ -188,7 +188,7 @@ for patient in patientfolders:
     for gtv_file_name in patient_gtvs:
         
         #now if we have a GTV segementation available, we can move it along with the MR to the CT
-        if os.path.exists(gtv_file_name):
+        if os.path.exists(gtv_file_name) and gtv_file_name.endswith('gtv.nii.gz'):
             gtv_image = sitk.ReadImage(gtv_file_name)
 
             #transformix is a part of Elastix that you can use to apply registrations to scans/segmentations   
