@@ -140,10 +140,11 @@ for patient in patientfolders:
     #so here we do the dilation of the mask
     ct_mask = dilate_filter_ct.Execute(ct_mask)
     
-    for (mr_file, mr_mask, gtv_file_name)  in zip(mr_list, mr_masks, gtv_list):
+    for (mr_file, mr_mask, gtv_file)  in zip(mr_list, mr_masks, gtv_list):
         #we make sure that all images are of datatype Float32
         mr_file_name = os.path.basename(mr_file)
         mr_mask_name = os.path.basename(mr_mask)
+        gtv_file_name = os.path.basename(gtv_file)
         mr_file = sitk.Cast(sitk.ReadImage(mr_file),sitk.sitkFloat32)
         
         # We now dialte the mr mask
@@ -200,7 +201,7 @@ for patient in patientfolders:
         sitk.WriteImage(mr_mask_moved, os.path.join(outfolder, mr_mask_name.replace("mask_cleaned", "mask")))
 
         #now we want to move the GTV segmentation along with the MR to the CT
-        gtv_image = sitk.ReadImage(gtv_file_name)
+        gtv_image = sitk.ReadImage(gtv_file)
 
         #transformix is a part of Elastix that you can use to apply registrations to scans/segmentations   
         transformix=sitk.TransformixImageFilter()
