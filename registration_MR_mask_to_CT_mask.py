@@ -89,7 +89,7 @@ for patient in patientfolders:
     
     # define the path for the ct file and mask
     for pathstr in ct_mask_filelist:
-        if os.path.basename(pathstr).endswith('mask.nii.gz'): 
+        if os.path.basename(pathstr).endswith('mask_cleaned.nii.gz'): 
             ct_mask = pathstr
 
     # define the path for the mr files and masks
@@ -142,7 +142,8 @@ for patient in patientfolders:
 
         #some of the rigid parametermap parameters might change, so we need to make sure these are set to the start settings  
         parameterMapRigid['AutomaticTransformInitialization']= ['true']
-        parameterMapRigid['AutomaticTransformInitializationMethod']= ['GeometricalCenter']
+        #parameterMapRigid['AutomaticTransformInitializationMethod']= ['GeometricalCenter']
+        parameterMapRigid['AutomaticTransformInitializationMethod']= ['CenterOfGravity']
         parameterMapRigid['NumberOfResolutions']= ['3']
         parameterMapRigid['ImagePyramidSchedule']= ['8','8','8', '4','4','4', '2','2','2' ] 
         
