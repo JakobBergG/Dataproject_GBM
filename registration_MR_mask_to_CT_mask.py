@@ -20,7 +20,7 @@ def rigidParameterMap():
     parameterMapRigid['FinalGridSpacingInVoxels']= ['10']
     parameterMapRigid['FixedImagePyramid']= ['FixedSmoothingImagePyramid']
     parameterMapRigid['HowToCombineTransforms']= ['Compose']
-    parameterMapRigid['ImageSampler']= ['RandomSparseMask'] # original 'Random'
+    parameterMapRigid['ImageSampler']= ['Random'] # tried 'RandomSparseMask'
     parameterMapRigid['Interpolator']= ['BSplineInterpolator']
     parameterMapRigid['MaximumNumberOfIterations']= ['2000']
     parameterMapRigid['Metric']= ['AdvancedMattesMutualInformation']
