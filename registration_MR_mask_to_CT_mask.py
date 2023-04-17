@@ -57,7 +57,7 @@ basepath = utils.get_path('path_data')
 
 patientfolders = [ f.path for f in os.scandir(basepath) if f.is_dir() ]
 logfilepath = os.path.join(basepath, 'log_MR_to_CT_mask.txt')
-for patient in patientfolders[4:]: 
+for patient in patientfolders: 
     patientid = os.path.basename(patient)
     outfolder = os.path.join(patient, 'MR_to_CT_mask')
     gtvfolder = os.path.join(patient, 'MR_to_CT_gtv')
