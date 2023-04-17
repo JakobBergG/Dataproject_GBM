@@ -80,6 +80,10 @@ for patient in patientfolders:
 
     # loop over all oroginal scans for the patient
     image_filelist = [ f.path for f in os.scandir(patient) if f.is_file() ]
+
+    # Find all GTVs for the patient
+    patient_gtv_folder = os.path.join(patient, utils.get_path('local_path_output_gtvs'))
+    patient_gtvs = [ f.path for f in os.scandir(patient_gtv_folder) if f.is_file() ] 
     
     #we expect to find one CT file, one brain file, and multiple mr files
     ct_file = ''
@@ -130,7 +134,7 @@ for patient in patientfolders:
     #so here we do the dilation of the mask
     ct_mask = dilate_filter_ct.Execute(ct_mask)
     
-    for (mr_file, mr_mask)  in zip(mr_list, mr_masks):
+    for (mr_file, mr_mask, gtv_file_name)  in zip(mr_list, mr_masks, patient_gtvs):
         #we make sure that all images are of datatype Float32
         mr_file_name = os.path.basename(mr_file)
         mr_mask_name = os.path.basename(mr_mask)
@@ -155,7 +159,7 @@ for patient in patientfolders:
         elastix.SetMovingImage(mr_file)
         elastix.SetMovingMask(mr_mask_dilated)
         
-        # elastix.LogToFileOn()
+        elastix.LogToFileOn()
         elastix.SetOutputDirectory(outfolder)
         elastix.SetParameterMap(parameterMapRigid)
 
@@ -163,6 +167,15 @@ for patient in patientfolders:
         mr_moved = elastix.Execute()
         transf0 = elastix.GetTransformParameterMap() 
         sitk.WriteImage(mr_moved, os.path.join(outfolder, mr_file_name))
+
+        #the transform contains the actual registration parameters
+        Transform = os.path.join(outfolder, 'TransformParameters.0.txt')
+        #this part is used to save the transform, if we want to use it later
+        pre, ext = os.path.splitext(mr_file_name)
+        transformstring = os.path.join(outfolder, pre + '_TranformRigid.txt')
+        if os.path.exists(transformstring):
+            os.remove(transformstring)
+        os.rename(Transform, transformstring)
          
         del elastix
 
@@ -180,15 +193,8 @@ for patient in patientfolders:
         mr_mask_moved = sitk.Cast(mr_mask_moved,sitk.sitkUInt8)
         sitk.WriteImage(mr_mask_moved, os.path.join(outfolder, mr_mask_name.replace("mask_cleaned", "mask")))
 
-    
-    # finde the folder with the gtvs from nn-Unet for the patient and loop over all the gtvs
-    patient_gtv_folder = os.path.join(patient, utils.get_path('local_path_output_gtvs'))
-    patient_gtvs = [ f.path for f in os.scandir(patient_gtv_folder) if f.is_file() ]     
-    
-    for gtv_file_name in patient_gtvs:
-        
-        #now if we have a GTV segementation available, we can move it along with the MR to the CT
-        if os.path.exists(gtv_file_name) and gtv_file_name.endswith('gtv.nii.gz'):
+        #now we want to move the GTV segmentation along with the MR to the CT
+        if gtv_file_name.endswith('gtv.nii.gz'):
             gtv_image = sitk.ReadImage(gtv_file_name)
 
             #transformix is a part of Elastix that you can use to apply registrations to scans/segmentations   
