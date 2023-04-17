@@ -90,6 +90,7 @@ for patient in patientfolders:
     ct_mask = ''
     mr_list = []
     mr_masks = []
+    gtv_list = []
     
     # define the path for the ct file and mask
     for pathstr in ct_mask_filelist:
@@ -100,6 +101,11 @@ for patient in patientfolders:
     for pathstr in mr_mask_filelist:
         if os.path.basename(pathstr).endswith('mask_cleaned.nii.gz'): 
             mr_masks.append(pathstr)
+
+    # define the path for the gtv segmentations
+    for pathstr in patient_gtvs:
+        if os.path.basename(pathstr).endswith('gtv.nii.gz'): 
+            gtv_list.append(pathstr)
             
     
     # define the path for the original scans
@@ -134,7 +140,7 @@ for patient in patientfolders:
     #so here we do the dilation of the mask
     ct_mask = dilate_filter_ct.Execute(ct_mask)
     
-    for (mr_file, mr_mask, gtv_file_name)  in zip(mr_list, mr_masks, patient_gtvs):
+    for (mr_file, mr_mask, gtv_file_name)  in zip(mr_list, mr_masks, gtv_list):
         #we make sure that all images are of datatype Float32
         mr_file_name = os.path.basename(mr_file)
         mr_mask_name = os.path.basename(mr_mask)
@@ -194,20 +200,19 @@ for patient in patientfolders:
         sitk.WriteImage(mr_mask_moved, os.path.join(outfolder, mr_mask_name.replace("mask_cleaned", "mask")))
 
         #now we want to move the GTV segmentation along with the MR to the CT
-        if gtv_file_name.endswith('gtv.nii.gz'):
-            gtv_image = sitk.ReadImage(gtv_file_name)
+        gtv_image = sitk.ReadImage(gtv_file_name)
 
-            #transformix is a part of Elastix that you can use to apply registrations to scans/segmentations   
-            transformix=sitk.TransformixImageFilter()
-            transformix.LogToFileOn()
-            transformix.SetOutputDirectory(gtvfolder)
-            transformix.SetMovingImage(gtv_image)
-            transf0[0]['FinalBSplineInterpolationOrder']=['0']
-            transformix.SetTransformParameterMap(transf0[0])
-            transformix.Execute()
-            gtv_moved = transformix.GetResultImage()
-            gtv_moved = sitk.Cast(gtv_moved,sitk.sitkUInt8)
-            sitk.WriteImage(gtv_moved, os.path.join(gtvfolder, gtv_file_name))
+        #transformix is a part of Elastix that you can use to apply registrations to scans/segmentations   
+        transformix=sitk.TransformixImageFilter()
+        transformix.LogToFileOn()
+        transformix.SetOutputDirectory(gtvfolder)
+        transformix.SetMovingImage(gtv_image)
+        transf0[0]['FinalBSplineInterpolationOrder']=['0']
+        transformix.SetTransformParameterMap(transf0[0])
+        transformix.Execute()
+        gtv_moved = transformix.GetResultImage()
+        gtv_moved = sitk.Cast(gtv_moved,sitk.sitkUInt8)
+        sitk.WriteImage(gtv_moved, os.path.join(gtvfolder, gtv_file_name))
             
             
 print('registration done')
