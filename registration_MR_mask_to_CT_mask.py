@@ -20,7 +20,7 @@ def rigidParameterMap():
     parameterMapRigid['FinalGridSpacingInVoxels']= ['10']
     parameterMapRigid['FixedImagePyramid']= ['FixedSmoothingImagePyramid']
     parameterMapRigid['HowToCombineTransforms']= ['Compose']
-    parameterMapRigid['ImageSampler']= ['Random']
+    parameterMapRigid['ImageSampler']= ['RandomSparseMask'] # original 'Random'
     parameterMapRigid['Interpolator']= ['BSplineInterpolator']
     parameterMapRigid['MaximumNumberOfIterations']= ['2000']
     parameterMapRigid['Metric']= ['AdvancedMattesMutualInformation']
@@ -57,7 +57,7 @@ basepath = utils.get_path('path_data')
 
 patientfolders = [ f.path for f in os.scandir(basepath) if f.is_dir() ]
 logfilepath = os.path.join(basepath, 'log_MR_to_CT_mask.txt')
-for patient in patientfolders:
+for patient in patientfolders[4:]: 
     patientid = os.path.basename(patient)
     outfolder = os.path.join(patient, 'MR_to_CT_mask')
     gtvfolder = os.path.join(patient, 'MR_to_CT_gtv')
@@ -153,8 +153,8 @@ for patient in patientfolders:
 
         #some of the rigid parametermap parameters might change, so we need to make sure these are set to the start settings  
         parameterMapRigid['AutomaticTransformInitialization']= ['true']
-        #parameterMapRigid['AutomaticTransformInitializationMethod']= ['GeometricalCenter']
-        parameterMapRigid['AutomaticTransformInitializationMethod']= ['CenterOfGravity']
+        parameterMapRigid['AutomaticTransformInitializationMethod']= ['GeometricalCenter']
+        #parameterMapRigid['AutomaticTransformInitializationMethod']= ['CenterOfGravity']
         parameterMapRigid['NumberOfResolutions']= ['3']
         parameterMapRigid['ImagePyramidSchedule']= ['8','8','8', '4','4','4', '2','2','2' ] 
         
