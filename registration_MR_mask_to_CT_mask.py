@@ -117,7 +117,7 @@ for patient in patientfolders:
 
     
     #if there is no brainfile available, skip the patient, as we need it to do the scull stripping
-    if ct_file_name == '':
+    if ct_file == '':
         print("no ct_file")
         continue
   
