@@ -117,7 +117,7 @@ for patient in patientfolders:
 
     
     #if there is no brainfile available, skip the patient, as we need it to do the scull stripping
-    if ct_file == '':
+    if ct_file_name == '':
         print("no ct_file")
         continue
   
@@ -129,7 +129,7 @@ for patient in patientfolders:
     '''
     #The ct files are already resampled on a 1x1x1 mm grid, but the brain mask is not yet
     #the following 4 lines can be used to slice the mask to the CT grid
-    ct = sitk.ReadImage(ct_file) 
+    ct_image = sitk.ReadImage(ct_file) 
     #maskfilename = brain_file
     ct_mask = sitk.ReadImage(ct_mask)
     #brainmask = reslice_image(brainmask, ct,True)
@@ -145,7 +145,7 @@ for patient in patientfolders:
         mr_file_name = os.path.basename(mr_file)
         mr_mask_name = os.path.basename(mr_mask)
         gtv_file_name = os.path.basename(gtv_file)
-        mr_file = sitk.Cast(sitk.ReadImage(mr_file),sitk.sitkFloat32)
+        mr_image = sitk.Cast(sitk.ReadImage(mr_file),sitk.sitkFloat32)
         
         # We now dialte the mr mask
         mr_mask = sitk.ReadImage(mr_mask)
@@ -155,16 +155,20 @@ for patient in patientfolders:
         parameterMapRigid['AutomaticTransformInitialization']= ['true']
         parameterMapRigid['AutomaticTransformInitializationMethod']= ['GeometricalCenter']
         #parameterMapRigid['AutomaticTransformInitializationMethod']= ['CenterOfGravity']
-        parameterMapRigid['NumberOfResolutions']= ['3']
-        parameterMapRigid['ImagePyramidSchedule']= ['8','8','8', '4','4','4', '2','2','2' ] 
+        parameterMapRigid['NumberOfResolutions']= ['4']
+        parameterMapRigid['ImagePyramidSchedule']= ['16','16','16', '8','8','8', '4','4','4', '2','2','2' ] 
         
-        #you can write the parameters for file for reading
+        # you can write the parameters for file for reading
         # sitk.WriteParameterFile(parameterMapRigid, os.path.join(regfolder, 'rigid_params.txt'))
         
+        # make sure that the masks and images have same direction cosines
+        ct_mask.CopyInformation(ct_image)
+        mr_mask.CopyInformation(mr_image)
+        
         elastix = sitk.ElastixImageFilter()
-        elastix.SetFixedImage(ct)
+        elastix.SetFixedImage(ct_image)
         elastix.SetFixedMask(ct_mask)
-        elastix.SetMovingImage(mr_file)
+        elastix.SetMovingImage(mr_image)
         elastix.SetMovingMask(mr_mask_dilated)
         
         elastix.LogToFileOn()
