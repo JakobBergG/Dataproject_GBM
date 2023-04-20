@@ -136,7 +136,7 @@ for patient in patientfolders:
     #maskfilename = brain_file
     ct_mask = sitk.ReadImage(ct_mask)
     #brainmask = reslice_image(brainmask, ct,True)
-
+    ct_stripped = sitk.Mask(ct_image,ct_mask)
 
     
     #We use the brainmask plus a margin of 20 mm around to evaluate the registrations later
@@ -153,6 +153,9 @@ for patient in patientfolders:
         # We now dialte the mr mask
         mr_mask = sitk.ReadImage(mr_mask)
         mr_mask_dilated = dilate_filter_mr.Execute(mr_mask)
+
+        mr_stripped = sitk.Mask(mr_image,mr_mask)
+        
 
         # First round of registration
         
@@ -171,8 +174,8 @@ for patient in patientfolders:
         mr_mask.CopyInformation(mr_image)
         
         elastix = sitk.ElastixImageFilter()
-        elastix.SetFixedImage(ct_image)
-        elastix.SetMovingImage(mr_image)
+        elastix.SetFixedImage(ct_stripped)
+        elastix.SetMovingImage(mr_stripped)
         
         elastix.LogToFileOn()
         elastix.SetOutputDirectory(outfolder)
@@ -204,6 +207,10 @@ for patient in patientfolders:
         # we now want to use fixed and moving mask 
         elastix.SetFixedMask(ct_mask_dilated)
         elastix.SetMovingMask(mr_mask_dilated)
+        
+        # Use non_stripped scans
+        elastix.SetFixedImage(ct_image)
+        elastix.SetMovingImage(mr_image)
         
         # run the registration
         mr_moved = elastix.Execute()
