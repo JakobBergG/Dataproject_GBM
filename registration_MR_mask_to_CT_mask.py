@@ -141,7 +141,7 @@ for patient in patientfolders:
     
     #We use the brainmask plus a margin of 20 mm around to evaluate the registrations later
     #so here we do the dilation of the mask
-    ct_mask = dilate_filter_ct.Execute(ct_mask)
+    ct_mask_dilated = dilate_filter_ct.Execute(ct_mask)
     
     for (mr_file, mr_mask, gtv_file)  in zip(mr_list, mr_masks, gtv_list):
         #we make sure that all images are of datatype Float32
@@ -154,12 +154,14 @@ for patient in patientfolders:
         mr_mask = sitk.ReadImage(mr_mask)
         mr_mask_dilated = dilate_filter_mr.Execute(mr_mask)
 
+        # First round of registration
+        
         #some of the rigid parametermap parameters might change, so we need to make sure these are set to the start settings  
         parameterMapRigid['AutomaticTransformInitialization']= ['true']
-        #parameterMapRigid['AutomaticTransformInitializationMethod']= ['GeometricalCenter']
-        parameterMapRigid['AutomaticTransformInitializationMethod']= ['CenterOfGravity']
-        parameterMapRigid['NumberOfResolutions']= ['4']
-        parameterMapRigid['ImagePyramidSchedule']= ['16','16','16', '8','8','8', '4','4','4', '2','2','2' ] 
+        parameterMapRigid['AutomaticTransformInitializationMethod']= ['GeometricalCenter']
+        #parameterMapRigid['AutomaticTransformInitializationMethod']= ['CenterOfGravity']
+        parameterMapRigid['NumberOfResolutions']= ['3']
+        parameterMapRigid['ImagePyramidSchedule']= ['16','16','16','8','8','8', '4','4','4']
         
         # you can write the parameters for file for reading
         # sitk.WriteParameterFile(parameterMapRigid, os.path.join(regfolder, 'rigid_params.txt'))
@@ -170,28 +172,63 @@ for patient in patientfolders:
         
         elastix = sitk.ElastixImageFilter()
         elastix.SetFixedImage(ct_image)
-        elastix.SetFixedMask(ct_mask)
         elastix.SetMovingImage(mr_image)
-        elastix.SetMovingMask(mr_mask_dilated)
         
         elastix.LogToFileOn()
         elastix.SetOutputDirectory(outfolder)
         elastix.SetParameterMap(parameterMapRigid)
 
-        #the output of elastix is the registered moving image in the grid of the CT
+        # the output of elastix is the registered moving image in the grid of the CT
         mr_moved = elastix.Execute()
         transf0 = elastix.GetTransformParameterMap() 
-        sitk.WriteImage(mr_moved, os.path.join(outfolder, mr_file_name))
+        
 
-        #the transform contains the actual registration parameters
+        # the transform contains the actual registration parameters
         Transform = os.path.join(outfolder, 'TransformParameters.0.txt')
-        #this part is used to save the transform, if we want to use it later
+        # this part is used to save the transform, if we want to use it later
         pre, ext = os.path.splitext(mr_file_name)
-        transformstring = os.path.join(outfolder, pre + '_TranformRigid.txt')
+        transformstring = os.path.join(outfolder, pre + '_TranformRigid1.txt')
         if os.path.exists(transformstring):
             os.remove(transformstring)
         os.rename(Transform, transformstring)
-         
+        
+        # Second round of registration
+        parameterMapRigid['AutomaticTransformInitialization']= ['false']
+        parameterMapRigid['NumberOfResolutions']= ['2']
+        parameterMapRigid['ImagePyramidSchedule']= ['4','4','4', '2','2','2' ]         
+        elastix.SetParameterMap(parameterMapRigid)
+        
+        # and very important, we start where the first registration brought us.
+        elastix.SetInitialTransformParameterFileName(transformstring)
+        
+        # we now want to use fixed and moving mask 
+        elastix.SetFixedMask(ct_mask_dilated)
+        elastix.SetMovingMask(mr_mask_dilated)
+        
+        # run the registration
+        mr_moved = elastix.Execute()
+        transf1 = elastix.GetTransformParameterMap() 
+        
+        #there is a bug in Elastix that I can't seem to solve quickly, so this is a way around
+        #here i read the transformation parameters of the first and second registration, add them,
+        #and store them in the first registration transform.
+        sum = []
+        for i in range(0,6):
+            sum.append(str(transf0[0]["TransformParameters"][i] +transf1[0]["TransformParameters"][i])) 
+        transf0[0]["TransformParameters"]=tuple(sum)
+        
+        # save the moved mr image
+        sitk.WriteImage(mr_moved, os.path.join(outfolder, mr_file_name))
+        
+        # the transform contains the actual registration parameters
+        Transform = os.path.join(outfolder, 'TransformParameters.0.txt')
+        # this part is used to save the transform, if we want to use it later
+        pre, ext = os.path.splitext(mr_file_name)
+        transformstring = os.path.join(outfolder, pre + '_TranformRigid2.txt')
+        if os.path.exists(transformstring):
+            os.remove(transformstring)
+        os.rename(Transform, transformstring)
+        
         del elastix
 
 
