@@ -15,7 +15,7 @@ def rigidParameterMap():
     
     parameterMapRigid['AutomaticScalesEstimation']= ['true']
     parameterMapRigid['AutomaticTransformInitialization']= ['true']
-    parameterMapRigid['AutomaticTransformInitializationMethod']= ['GeometricalCenter']
+    parameterMapRigid['AutomaticTransformInitializationMethod']= ['CenterOfGravity']
     parameterMapRigid['DefaultPixelValue']= ['0.0']
     parameterMapRigid['FinalGridSpacingInVoxels']= ['10']
     parameterMapRigid['FixedImagePyramid']= ['FixedSmoothingImagePyramid']
@@ -161,8 +161,8 @@ for patient in patientfolders:
         
         #some of the rigid parametermap parameters might change, so we need to make sure these are set to the start settings  
         parameterMapRigid['AutomaticTransformInitialization']= ['true']
-        parameterMapRigid['AutomaticTransformInitializationMethod']= ['GeometricalCenter']
-        #parameterMapRigid['AutomaticTransformInitializationMethod']= ['CenterOfGravity']
+        #parameterMapRigid['AutomaticTransformInitializationMethod']= ['GeometricalCenter']
+        parameterMapRigid['AutomaticTransformInitializationMethod']= ['CenterOfGravity']
         parameterMapRigid['NumberOfResolutions']= ['3']
         parameterMapRigid['ImagePyramidSchedule']= ['16','16','16','8','8','8', '4','4','4']
         
