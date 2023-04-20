@@ -37,6 +37,9 @@ def rigidParameterMap():
     parameterMapRigid['ResultImagePixelType']= ['unsigned short']
     parameterMapRigid['UseDirectionCosines']= ['true']
     parameterMapRigid['WriteResultImage']= ['true']    
+    
+    parameterMapRigid['ErodeMovingMask'] = ['False']
+    parameterMapRigid['ErodeFixedMask'] = ['False']
     return parameterMapRigid
 
 #this is a 3D binary image filter that you can use to expand a mr mask in 3D
@@ -153,8 +156,8 @@ for patient in patientfolders:
 
         #some of the rigid parametermap parameters might change, so we need to make sure these are set to the start settings  
         parameterMapRigid['AutomaticTransformInitialization']= ['true']
-        parameterMapRigid['AutomaticTransformInitializationMethod']= ['GeometricalCenter']
-        #parameterMapRigid['AutomaticTransformInitializationMethod']= ['CenterOfGravity']
+        #parameterMapRigid['AutomaticTransformInitializationMethod']= ['GeometricalCenter']
+        parameterMapRigid['AutomaticTransformInitializationMethod']= ['CenterOfGravity']
         parameterMapRigid['NumberOfResolutions']= ['4']
         parameterMapRigid['ImagePyramidSchedule']= ['16','16','16', '8','8','8', '4','4','4', '2','2','2' ] 
         
