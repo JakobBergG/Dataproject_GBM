@@ -38,8 +38,8 @@ def rigidParameterMap():
     parameterMapRigid['UseDirectionCosines']= ['true']
     parameterMapRigid['WriteResultImage']= ['true']    
     
-    parameterMapRigid['ErodeMovingMask'] = ['False']
-    parameterMapRigid['ErodeFixedMask'] = ['False']
+    parameterMapRigid['ErodeMovingMask'] = ['false']
+    parameterMapRigid['ErodeFixedMask'] = ['false']
     return parameterMapRigid
 
 #this is a 3D binary image filter that you can use to expand a mr mask in 3D
