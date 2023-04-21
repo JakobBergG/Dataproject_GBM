@@ -136,6 +136,10 @@ for patient in patientfolders:
     #maskfilename = brain_file
     ct_mask = sitk.ReadImage(ct_mask)
     #brainmask = reslice_image(brainmask, ct,True)
+    
+    # make sure that the mask and image have same direction cosines
+    ct_mask.CopyInformation(ct_image)
+    
     ct_stripped = sitk.Mask(ct_image,ct_mask)
 
     
@@ -149,6 +153,9 @@ for patient in patientfolders:
         mr_mask_name = os.path.basename(mr_mask)
         gtv_file_name = os.path.basename(gtv_file)
         mr_image = sitk.Cast(sitk.ReadImage(mr_file),sitk.sitkFloat32)
+        
+        # make sure that the mask and image have same direction cosines
+        mr_mask.CopyInformation(mr_image)
         
         # We now dialte the mr mask
         mr_mask = sitk.ReadImage(mr_mask)
@@ -169,9 +176,8 @@ for patient in patientfolders:
         # you can write the parameters for file for reading
         # sitk.WriteParameterFile(parameterMapRigid, os.path.join(regfolder, 'rigid_params.txt'))
         
-        # make sure that the masks and images have same direction cosines
-        ct_mask.CopyInformation(ct_image)
-        mr_mask.CopyInformation(mr_image)
+        
+        
         
         elastix = sitk.ElastixImageFilter()
         elastix.SetFixedImage(ct_stripped)
