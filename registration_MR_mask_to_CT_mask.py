@@ -154,12 +154,14 @@ for patient in patientfolders:
         gtv_file_name = os.path.basename(gtv_file)
         mr_image = sitk.Cast(sitk.ReadImage(mr_file),sitk.sitkFloat32)
         
-        # make sure that the mask and image have same direction cosines
-        mr_mask.CopyInformation(mr_image)
+        
         
         # We now dialte the mr mask
         mr_mask = sitk.ReadImage(mr_mask)
         mr_mask_dilated = dilate_filter_mr.Execute(mr_mask)
+
+        # make sure that the mask and image have same direction cosines
+        mr_mask.CopyInformation(mr_image)
 
         mr_stripped = sitk.Mask(mr_image,mr_mask)
         
