@@ -60,7 +60,7 @@ basepath = utils.get_path('path_data')
 
 patientfolders = [ f.path for f in os.scandir(basepath) if f.is_dir() ]
 logfilepath = os.path.join(basepath, 'log_MR_to_CT_mask.txt')
-for patient in patientfolders: 
+for patient in patientfolders[20:]: 
     patientid = os.path.basename(patient)
     outfolder = os.path.join(patient, 'MR_to_CT_mask')
     gtvfolder = os.path.join(patient, 'MR_to_CT_gtv')
@@ -140,6 +140,7 @@ for patient in patientfolders:
     # make sure that the mask and image have same direction cosines
     ct_mask.CopyInformation(ct_image)
     
+    # Strip for first registration
     ct_stripped = sitk.Mask(ct_image,ct_mask)
 
     
@@ -156,14 +157,20 @@ for patient in patientfolders:
         
         
         
-        # We now dialte the mr mask
+        
         mr_mask = sitk.ReadImage(mr_mask)
-        mr_mask_dilated = dilate_filter_mr.Execute(mr_mask)
-
+        
         # make sure that the mask and image have same direction cosines
         mr_mask.CopyInformation(mr_image)
-
+        
+        # Strip for first registration
         mr_stripped = sitk.Mask(mr_image,mr_mask)
+        
+        # We now dialte the mr mask for second registration
+        mr_mask_dilated = dilate_filter_mr.Execute(mr_mask)
+
+        
+        
         
 
         # First round of registration
