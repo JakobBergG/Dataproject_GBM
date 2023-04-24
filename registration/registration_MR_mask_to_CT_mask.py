@@ -5,7 +5,10 @@ import logging
 
 log = logging.getLogger(__name__)
 
-#here the Elastix parameter map for rigid registration is set.
+#---------------------------------------------------------#
+# Elastix parameter map for rigid registration is defined #
+#---------------------------------------------------------#
+
 def rigidParameterMap():
     parameterMapRigid = sitk.GetDefaultParameterMap('rigid')
     
@@ -22,7 +25,7 @@ def rigidParameterMap():
     parameterMapRigid['FinalGridSpacingInVoxels']= ['10']
     parameterMapRigid['FixedImagePyramid']= ['FixedSmoothingImagePyramid']
     parameterMapRigid['HowToCombineTransforms']= ['Compose']
-    parameterMapRigid['ImageSampler']= ['Random'] # tried 'RandomSparseMask'
+    parameterMapRigid['ImageSampler']= ['Random'] 
     parameterMapRigid['Interpolator']= ['BSplineInterpolator']
     parameterMapRigid['MaximumNumberOfIterations']= ['2000']
     parameterMapRigid['Metric']= ['AdvancedMattesMutualInformation']
@@ -44,18 +47,21 @@ def rigidParameterMap():
     parameterMapRigid['ErodeFixedMask'] = ['false']
     return parameterMapRigid
 
-#this is a 3D binary image filter that you can use to expand a mr mask in 3D
+#------------------------------#
+# Dilation filters are defined #
+#------------------------------#
+
+# create 3D binary image filter used to expand the mr masks in 3D
 dilate_filter_mr = sitk.BinaryDilateImageFilter()
 dilate_filter_mr.SetKernelType(sitk.sitkBall)
 dilate_filter_mr.SetKernelRadius((10,10,5))
 dilate_filter_mr.SetForegroundValue(1)
 
-#this is a 3D binary image filter that you can use to expand a ct mask in 3D
+# create 3D binary image filter used to expand the mr masks in 3D
 dilate_filter_ct = sitk.BinaryDilateImageFilter()
 dilate_filter_ct.SetKernelType(sitk.sitkBall)
 dilate_filter_ct.SetKernelRadius((5,5,5))
 dilate_filter_ct.SetForegroundValue(1)
-
 
 
 def register_MR_to_CT(patient_folder : str):
@@ -69,28 +75,38 @@ def register_MR_to_CT(patient_folder : str):
         
     # log start of new patient
     log.info(f"Starting registration for patient {patient_id}")
+    
+    # set the registration parameter map as defined above
+    parameterMapRigid = rigidParameterMap()
 
+    #------------------------------------------------------------#
+    # Find the PathString of the different scans for the patient #
+    #------------------------------------------------------------#
 
-    #loop over all the ct files from the nn-Unet result
+    # loop over all the files in the nn-Unet output folder for CT brain segmentation 
     ct_mask_path = os.path.join(patient_folder, utils.get_path('local_path_brainmasks_ct'))
     ct_mask_filelist = [ f.path for f in os.scandir(ct_mask_path) if f.is_file() ]
 
-    #loop over all the mr files from the nn-Unet result
+    # loop over all the files in the nn-Unet output folder for MR brain segmentation 
     mr_mask_path = os.path.join(patient_folder, utils.get_path('local_path_brainmasks_mr'))
     mr_mask_filelist = [ f.path for f in os.scandir(mr_mask_path) if f.is_file() ]
 
-    # loop over all oroginal scans for the patient
+    # loop over all original scans for the patient
     image_filelist = [ f.path for f in os.scandir(patient_folder) if f.is_file() ]
 
-    # Find all GTVs for the patient
+    # find all GTVs for the patient
     patient_gtv_folder = os.path.join(patient_folder, utils.get_path('local_path_output_gtvs'))
     patient_gtvs = [ f.path for f in os.scandir(patient_gtv_folder) if f.is_file() ] 
     
-    #we expect to find one CT file, one brain file, and multiple mr files
+    # we expect to find one CT file, with corrosponding mask, for each patient
     ct_file = ''
     ct_mask = ''
+    
+    # we expect to find multiple MR files, each with corrosponding mask, for each patient
     mr_list = []
     mr_masks = []
+    
+    # we expect to find multiple GTVs for each patient
     gtv_list = []
     
     # define the path for the ct file and mask
@@ -117,143 +133,146 @@ def register_MR_to_CT(patient_folder : str):
             mr_list.append(pathstr)
 
     
-    #if there is no brainfile available, raise exception
+    # if there is no brainfile available, raise exception
     if ct_file == '':
         log.error(f"No CT file for patient {patient_id}")
         raise Exception(f"No CT file for patient {patient_id}")
-  
-    #make the registration parameter map
-    parameterMapRigid= rigidParameterMap()
 
-    '''
-    nn-Unet makes its so that the mask and ct file already are on the same grid
-    '''
-    #The ct files are already resampled on a 1x1x1 mm grid, but the brain mask is not yet
-    #the following 4 lines can be used to slice the mask to the CT grid
-    ct_image = sitk.ReadImage(ct_file) 
-    #maskfilename = brain_file
-    ct_mask = sitk.ReadImage(ct_mask)
-    #brainmask = reslice_image(brainmask, ct,True)
+    #----------------------------------------#
+    # Read and update the different CT files #
+    #----------------------------------------#
     
-    # make sure that the mask and image have same direction cosines
+    # reading the CT scan and CT mask
+    ct_image = sitk.ReadImage(ct_file) 
+    ct_mask = sitk.ReadImage(ct_mask)
+
+    
+    # set the direction cosines for the mask and scan to be equal
     ct_mask.CopyInformation(ct_image)
     
-    # Strip for first registration
+    # strip CT image based on CT mask for first round of registration
     ct_stripped = sitk.Mask(ct_image,ct_mask)
 
     
-    #We use the brainmask plus a margin of 20 mm around to evaluate the registrations later
-    #so here we do the dilation of the mask
+    # we use the brainmask plus a margin of 20 mm around in the second round of registration
     ct_mask_dilated = dilate_filter_ct.Execute(ct_mask)
     
     for (mr_file, mr_mask, gtv_file)  in zip(mr_list, mr_masks, gtv_list):
-        #we make sure that all images are of datatype Float32
+     
+        #------------------------------------------------#
+        # Read and update the different MR and GTV files #
+        #------------------------------------------------#
+        
+        # define path to the MR scan and MR mask
         mr_file_name = os.path.basename(mr_file)
         mr_mask_name = os.path.basename(mr_mask)
-        gtv_file_name = os.path.basename(gtv_file)
+        
+        # reading the MR scan and MR mask
         mr_image = sitk.Cast(sitk.ReadImage(mr_file),sitk.sitkFloat32)
-        
-        
-        
-        
         mr_mask = sitk.ReadImage(mr_mask)
+        
+        # reading the corrosponding GTV
+        gtv_file_name = os.path.basename(gtv_file)
         
         # make sure that the mask and image have same direction cosines
         mr_mask.CopyInformation(mr_image)
         
-        # Strip for first registration
+        # strip MR image based on MR mask for first round of registration
         mr_stripped = sitk.Mask(mr_image,mr_mask)
         
-        # We now dialte the mr mask for second registration
+        # we use the brainmask plus a margin of 20 mm around in the second round of registration
         mr_mask_dilated = dilate_filter_mr.Execute(mr_mask)
 
+        #-----------------------------#
+        # First round of registration #
+        #-----------------------------#
         
-        
-        
-
-        # First round of registration
-        
-        #some of the rigid parametermap parameters might change, so we need to make sure these are set to the start settings  
+        # define specific parametermap for first round of registration
         parameterMapRigid['AutomaticTransformInitialization']= ['true']
-        #parameterMapRigid['AutomaticTransformInitializationMethod']= ['GeometricalCenter']
         parameterMapRigid['AutomaticTransformInitializationMethod']= ['CenterOfGravity']
         parameterMapRigid['NumberOfResolutions']= ['3']
         parameterMapRigid['ImagePyramidSchedule']= ['16','16','16','8','8','8', '4','4','4']
         
-        # you can write the parameters for file for reading
-        # sitk.WriteParameterFile(parameterMapRigid, os.path.join(regfolder, 'rigid_params.txt'))
-        
-        
-        
-        
+        # defining the images used in the first round of registration
+        # we use skull-stripped versions of the scans in the first round
         elastix = sitk.ElastixImageFilter()
         elastix.SetFixedImage(ct_stripped)
         elastix.SetMovingImage(mr_stripped)
         
+        # activate log file and define output folder and parameters.
         elastix.LogToFileOn()
         elastix.SetOutputDirectory(outfolder)
         elastix.SetParameterMap(parameterMapRigid)
 
-        # the output of elastix is the registered moving image in the grid of the CT
-        mr_moved = elastix.Execute()
+        # execute Elastix and save the paramtermap used by Elastix
+        elastix.Execute()
         transf0 = elastix.GetTransformParameterMap() 
         
-
-        # the transform contains the actual registration parameters
+        # change the name of the log file from Elastix 
+        # this file contains information about the above executed transformation
         Transform = os.path.join(outfolder, 'TransformParameters.0.txt')
-        # this part is used to save the transform, if we want to use it later
         pre, ext = os.path.splitext(mr_file_name)
         transformstring = os.path.join(outfolder, pre + '_TranformRigid1.txt')
         if os.path.exists(transformstring):
             os.remove(transformstring)
         os.rename(Transform, transformstring)
         
-        # Second round of registration
+        #------------------------------#
+        # Second round of registration #
+        #------------------------------#
+        
+        # define specific parametermap for first second of registration
         parameterMapRigid['AutomaticTransformInitialization']= ['false']
         parameterMapRigid['NumberOfResolutions']= ['2']
         parameterMapRigid['ImagePyramidSchedule']= ['4','4','4', '2','2','2' ]         
         elastix.SetParameterMap(parameterMapRigid)
         
-        # and very important, we start where the first registration brought us.
+        # start the second round where the first round ended.
         elastix.SetInitialTransformParameterFileName(transformstring)
         
-        # we now want to use fixed and moving mask 
-        elastix.SetFixedMask(ct_mask_dilated)
-        elastix.SetMovingMask(mr_mask_dilated)
-        
-        # Use non_stripped scans
+        # define the images used in the second round of registration
+        # we use the entire scans in the second round
         elastix.SetFixedImage(ct_image)
         elastix.SetMovingImage(mr_image)
         
-        # run the registration
+        # in this round we also use a moving and fixed mask.
+        elastix.SetFixedMask(ct_mask_dilated)
+        elastix.SetMovingMask(mr_mask_dilated)
+        
+        # execute Elastix and save the moved MR file and the paramtermap used by Elastix
         mr_moved = elastix.Execute()
-        transf1 = elastix.GetTransformParameterMap() 
+        transf1 = elastix.GetTransformParameterMap()
         
-        #there is a bug in Elastix that I can't seem to solve quickly, so this is a way around
-        #here i read the transformation parameters of the first and second registration, add them,
-        #and store them in the first registration transform.
-        sum = []
-        for i in range(0,6):
-            sum.append(str(transf0[0]["TransformParameters"][i] +transf1[0]["TransformParameters"][i])) 
-        transf0[0]["TransformParameters"]=tuple(sum)
-        
-        # save the moved mr image
-        sitk.WriteImage(mr_moved, os.path.join(outfolder, mr_file_name))
-        
-        # the transform contains the actual registration parameters
+        # change the name of the log file from Elastix 
+        # this file contains information about the above executed transformation
         Transform = os.path.join(outfolder, 'TransformParameters.0.txt')
-        # this part is used to save the transform, if we want to use it later
         pre, ext = os.path.splitext(mr_file_name)
         transformstring = os.path.join(outfolder, pre + '_TranformRigid2.txt')
         if os.path.exists(transformstring):
             os.remove(transformstring)
         os.rename(Transform, transformstring)
         
+        #-----------------------------#
+        # Save result of registration #
+        #-----------------------------#
+        
+        # sum the parametermaps from the two rounds of registrations into one map.
+        sum = []
+        for i in range(0,6):
+            sum.append(str(transf0[0]["TransformParameters"][i] +transf1[0]["TransformParameters"][i])) 
+        transf0[0]["TransformParameters"]=tuple(sum)
+        
+        # write the moved mr image
+        sitk.WriteImage(mr_moved, os.path.join(outfolder, mr_file_name))
+        
         del elastix
 
+        #------------------------------------------------------------#
+        # Move MR mask to CT based on the result of the registration #
+        #------------------------------------------------------------#
 
-        # we want to move the mask to the ct, here we use transformix
-        # transformix is a part of Elastix that you can use to apply registrations to scans/segmentations   
+        # we want to move the MR mask to the CT scan, to do so we use transformix.
+        # we use the summed parameter map to move the mask in the same direction as the MR
         transformix=sitk.TransformixImageFilter()
         transformix.LogToFileOn()
         transformix.SetOutputDirectory(outfolder)
@@ -265,10 +284,15 @@ def register_MR_to_CT(patient_folder : str):
         mr_mask_moved = sitk.Cast(mr_mask_moved,sitk.sitkUInt8)
         sitk.WriteImage(mr_mask_moved, os.path.join(outfolder, mr_mask_name.replace("mask_cleaned", "mask")))
 
-        #now we want to move the GTV segmentation along with the MR to the CT
+        #--------------------------------------------------------#
+        # Move GTV to CT based on the result of the registration #
+        #--------------------------------------------------------#
+
+        # read the GTV corrosponding to the above moved MR
         gtv_image = sitk.ReadImage(gtv_file)
 
-        #transformix is a part of Elastix that you can use to apply registrations to scans/segmentations   
+        # we want to move the GTV to the CT scan, to do so we use transformix.
+        # we use the summed parameter map to move the GTV in the same direction as the MR 
         transformix=sitk.TransformixImageFilter()
         transformix.LogToFileOn()
         transformix.SetOutputDirectory(gtvfolder)
