@@ -6,9 +6,13 @@ import brain_segmentation.cleanup_brain_masks
 import skull_stripping.strip_skull_from_mask
 import gtv_segmentation.predict_gtvs
 import logging
+from datetime import datetime
 
 # setup of logging
-logging.basicConfig(filename="log.txt", level=logging.INFO, 
+log_output = utils.get_path("path_output")
+log_name = f"log_{datetime.now().strftime('%Y-%m-%d-%H:%M:%S')}.txt"
+log_path = os.path.join(log_output, log_name)
+logging.basicConfig(filename=log_path, level=logging.INFO, 
                     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler(sys.stdout))
