@@ -36,11 +36,11 @@ def run_pipeline(patient_folder : str):
     # TODO: load these values from settings.json
     log.info(f"Starting brain segmentation for patient {patient_id}")
 
-    try:
-        brain_segmentation.predict_brain_masks.run_ct_prediction(patient_folder)
-    except:
-        log.error(f"CT brain mask prediction failed. Stopping here for patient {patient_id}")
-        return
+    #try:
+    brain_segmentation.predict_brain_masks.run_ct_prediction(patient_folder)
+    #except:
+    #    log.error(f"CT brain mask prediction failed. Stopping here for patient {patient_id}")
+     #   return
     
     try:
         brain_segmentation.predict_brain_masks.run_mr_prediction(patient_folder)
