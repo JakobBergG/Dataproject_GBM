@@ -241,16 +241,19 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
     
 
 def setup(output_name : str):
+    '''
+    Load patient journal info and setup path for output
+    '''
     global journal_info_patients
     global output_path
     journal_info_patients = load_journal_info_patients(journal_info_path)
     output_path = os.path.join(utils.get_path("path_output"), output_name)
 
 
-def run_patient_metrics(patient_folder : str, metrics_path : str):
+def run_patient_metrics(patient_folder : str, output_name : str):
     '''
     Open the .json file with path metrics_path, calculate the metrics, add them
-    to the .json file, and save it again
+    to the .json file at output_name, and save it again
     '''
     # load journal info for all patients
     

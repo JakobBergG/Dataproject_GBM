@@ -1,17 +1,20 @@
 import sys
 import os
+import logging
+from datetime import datetime
 import common.utils as utils
 import brain_segmentation.predict_brain_masks
 import brain_segmentation.cleanup_brain_masks
 import skull_stripping.strip_skull_from_mask
 import gtv_segmentation.predict_gtvs
 import registration.registration_MR_mask_to_CT_mask
-import logging
-from datetime import datetime
+import analysis.patient_metrics
+
 
 # setup of logging
 log_output = utils.get_path("path_output")
-log_name = f"log_{datetime.now().strftime('%Y-%m-%d-%H:%M:%S')}.txt"
+date_str = datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
+log_name = f"log_{date_str}.txt"
 log_path = os.path.join(log_output, log_name)
 logging.basicConfig(filename=log_path, level=logging.INFO, 
                     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
@@ -31,7 +34,6 @@ def run_pipeline(patient_folder : str):
     #
     # TODO: load these values from settings.json
     log.info(f"Starting brain segmentation for patient {patient_id}")
-    brain_segmentation.predict_brain_masks.setup_prediction(nnUNet_ct_task_id=800, nnUNet_mr_task_id=801)
 
     try:
         brain_segmentation.predict_brain_masks.run_ct_prediction(patient_folder)
@@ -84,12 +86,24 @@ def run_pipeline(patient_folder : str):
     except:
         log.error(f"Registration failed. Stopping here for patient {patient_id}")
         return
+    
+    #
+    # Calculate metrics
+    #
+    log.info(f"Calculating metrics for patient {patient_id}")
+    try:
+        analysis.patient_metrics.run_patient_metrics(patient_folder)
+    except:
+        log.error(f"Calculating patient metrics failed for patient {patient_id}")
+        return
 
 
 def main():
     # Load the base data path from the settings.json file
     basepath = utils.get_path("path_data")
-
+    # Run setup
+    brain_segmentation.predict_brain_masks.setup_prediction(nnUNet_ct_task_id=800, nnUNet_mr_task_id=801)
+    analysis.patient_metrics.setup(f"patient_metrics_{date_str}.json")
     # Find all the patient folders in the main data folder
     patient_folders = [f.path for f in os.scandir(basepath) if f.is_dir()]
     for patient_folder in patient_folders:
