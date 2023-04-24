@@ -3,7 +3,6 @@ import os
 import json
 from datetime import datetime
 import re
-import csv
 
 
 def get_path(location_name : str) -> str:
@@ -59,46 +58,3 @@ def parse_filename(filename : str) -> tuple:
 def date_to_relative_time(date : datetime, base_date : datetime) -> float:
     '''Returns date with relative time in days relative to base date'''
     return (date - base_date).total_seconds() / 86400
-
-
-def load_journal_info_patients(path : str) -> dict:
-    '''Loads .csv file with info about patient. Returns dictionary
-    with key for each patient'''
-
-    # these following columns should be read, and the following functions should be called
-    to_read = {
-        "Study_ID": str,
-        "MRIDiagDate_checked": str,
-        "MRIPostopDate_checked": str,
-        "RT_MRIDate": str,
-        "ProgressionDate": str,
-        "RTdoseplan": lambda x : int(float(re.sub(",", ".", x))),
-        "Age_at_diagn": lambda x : float(re.sub(",", ".", x)),
-        "Sex" : str,
-        "ProgressionType": int
-    }
-
-    # create dict to hold all patients
-    journal_info_patients = {}
-
-    with open(path, newline='', mode="r", encoding="utf-8-sig") as f:
-        rows = csv.reader(f, delimiter=";")
-        names = next(rows) # the first row gives the names of the columns
-        
-        # now read info for all patients
-        for row in rows:
-            # create dict for each patient
-            patient_dict = {}
-            for i, name in enumerate(names):
-                if name == "Study_ID":
-                    study_id = f"{row[i]:>04}" #pad with 4 zeros
-                elif name in to_read:
-                    func = to_read[name]
-                    patient_dict[name] = func(row[i])
-            journal_info_patients[study_id] = patient_dict
-    
-    return journal_info_patients
-
-
-
-
