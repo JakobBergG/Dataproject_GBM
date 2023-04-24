@@ -1,7 +1,9 @@
 import SimpleITK as sitk
 import os
 import common.utils as utils
+import logging
 
+log = logging.getLogger(__name__)
 
 #here the Elastix parameter map for rigid registration is set.
 def rigidParameterMap():
@@ -56,36 +58,32 @@ dilate_filter_ct.SetForegroundValue(1)
 
 
 
-basepath = utils.get_path('path_data')
-
-patientfolders = [ f.path for f in os.scandir(basepath) if f.is_dir() ]
-logfilepath = os.path.join(basepath, 'log_MR_to_CT_mask.txt')
-for patient in patientfolders[20:]: 
-    patientid = os.path.basename(patient)
-    outfolder = os.path.join(patient, 'MR_to_CT_mask')
-    gtvfolder = os.path.join(patient, 'MR_to_CT_gtv')
+def register_MR_to_CT(patient_folder : str):
+    patient_id = os.path.basename(patient_folder)
+    outfolder = os.path.join(patient_folder, 'MR_to_CT_mask')
+    gtvfolder = os.path.join(patient_folder, 'MR_to_CT_gtv')
     if not os.path.isdir(outfolder):
         os.makedirs(outfolder) 
     if not os.path.isdir(gtvfolder):
         os.makedirs(gtvfolder) 
         
-    # print to show new patient is started
-    print(patientid)
+    # log start of new patient
+    log.info(f"Starting registration for patient {patient_id}")
 
 
     #loop over all the ct files from the nn-Unet result
-    ct_mask_path = os.path.join(patient, utils.get_path('local_path_brainmasks_ct'))
+    ct_mask_path = os.path.join(patient_folder, utils.get_path('local_path_brainmasks_ct'))
     ct_mask_filelist = [ f.path for f in os.scandir(ct_mask_path) if f.is_file() ]
 
     #loop over all the mr files from the nn-Unet result
-    mr_mask_path = os.path.join(patient, utils.get_path('local_path_brainmasks_mr'))
+    mr_mask_path = os.path.join(patient_folder, utils.get_path('local_path_brainmasks_mr'))
     mr_mask_filelist = [ f.path for f in os.scandir(mr_mask_path) if f.is_file() ]
 
     # loop over all oroginal scans for the patient
-    image_filelist = [ f.path for f in os.scandir(patient) if f.is_file() ]
+    image_filelist = [ f.path for f in os.scandir(patient_folder) if f.is_file() ]
 
     # Find all GTVs for the patient
-    patient_gtv_folder = os.path.join(patient, utils.get_path('local_path_output_gtvs'))
+    patient_gtv_folder = os.path.join(patient_folder, utils.get_path('local_path_output_gtvs'))
     patient_gtvs = [ f.path for f in os.scandir(patient_gtv_folder) if f.is_file() ] 
     
     #we expect to find one CT file, one brain file, and multiple mr files
@@ -119,10 +117,10 @@ for patient in patientfolders[20:]:
             mr_list.append(pathstr)
 
     
-    #if there is no brainfile available, skip the patient, as we need it to do the scull stripping
+    #if there is no brainfile available, raise exception
     if ct_file == '':
-        print("no ct_file")
-        continue
+        log.error(f"No CT file for patient {patient_id}")
+        raise Exception(f"No CT file for patient {patient_id}")
   
     #make the registration parameter map
     parameterMapRigid= rigidParameterMap()
@@ -281,8 +279,8 @@ for patient in patientfolders[20:]:
         gtv_moved = transformix.GetResultImage()
         gtv_moved = sitk.Cast(gtv_moved,sitk.sitkUInt8)
         sitk.WriteImage(gtv_moved, os.path.join(gtvfolder, gtv_file_name))
+        
+        log.info(f"Done with registration for patient {patient_id}")
             
-            
-print('registration done')
 
         

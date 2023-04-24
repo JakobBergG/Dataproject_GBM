@@ -5,6 +5,7 @@ import brain_segmentation.predict_brain_masks
 import brain_segmentation.cleanup_brain_masks
 import skull_stripping.strip_skull_from_mask
 import gtv_segmentation.predict_gtvs
+import registration.registration_MR_mask_to_CT_mask
 import logging
 from datetime import datetime
 
@@ -73,9 +74,16 @@ def run_pipeline(patient_folder : str):
     except:
         log.error(f"GTV-segmentation failed. Stopping here for patient {patient_id}")
         return
-
-
-
+    
+    #
+    # Register MR to CT
+    #
+    log.info(f"Starting registration for patient {patient_id}")
+    try:
+        registration.registration_MR_mask_to_CT_mask.register_MR_to_CT(patient_folder)
+    except:
+        log.error(f"Registration failed. Stopping here for patient {patient_id}")
+        return
 
 
 def main():
