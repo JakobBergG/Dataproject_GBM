@@ -1,22 +1,11 @@
 import os
 import SimpleITK as sitk
 import numpy as np
-import medpy.metric
 import json
 import common.utils as utils
+import common.metrics as metrics
 
 SAVE_AS_JSON = True
-
-def msd(ct_mask : sitk.Image, mr_mask : sitk.Image) -> float:
-    '''Calculate Mean Surface Distance between mr and ct brain masks.
-    Returns float MSD(ct_mask, mr_mask)'''
-    spacing = ct_mask.GetSpacing()
-    mr_mask = utils.reslice_image(mr_mask, ct_mask, is_label=True)
-    mr_mask_array = sitk.GetArrayFromImage(mr_mask)
-    ct_mask_array = sitk.GetArrayFromImage(ct_mask)
-    mean_surface_distance = medpy.metric.binary.assd(mr_mask_array, ct_mask_array, voxelspacing=spacing)
-    
-    return mean_surface_distance
 
 basepath = utils.get_path("path_data")
 patientfolders = [ f.path for f in os.scandir(basepath) if f.is_dir() ]
@@ -58,7 +47,7 @@ for patient in patientfolders:
     for mr_mask in mr_masks:
         # For each mr mask compute Mean Surface Difference with ct mask
         mr_mask = sitk.ReadImage(mr_mask)
-        patient_dic[patient_id].append(msd(ct_mask, mr_mask))
+        patient_dic[patient_id].append(metrics.msd(ct_mask, mr_mask))
     
     # Append the average value of all MSDs for the patient at the end of list
     avg_msd = np.mean(patient_dic[patient_id])
