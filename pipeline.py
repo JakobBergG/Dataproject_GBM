@@ -1,15 +1,23 @@
 import sys
 import os
+import logging
+from datetime import datetime
 import common.utils as utils
 import brain_segmentation.predict_brain_masks
 import brain_segmentation.cleanup_brain_masks
 import skull_stripping.strip_skull_from_mask
 import gtv_segmentation.predict_gtvs
 import registration.registration_MR_mask_to_CT_mask
-import logging
+import registration.mask_registration_evaluation
+import analysis.patient_metrics
+
 
 # setup of logging
-logging.basicConfig(filename="log.txt", level=logging.INFO, 
+log_output = utils.get_path("path_output")
+date_str = datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
+log_name = f"log_{date_str}.txt"
+log_path = os.path.join(log_output, log_name)
+logging.basicConfig(filename=log_path, level=logging.DEBUG, 
                     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler(sys.stdout))
@@ -27,13 +35,12 @@ def run_pipeline(patient_folder : str):
     #
     # TODO: load these values from settings.json
     log.info(f"Starting brain segmentation for patient {patient_id}")
-    brain_segmentation.predict_brain_masks.setup_prediction(nnUNet_ct_task_id=800, nnUNet_mr_task_id=801)
 
-    try:
-        brain_segmentation.predict_brain_masks.run_ct_prediction(patient_folder)
-    except:
-        log.error(f"CT brain mask prediction failed. Stopping here for patient {patient_id}")
-        return
+    #try:
+    brain_segmentation.predict_brain_masks.run_ct_prediction(patient_folder)
+    #except:
+    #    log.error(f"CT brain mask prediction failed. Stopping here for patient {patient_id}")
+     #   return
     
     try:
         brain_segmentation.predict_brain_masks.run_mr_prediction(patient_folder)
@@ -72,7 +79,7 @@ def run_pipeline(patient_folder : str):
         return
     
     #
-    # Register MR to CT
+    # REGISTRATION (MR to CT)
     #
     log.info(f"Starting registration for patient {patient_id}")
     try:
@@ -80,19 +87,37 @@ def run_pipeline(patient_folder : str):
     except:
         log.error(f"Registration failed. Stopping here for patient {patient_id}")
         return
+    
+    try:
+        registration.mask_registration_evaluation.add_msd_to_json(patient_folder)
+    except:
+        log.error(f"Registration evaluation for patient {patient_id} failed. Continuing...")
+    
+    #
+    # Calculate metrics
+    #
+    log.info(f"Calculating metrics for patient {patient_id}")
+    try:
+        analysis.patient_metrics.run_patient_metrics(patient_folder)
+    except:
+        log.error(f"Calculating patient metrics failed for patient {patient_id}")
+        return
 
 
 def main():
     # Load the base data path from the settings.json file
     basepath = utils.get_path("path_data")
-
+    # Run setup
+    brain_segmentation.predict_brain_masks.setup_prediction(nnUNet_ct_task_id=800, nnUNet_mr_task_id=801)
+    analysis.patient_metrics.setup(f"patient_metrics_{date_str}.json")
     # Find all the patient folders in the main data folder
     patient_folders = [f.path for f in os.scandir(basepath) if f.is_dir()]
-    for patient_folder in patient_folders:
-        patient_id = os.path.basename(patient_folder)
-        # Execute the entire pipeline for the patient
-        log.info(f"Starting pipeline execution for patient {patient_id}")
-        run_pipeline(patient_folder)
+    run_pipeline(patient_folders[0])
+    # for patient_folder in patient_folders:
+    #     patient_id = os.path.basename(patient_folder)
+    #     # Execute the entire pipeline for the patient
+    #     log.info(f"Starting pipeline execution for patient {patient_id}")
+    #     run_pipeline(patient_folder)
 
 
 if __name__ == "__main__":

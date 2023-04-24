@@ -4,20 +4,66 @@ import common.utils as utils
 import SimpleITK as sitk
 import common.metrics as metrics
 import json
-import objgraph
+import csv
+import logging
+import re
 
-SAVE_AS_JSON = True
+log = logging.getLogger(__name__)
+
+# TODO: replace print with logging
+
+# TODO: LOAD FROM settings.json
 MINIMUM_VOXELS_LESION = 20 # if lesions contain fewer voxels than this, do not
                            # per-lesion metrics.   
 
 TIME_POINTS = ("time0", "time1", "time2", "time3")
 
-JOURNAL_INFO_PATH = os.path.join(utils.get_path("path_info"), "gbm_treatment_info.csv")
-OUTPUT_PATH = os.path.join(utils.get_path("path_output"), "patient_metrics.json")
+journal_info_path = os.path.join(utils.get_path("path_info"), "gbm_treatment_info.csv")
+output_path = "" # path of where to output the end metrics file - is specified in setup()
 
 local_path_gtv = utils.get_path("local_path_gtv") #points to gtv subfolder starting from patient folder
-
 basepath = utils.get_path("path_data")
+
+journal_info_patients : dict = {} #dictionary with journal info - is specified in setup()
+
+def load_journal_info_patients(path : str) -> dict:
+    '''Loads .csv file with info about patient. Returns dictionary
+    with key for each patient'''
+
+    # these following columns should be read, and the following functions should be called
+    to_read = {
+        "Study_ID": str,
+        "MRIDiagDate_checked": str,
+        "MRIPostopDate_checked": str,
+        "RT_MRIDate": str,
+        "ProgressionDate": str,
+        "RTdoseplan": lambda x : int(float(re.sub(",", ".", x))),
+        "Age_at_diagn": lambda x : float(re.sub(",", ".", x)),
+        "Sex" : str,
+        "ProgressionType": int
+    }
+
+    # create dict to hold all patients
+    journal_info_patients = {}
+
+    with open(path, newline='', mode="r", encoding="utf-8-sig") as f:
+        rows = csv.reader(f, delimiter=";")
+        names = next(rows) # the first row gives the names of the columns
+        
+        # now read info for all patients
+        for row in rows:
+            # create dict for each patient
+            patient_dict = {}
+            for i, name in enumerate(names):
+                if name == "Study_ID":
+                    study_id = f"{row[i]:>04}" #pad with 4 zeros
+                elif name in to_read:
+                    func = to_read[name]
+                    patient_dict[name] = func(row[i])
+            journal_info_patients[study_id] = patient_dict
+    
+    return journal_info_patients
+
 
 def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
     '''Returns dictionary with metrics calculated for all time points
@@ -84,13 +130,6 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
     # add subdictionary for each time point which can be filled with metric values
     # assign a timepoint to each date (we assume we have time3 and time2 always,
     # so fill these out first
-  
-    # for timepoint, date in zip(reversed(TIME_POINTS[2:]), reversed(dates)):
-    #    write_timepoint(timepoint, date)
-
-    
-
-    
 
     # now match times with dates from journal, if they exist (and if journal exists)
 
@@ -201,28 +240,38 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
     return info
     
 
-# load journal info for patiens
-journal_info_patients = utils.load_journal_info_patients(JOURNAL_INFO_PATH)
-patientfolders = [f.path for f in os.scandir(basepath) if f.is_dir()]
+def setup(output_name : str):
+    '''
+    Load patient journal info and setup path for output
+    '''
+    global journal_info_patients
+    global output_path
+    journal_info_patients = load_journal_info_patients(journal_info_path)
+    output_path = os.path.join(utils.get_path("path_output"), output_name)
 
-info_patients = {} # create dictionary to hold metrics for all patients
-for patient in patientfolders:
-    patient_id = os.path.basename(patient)
-    print(f"\n------ Calculating metrics for patient {patient_id} ------")
+
+def run_patient_metrics(patient_folder : str, output_name : str):
+    '''
+    Open the .json file with path metrics_path, calculate the metrics, add them
+    to the .json file at output_name, and save it again
+    '''
+    # load journal info for all patients
+    
+    patient_id = os.path.basename(patient_folder)
+    log.info(f"\nCalculating metrics for patient {patient_id}")
     if patient_id in journal_info_patients:
         journal_info = journal_info_patients[patient_id]
     else:
         journal_info = None
 
-
+    # calculate metrics
+    patient_dict = get_patient_metrics(patient_folder, journal_info)
     
-    info_patients[patient_id] = get_patient_metrics(patient, journal_info)
-    print("New objects in memory:")
-    objgraph.show_growth()  
-
-    if SAVE_AS_JSON: # overwrite with new information
-        with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
-            json.dump(info_patients, f, ensure_ascii=False, indent = 4)
+    # write to file
+    with open(output_path, "a+", encoding="utf-8") as f:
+        info_patients = json.load(f)
+        info_patients[patient_id] = info_patients
+        json.dump(info_patients, f, ensure_ascii=False, indent = 4)
 
 print("All done.")
 

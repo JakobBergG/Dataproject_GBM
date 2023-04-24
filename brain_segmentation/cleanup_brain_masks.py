@@ -3,6 +3,7 @@ import common.utils as utils
 import SimpleITK as sitk
 import re
 
+# TODO: remove holes here
 
 basepath = utils.get_path("path_data")
 
