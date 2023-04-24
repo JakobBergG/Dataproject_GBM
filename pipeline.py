@@ -17,7 +17,7 @@ log_output = utils.get_path("path_output")
 date_str = datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
 log_name = f"log_{date_str}.txt"
 log_path = os.path.join(log_output, log_name)
-logging.basicConfig(filename=log_path, level=logging.INFO, 
+logging.basicConfig(filename=log_path, level=logging.DEBUG, 
                     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler(sys.stdout))
