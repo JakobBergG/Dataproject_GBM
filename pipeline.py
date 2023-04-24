@@ -8,6 +8,7 @@ import brain_segmentation.cleanup_brain_masks
 import skull_stripping.strip_skull_from_mask
 import gtv_segmentation.predict_gtvs
 import registration.registration_MR_mask_to_CT_mask
+import registration.mask_registration_evaluation
 import analysis.patient_metrics
 
 
