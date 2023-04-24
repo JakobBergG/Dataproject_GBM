@@ -78,7 +78,7 @@ def run_pipeline(patient_folder : str):
         return
     
     #
-    # Register MR to CT
+    # REGISTRATION (MR to CT)
     #
     log.info(f"Starting registration for patient {patient_id}")
     try:
@@ -86,6 +86,11 @@ def run_pipeline(patient_folder : str):
     except:
         log.error(f"Registration failed. Stopping here for patient {patient_id}")
         return
+    
+    try:
+        registration.mask_registration_evaluation.add_msd_to_json(patient_folder)
+    except:
+        log.error(f"Registration evaluation for patient {patient_id} failed. Continuing...")
     
     #
     # Calculate metrics
