@@ -112,7 +112,7 @@ def main():
     analysis.patient_metrics.setup(f"patient_metrics_{date_str}.json")
     # Find all the patient folders in the main data folder
     patient_folders = [f.path for f in os.scandir(basepath) if f.is_dir()]
-    run_pipeline[patient_folders[0]]
+    run_pipeline(patient_folders[0])
     # for patient_folder in patient_folders:
     #     patient_id = os.path.basename(patient_folder)
     #     # Execute the entire pipeline for the patient
