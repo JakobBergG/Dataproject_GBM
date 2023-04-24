@@ -15,7 +15,7 @@ import analysis.patient_metrics
 # setup of logging
 log_output = utils.get_path("path_output")
 date_str = datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
-log_name = f"log_{date_str}.txt"
+log_name = "log.txt" #f"log_{date_str}.txt"
 log_path = os.path.join(log_output, log_name)
 logging.basicConfig(filename=log_path, level=logging.INFO, 
                     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
