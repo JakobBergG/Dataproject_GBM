@@ -13,6 +13,7 @@ def nnUNet_predict(task_id : int, input_folder : str, output_folder : str):
                 task_id, "-f", "0", "-tr", "nnUNetTrainerV2", "-m",
                 "3d_fullres"]
 
+    log.debug(f"Running command: {command}")
     result = subprocess.run(command)
     # if returncode is not 0, something bad happened
     if result.returncode == 0:
