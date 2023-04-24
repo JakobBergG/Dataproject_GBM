@@ -7,13 +7,14 @@ import utils
 
 SAVE_AS_JSON = True
 
-def msd(Image1 : sitk.Image,Image2 : sitk.Image) -> float:
-    '''Calculate Mean Surface Distance between two images.
-    Returns float MSD(Image1, Image2)'''
-    Image1 = utils.reslice_image(Image1, Image2, is_label=True)
-    Image1_array = sitk.GetArrayFromImage(Image1)
-    Image2_array = sitk.GetArrayFromImage(Image2)
-    mean_surface_distance = medpy.metric.binary.asd(Image1_array, Image2_array)
+def msd(ct_mask : sitk.Image, mr_mask : sitk.Image) -> float:
+    '''Calculate Mean Surface Distance between mr and ct brain masks.
+    Returns float MSD(ct_mask, mr_mask)'''
+    spacing = ct_mask.GetSpacing()
+    mr_mask = utils.reslice_image(mr_mask, ct_mask, is_label=True)
+    mr_mask_array = sitk.GetArrayFromImage(mr_mask)
+    ct_mask_array = sitk.GetArrayFromImage(ct_mask)
+    mean_surface_distance = medpy.metric.binary.assd(mr_mask_array, ct_mask_array, voxelspacing=spacing)
     
     return mean_surface_distance
 
