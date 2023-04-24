@@ -1,8 +1,8 @@
 import os
 from datetime import datetime
-import utils
+import common.utils as utils
 import SimpleITK as sitk
-import metrics
+import common.metrics as metrics
 import json
 import objgraph
 

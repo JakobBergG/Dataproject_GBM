@@ -3,7 +3,7 @@
 import SimpleITK as sitk
 import numpy as np
 import os
-import utils
+import common.utils as utils
 
 run_Registration = True
 run_nnUNet = True

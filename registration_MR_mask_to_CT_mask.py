@@ -1,6 +1,6 @@
 import SimpleITK as sitk
 import os
-import utils
+import common.utils as utils
 
 
 #here the Elastix parameter map for rigid registration is set.

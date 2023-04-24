@@ -3,7 +3,7 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 import json
-import utils
+import common.utils as utils
 
 with open(os.path.join(utils.get_path("path_output"), "metric_MR_to_CT.json"), "r") as f:
     patient_dic : dict = json.load(f)

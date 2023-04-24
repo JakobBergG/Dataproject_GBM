@@ -3,7 +3,7 @@ import os
 import SimpleITK as sitk
 import numpy as np
 import json
-import utils
+import common.utils as utils
 
 
 SAVE_AS_JSON = True

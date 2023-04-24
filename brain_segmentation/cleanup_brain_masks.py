@@ -1,15 +1,13 @@
 import os
-import utils
+import common.utils as utils
 import SimpleITK as sitk
 import re
-
 
 
 basepath = utils.get_path("path_data")
 
 local_path_brainmasks_ct = utils.get_path("local_path_brainmasks_ct")
 local_path_brainmasks_mr = utils.get_path("local_path_brainmasks_mr")
-
 
 def remove_small_object_and_save(mask_path: str, output_path: str):
     '''removes small object from mask image and saves new mask'''
@@ -22,20 +20,14 @@ def remove_small_object_and_save(mask_path: str, output_path: str):
     sitk.WriteImage(label_image, output_path)
     
 
-
-
-
-
-# Run for the type of scans we want
-patientfolders = [f.path for f in os.scandir(basepath) if f.is_dir()]
-for patient in patientfolders:
-     
-     patient_id = os.path.basename(patient)
-     
-
+def cleanup_brain_mask(patient_folder : str):
+     '''
+     Cleans up all brain masks for patient data path patient_folder
+     '''
+     patient_id = os.path.basename(patient_folder)
      
      # find all masks
-     patient_filelist = [f.path for f in os.scandir(patient)]
+     patient_filelist = [f.path for f in os.scandir(patient_folder)]
      mr_list = []
      ct_list = []
      for file in patient_filelist:
@@ -44,22 +36,20 @@ for patient in patientfolders:
          if os.path.basename(file).endswith("_CT_res.nii.gz"):
             ct_list.append(file)
      
-        
-     
      for mr in mr_list:
         mr_name = os.path.basename(mr)
         mask_name = re.sub("_MR_res", "_MR_res_mask", mr_name)
         output_name = re.sub("_MR_res_mask", "_MR_res_mask_cleaned", mask_name)
-        mask_path = os.path.join(patient, local_path_brainmasks_mr, mask_name)
-        output_path = os.path.join(patient, local_path_brainmasks_mr, output_name)
+        mask_path = os.path.join(patient_folder, local_path_brainmasks_mr, mask_name)
+        output_path = os.path.join(patient_folder, local_path_brainmasks_mr, output_name)
         remove_small_object_and_save(mask_path, output_path)
         
      for ct in ct_list:
         ct_name = os.path.basename(ct)
         mask_name = re.sub("_CT_res", "_CT_res_mask", ct_name)
         output_name = re.sub("_CT_res_mask", "_CT_res_mask_cleaned", mask_name)
-        mask_path = os.path.join(patient, local_path_brainmasks_ct, mask_name)
-        output_path = os.path.join(patient, local_path_brainmasks_ct, output_name)
+        mask_path = os.path.join(patient_folder, local_path_brainmasks_ct, mask_name)
+        output_path = os.path.join(patient_folder, local_path_brainmasks_ct, output_name)
         remove_small_object_and_save(mask_path, output_path)
         
     

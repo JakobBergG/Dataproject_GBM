@@ -1,18 +1,32 @@
 import os
-import utils
+import common.utils as utils
+from common.run_prediction import nnUNet_predict
 import shutil
 import re
+import logging
 
-GTV_TASK_ID = 600
+log = logging.getLogger(__name__)
 
-# setup GPU 
-os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+
+# task id used by nnUNet -- these are default values and can be changed
+# when running setup_prediction
+gtv_task_id = 600
 
 basepath = utils.get_path("path_data")
 
 local_path_brainmasks_mr = utils.get_path("local_path_brainmasks_mr")
 local_path_output_gtvs = utils.get_path("local_path_output_gtvs")
+
+def setup_prediction(nnUNet_gtv_task_id : int):
+    '''
+    Setup stuff required for nnUNet to run properly
+    '''
+    global gtv_task_id
+    gtv_task_id = nnUNet_gtv_task_id
+    # setup GPU 
+    os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+    os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+
 
 def move_mr_scans(masks_folder : str, destination_folder : str):
     # find MR_res scans
@@ -30,19 +44,14 @@ def move_mr_scans(masks_folder : str, destination_folder : str):
         shutil.copy2(source, dest)
 
 
-def predict_gtv(task_id : int, input_folder : str, output_folder : str):
-    # nnUNet_predict runs for all scans in subfolder
-    command = f"nnUNet_predict -i {input_folder} -o {output_folder} -t {task_id} -f 0 -tr nnUNetTrainerV2 -m 3d_fullres"
-    os.system(command)
-
-
-patientfolders = [f.path for f in os.scandir(basepath) if f.is_dir()]
-
-for patient in patientfolders:
-    patient_id = os.path.basename(patient)
+def run_prediction(patient_folder):
+    '''
+    Run GTV prediction for all MR scans
+    '''
+    patient_id = os.path.basename(patient_folder)
     # start by moving scans
-    print(f"Copying MR scans for patient {patient_id}")
-    brainmasks_folder = os.path.join(patient, local_path_brainmasks_mr)
+    log.info(f"Copying MR scans for patient {patient_id}")
+    brainmasks_folder = os.path.join(patient_folder, local_path_brainmasks_mr)
     input_dest = os.path.join(brainmasks_folder, "nnUNet_input")
     # create destination folder if not exists
     if not os.path.exists(input_dest):
@@ -50,15 +59,15 @@ for patient in patientfolders:
 
     move_mr_scans(brainmasks_folder, input_dest)
 
-    # now predict
-    print(f"Running gtv prediction for patient {patient_id}")
-
     #create output folder if not exists¨
-    output_dest = os.path.join(patient, local_path_output_gtvs)
+    output_dest = os.path.join(patient_folder, local_path_output_gtvs)
     if not os.path.exists(output_dest):
         os.mkdir(output_dest)
     
+    # now predict
+    log.info(f"Running gtv prediction for patient {patient_id}")
+
     # now run prediction
-    predict_gtv(GTV_TASK_ID, input_dest, output_dest)
+    nnUNet_predict(gtv_task_id, input_dest, output_dest)
 
     

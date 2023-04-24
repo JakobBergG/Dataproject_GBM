@@ -3,7 +3,7 @@ import SimpleITK as sitk
 import numpy as np
 import medpy.metric
 import json
-import utils
+import common.utils as utils
 
 SAVE_AS_JSON = True
 

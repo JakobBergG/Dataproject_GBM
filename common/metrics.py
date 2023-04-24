@@ -1,7 +1,7 @@
 import numpy as np
 import medpy.metric
 import SimpleITK as sitk
-import utils
+import common.utils as utils
 
 
 def volume_mask(image : sitk.Image) -> int:

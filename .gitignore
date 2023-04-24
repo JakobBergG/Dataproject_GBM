@@ -3,6 +3,7 @@ output/
 *.DS_store
 Tumor_tracking_stupid.py
 settings.json
+log.txt
 
 
 # Byte-compiled / optimized / DLL files
