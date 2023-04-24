@@ -14,8 +14,8 @@ import analysis.patient_metrics
 
 # setup of logging
 log_output = utils.get_path("path_output")
-date_str = datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
-log_name = "log.txt" #f"log_{date_str}.txt"
+date_str = datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
+log_name = f"log_{date_str}.txt"
 log_path = os.path.join(log_output, log_name)
 logging.basicConfig(filename=log_path, level=logging.INFO, 
                     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
@@ -112,11 +112,12 @@ def main():
     analysis.patient_metrics.setup(f"patient_metrics_{date_str}.json")
     # Find all the patient folders in the main data folder
     patient_folders = [f.path for f in os.scandir(basepath) if f.is_dir()]
-    for patient_folder in patient_folders:
-        patient_id = os.path.basename(patient_folder)
-        # Execute the entire pipeline for the patient
-        log.info(f"Starting pipeline execution for patient {patient_id}")
-        run_pipeline(patient_folder)
+    run_pipeline[patient_folders[0]]
+    # for patient_folder in patient_folders:
+    #     patient_id = os.path.basename(patient_folder)
+    #     # Execute the entire pipeline for the patient
+    #     log.info(f"Starting pipeline execution for patient {patient_id}")
+    #     run_pipeline(patient_folder)
 
 
 if __name__ == "__main__":
