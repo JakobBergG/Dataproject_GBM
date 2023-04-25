@@ -268,11 +268,14 @@ def run_patient_metrics(patient_folder : str):
     patient_dict = get_patient_metrics(patient_folder, journal_info)
     
     # open file to get old dict
-    with open(output_path, "r", encoding="utf-8") as f:
-        try:
-            info_patients = json.load(f)
-        except json.decoder.JSONDecodeError: # happens if file does not exist or empty
-            info_patients = {}
+    if os.path.exists(output_path):
+        with open(output_path, "r", encoding="utf-8") as f:
+            try:
+                info_patients = json.load(f)
+            except json.decoder.JSONDecodeError: # happens if file is empty
+                info_patients = {}
+    else:
+        info_patients = {}
     
     # add to dict
     info_patients[patient_id] = patient_dict
