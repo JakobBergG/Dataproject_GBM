@@ -270,7 +270,7 @@ def run_patient_metrics(patient_folder : str, output_name : str):
     # write to file
     with open(output_path, "a+", encoding="utf-8") as f:
         info_patients = json.load(f)
-        info_patients[patient_id] = info_patients
+        info_patients[patient_id] = patient_dict
         json.dump(info_patients, f, ensure_ascii=False, indent = 4)
 
 print("All done.")
