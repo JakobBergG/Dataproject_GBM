@@ -278,7 +278,7 @@ def run_patient_metrics(patient_folder : str):
     info_patients[patient_id] = patient_dict
 
     # overwrite file
-    with open(output_path, "w", encoding="utf-8") as f:
+    with open(output_path, "w+", encoding="utf-8") as f:
         json.dump(info_patients, f, ensure_ascii=False, indent = 4)
 
 
