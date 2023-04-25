@@ -36,16 +36,16 @@ def run_pipeline(patient_folder : str):
     # TODO: load these values from settings.json
     log.info(f"Starting brain segmentation for patient {patient_id}")
 
-    #try:
-    brain_segmentation.predict_brain_masks.run_ct_prediction(patient_folder)
-    #except:
-    #    log.error(f"CT brain mask prediction failed. Stopping here for patient {patient_id}")
-     #   return
+    try:
+        brain_segmentation.predict_brain_masks.run_ct_prediction(patient_folder)
+    except Exception as e:
+       log.error(f"CT brain mask prediction failed for {patient_id}. Error message: {str(e)}")
+       return
     
     try:
         brain_segmentation.predict_brain_masks.run_mr_prediction(patient_folder)
-    except:
-        log.error(f"MR brain mask prediction failed. Stopping here for patient {patient_id}")
+    except Exception as e:
+        log.error(f"MR brain mask prediction failed for {patient_id}. Error message: {str(e)}")
         return
 
     #
@@ -54,8 +54,8 @@ def run_pipeline(patient_folder : str):
     log.info(f"Cleaning brain masks for patient {patient_id}")
     try:
         brain_segmentation.cleanup_brain_masks(patient_folder)
-    except:
-        log.error(f"Brain mask cleaning failed. Stopping here for patient {patient_id}")
+    except Exception as e:
+        log.error(f"Brain mask cleaning failed for {patient_id}. Error message: {str(e)}")
         return
     
     # 
@@ -64,8 +64,8 @@ def run_pipeline(patient_folder : str):
     log.info(f"Beginning skull-stripping for patient {patient_id}")
     try:
         skull_stripping.strip_skull_from_mask.run_skull_stripping(patient_folder)
-    except:
-        log.error(f"Skull-stripping failed. Stopping here for patient {patient_id}")
+    except Exception as e:
+        log.error(f"Skull-stripping failed for {patient_id}. Error message: {str(e)}")
         return
 
     #
@@ -74,8 +74,8 @@ def run_pipeline(patient_folder : str):
     log.info(f"Starting GTV segmentation for patient {patient_id}")
     try:
         gtv_segmentation.predict_gtvs.run_prediction(patient_folder)
-    except:
-        log.error(f"GTV-segmentation failed. Stopping here for patient {patient_id}")
+    except Exception as e:
+        log.error(f"GTV-segmentation failed for {patient_id}. Error message: {str(e)}")
         return
     
     #
@@ -84,14 +84,15 @@ def run_pipeline(patient_folder : str):
     log.info(f"Starting registration for patient {patient_id}")
     try:
         registration.registration_MR_mask_to_CT_mask.register_MR_to_CT(patient_folder)
-    except:
-        log.error(f"Registration failed. Stopping here for patient {patient_id}")
+    except Exception as e:
+        log.error(f"Registration failed for {patient_id}. Error message: {str(e)}")
         return
     
     try:
         registration.mask_registration_evaluation.add_msd_to_json(patient_folder)
-    except:
-        log.error(f"Registration evaluation for patient {patient_id} failed. Continuing...")
+    except Exception as e:
+        log.error(f"Registration evaluation failed for {patient_id}. Error message: {str(e)}")
+        log.info("Continuing despite mask registration fail...")
     
     #
     # Calculate metrics
@@ -99,8 +100,8 @@ def run_pipeline(patient_folder : str):
     log.info(f"Calculating metrics for patient {patient_id}")
     try:
         analysis.patient_metrics.run_patient_metrics(patient_folder)
-    except:
-        log.error(f"Calculating patient metrics failed for patient {patient_id}")
+    except Exception as e:
+        log.error(f"Calculating patient metrics failed for {patient_id}. Error message: {str(e)}")
         return
 
 
