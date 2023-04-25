@@ -99,7 +99,8 @@ def run_pipeline(patient_folder : str):
     #
     log.info(f"Calculating metrics for patient {patient_id}")
     try:
-        analysis.patient_metrics.run_patient_metrics(patient_folder)
+        analysis.patient_metrics.run_patient_metrics(patient_folder,
+                                    f"patient_metrics{date_str}.json")
     except Exception as e:
         log.error(f"Calculating patient metrics failed for {patient_id}. Error message: {str(e)}")
         return
