@@ -250,7 +250,7 @@ def setup(output_name : str):
     output_path = os.path.join(utils.get_path("path_output"), output_name)
 
 
-def run_patient_metrics(patient_folder : str, output_name : str):
+def run_patient_metrics(patient_folder : str):
     '''
     Open the .json file with path metrics_path, calculate the metrics, add them
     to the .json file at output_name, and save it again
@@ -269,7 +269,11 @@ def run_patient_metrics(patient_folder : str, output_name : str):
     
     # write to file
     with open(output_path, "a+", encoding="utf-8") as f:
-        info_patients = json.load(f)
+        try:
+            info_patients = json.load(f)
+        except json.decoder.JSONDecodeError: # happens if file does not or empty
+            info_patients = {}
+        
         info_patients[patient_id] = patient_dict
         json.dump(info_patients, f, ensure_ascii=False, indent = 4)
 
