@@ -53,7 +53,7 @@ def run_pipeline(patient_folder : str):
     #
     log.info(f"Cleaning brain masks for patient {patient_id}")
     try:
-        brain_segmentation.cleanup_brain_masks(patient_folder)
+        brain_segmentation.cleanup_brain_masks.cleanup_brain_mask(patient_folder)
     except Exception as e:
         log.error(f"Brain mask cleaning failed for {patient_id}. Error message: {str(e)}")
         return
