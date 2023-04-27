@@ -69,6 +69,9 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
     '''Returns dictionary with metrics calculated for all time points
     Dictionary journal_info should contain information read from the .csv file
     '''
+    patient_id = os.path.basename(patientfolder)
+    
+    
     # Load all GTVs 
     
     gtv_path = os.path.join(patientfolder, local_path_gtv)
@@ -107,8 +110,6 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
         patient_id, date, scantype, datatype = utils.parse_filename(filename)
         scans[date] = gtv #save the path for the date
 
-    # sort based on dates (earliest scan first) # TODO remove
-    dates = sorted(scans.keys())
 
     info = {
         "rtdose_filename": rtdose_filename,
@@ -175,9 +176,8 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
                 info["flags"].append(f"no_{timepoint}")
 
     # save information from journal info
-    if journal_info is not None: # TODO not necessary
-        for key, value in journal_info.items():
-            info[key] = value
+    for key, value in journal_info.items():
+        info[key] = value
     
 
     # -----------------------------
