@@ -21,8 +21,7 @@ TIME_POINTS = ("time0", "time1", "time2", "time3")
 journal_info_path = os.path.join(utils.get_path("path_info"), "gbm_treatment_info.csv")
 output_path = "" # path of where to output the end metrics file - is specified in setup()
 
-# BIG TODO: use moved gtvs
-local_path_gtv = utils.get_path("local_path_gtv") #points to gtv subfolder starting from patient folder
+local_path_gtv = utils.get_path("local_path_moved_gtv") #points to gtv subfolder starting from patient folder
 basepath = utils.get_path("path_data")
 
 journal_info_patients : dict = {} #dictionary with journal info - is specified in setup()
