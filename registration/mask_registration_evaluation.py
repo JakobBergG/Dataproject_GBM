@@ -11,6 +11,11 @@ log = logging.getLogger(__name__)
 output_path = ''
 
 def add_msd_to_json(patient_folder : str):
+    '''
+    Calculates Mean Surface Distance between MR and CT mask for each MR mask and
+    adds the MSDs and their average value to dictionary in JSON file.
+    If JSON file does not exist, it creates a new dictionary and a new JSON file.
+    '''
 
     patient_id = os.path.basename(patient_folder)
 
@@ -47,7 +52,7 @@ def add_msd_to_json(patient_folder : str):
     ct_mask = sitk.ReadImage(ct_mask)
 
     for mr_mask in mr_masks:
-        # For each mr mask compute Mean Surface Distance to ct mask
+        # For each MR mask compute Mean Surface Distance to CT mask
         mr_mask = sitk.ReadImage(mr_mask)
         patient_dic[patient_id].append(metrics.msd(ct_mask, mr_mask))
     
@@ -55,6 +60,7 @@ def add_msd_to_json(patient_folder : str):
     avg_msd = np.mean(patient_dic[patient_id])
     patient_dic[patient_id].append(avg_msd)
 
+    # Save the new/updated dictionary
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(patient_dic, f, ensure_ascii=False, indent = 4)
     
@@ -71,7 +77,6 @@ def sort_msd_dict():
     '''
     Sort the patients in the dictionary by avg MSD value
     '''
-    global output_path
     with open(output_path, "r") as f:
         patient_dic : dict = json.load(f)
 
