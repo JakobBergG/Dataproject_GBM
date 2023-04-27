@@ -9,16 +9,16 @@ log = logging.getLogger(__name__)
 
 # default settings
 settings = {
-    #settings
+    # nnUNet model task ids
     "task_id_brain_segmentation_ct": 800,
     "task_id_brain_segmentation_mr": 801,
-    "task_id_gtv_sefmentation": 600,
+    "task_id_gtv_segmentation": 600,
+    # dilation radii
     "skull_stripping_dilation_radius_ct": [2, 2, 2], # expand 2 mm in all directions
     "skull_stripping_dilation_radius_mr": [4, 4, 2], # also expand 2 mm : remember spacing is 0.5x0.5x1.0
     "registration_dilation_radius_mr": [10, 10, 5],
     "registration_dilation_radius_ct": [5, 5, 5],
-    
-    #paths
+    # paths
     "path_data": "data/",
     "path_info": "info/",
     "path_output": "output/",
