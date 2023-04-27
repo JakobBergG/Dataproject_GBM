@@ -26,32 +26,36 @@ def cleanup_brain_mask(patient_folder : str):
      '''
      Cleans up all brain masks for patient data path patient_folder
      '''
-     patient_id = os.path.basename(patient_folder)
+    
+     path_mr = os.path.join(patient_folder,local_path_brainmasks_mr)  
+     path_ct = os.path.join(patient_folder,local_path_brainmasks_ct)  
      
-     # find all masks
-     patient_filelist = [f.path for f in os.scandir(patient_folder)]
+
+     # find all files in mask folder
+     mr_filelist = [f.path for f in os.scandir(path_mr)]
+     ct_filelist = [f.path for f in os.scandir(path_ct)]
+    
+     # find masks
      mr_list = []
-     ct_list = []
-     for file in patient_filelist:
-         if os.path.basename(file).endswith("_MR_res.nii.gz"):
-             mr_list.append(file)
-         if os.path.basename(file).endswith("_CT_res.nii.gz"):
-            ct_list.append(file)
+     ct = ''
      
+     for file in mr_filelist:
+         if os.path.basename(file).endswith("_MR_res_mask.nii.gz"):
+             mr_list.append(file)
+        
+     for file in ct_filelist:
+        if os.path.basename(file).endswith("_CT_res_mask.nii.gz"):
+            ct = file
+ 
+     # clean and save masks
+     # mr masks
      for mr in mr_list:
-        mr_name = os.path.basename(mr)
-        mask_name = re.sub("_MR_res", "_MR_res_mask", mr_name)
-        output_name = re.sub("_MR_res_mask", "_MR_res_mask_cleaned", mask_name)
-        mask_path = os.path.join(patient_folder, local_path_brainmasks_mr, mask_name)
-        output_path = os.path.join(patient_folder, local_path_brainmasks_mr, output_name)
-        remove_small_object_and_save(mask_path, output_path)
+        output_name = re.sub("_MR_res_mask", "_MR_res_mask_cleaned", mr)
+        remove_small_object_and_save(mr, output_name)
         
-     for ct in ct_list:
-        ct_name = os.path.basename(ct)
-        mask_name = re.sub("_CT_res", "_CT_res_mask", ct_name)
-        output_name = re.sub("_CT_res_mask", "_CT_res_mask_cleaned", mask_name)
-        mask_path = os.path.join(patient_folder, local_path_brainmasks_ct, mask_name)
-        output_path = os.path.join(patient_folder, local_path_brainmasks_ct, output_name)
-        remove_small_object_and_save(mask_path, output_path)
         
+
+     # ct mask
+     output_name = re.sub("_CT_res_mask", "_CT_res_mask_cleaned", ct)
+     remove_small_object_and_save(ct, output_name)
     
