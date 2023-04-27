@@ -45,7 +45,7 @@ def run_skull_stripping(patient_folder):
         if os.path.basename(file).endswith("_CT_res.nii.gz"):
             ct_list.append(file)
 
-    # now strip skulls
+    # now strip mr skulls
     for mr in mr_list:
         mr_name = os.path.basename(mr)
         mask_name = re.sub("_MR_res", "_MR_res_mask_cleaned", mr_name)
@@ -56,9 +56,10 @@ def run_skull_stripping(patient_folder):
 
 
         patient_id = os.path.basename(patient_folder)
-        log.info(f"Stripping CT skulls for patient {patient_id}")
+    
 
-    # now strip skulls
+    # now strip ct skulls
+    log.info(f"Stripping CT skulls for patient {patient_id}")
     for ct in ct_list:
         ct_name = os.path.basename(ct)
         mask_name = re.sub("_CT_res", "_CT_res_mask_cleaned", ct_name)
