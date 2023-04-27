@@ -26,7 +26,7 @@ def add_msd_to_json(patient_folder : str):
     ct_mask_filelist = [ f.path for f in os.scandir(ct_mask_path) if f.is_file() ]
     ct_mask = ''
     for pathstr in ct_mask_filelist:
-        if os.path.basename(pathstr).endswith('mask.nii.gz'): #TODO: Tjek om det er den rigtige maske
+        if os.path.basename(pathstr).endswith('mask_cleaned.nii.gz'):
             ct_mask = pathstr
 
     if ct_mask == '':
