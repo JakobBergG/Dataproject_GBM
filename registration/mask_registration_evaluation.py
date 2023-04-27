@@ -8,14 +8,15 @@ import logging
 
 log = logging.getLogger(__name__)
 
+output_path = ''
+
 def add_msd_to_json(patient_folder : str):
 
     patient_id = os.path.basename(patient_folder)
 
-    json_file = os.path.join(utils.get_path("path_output"), "registration_mask_MSD.json")
-    json_filename = os.path.basename(json_file)
-    if os.path.isfile(json_file):
-        with open(json_file, "r") as f:
+    json_filename = os.path.basename(output_path)
+    if os.path.isfile(output_path):
+        with open(output_path, "r") as f:
             patient_dic : dict = json.load(f)
     else:
         patient_dic = {}
@@ -58,7 +59,14 @@ def add_msd_to_json(patient_folder : str):
     sorted_patients = sorted(patient_dic.items(), key = lambda L: L[1][-1])
     patient_dic = {key : value for key, value in sorted_patients}
 
-    with open(json_file, "w", encoding="utf-8") as f:
+    with open(output_path, "w", encoding="utf-8") as f:
         json.dump(patient_dic, f, ensure_ascii=False, indent = 4)
     
     log.info(f"Succesfully added MSDs for {patient_id} to {json_filename}.")
+
+def setup(output_name : str):
+    '''
+    Load patient journal info and setup path for output
+    '''
+    global output_path
+    output_path = os.path.join(utils.get_path("path_output"), output_name)

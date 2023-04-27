@@ -111,6 +111,7 @@ def main():
     # Run setup
     brain_segmentation.predict_brain_masks.setup_prediction(nnUNet_ct_task_id=800, nnUNet_mr_task_id=801)
     analysis.patient_metrics.setup(f"patient_metrics_{date_str}.json")
+    registration.mask_registration_evaluation.setup(f"registration_mask_MSD_{date_str}.json")
     # Find all the patient folders in the main data folder
     patient_folders = [f.path for f in os.scandir(basepath) if f.is_dir()]
     for patient_folder in patient_folders[:3]:
