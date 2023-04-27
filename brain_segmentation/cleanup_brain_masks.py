@@ -48,13 +48,14 @@ def cleanup_brain_mask(patient_folder : str):
             ct = file
  
      # clean and save masks
+     # mr masks
      for mr in mr_list:
         output_name = re.sub("_MR_res_mask", "_MR_res_mask_cleaned", mr)
         remove_small_object_and_save(mr, output_name)
         
         
 
-
+     # ct mask
      output_name = re.sub("_CT_res_mask", "_CT_res_mask_cleaned", ct)
      remove_small_object_and_save(ct, output_name)
     
