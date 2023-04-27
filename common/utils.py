@@ -41,7 +41,7 @@ else:
             settings[key] = value
 
 # log settings
-for key, value in settings:
+for key, value in settings.items():
     log.info(f"Setting {key} = {value}")
 
 
