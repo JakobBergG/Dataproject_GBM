@@ -34,7 +34,7 @@ def add_msd_to_json(patient_folder : str):
         raise Exception(f"No CT file for patient {patient_id}")
     
     # Find registered MR brain file
-    mr_mask_path = os.path.join(patient_folder, 'MR_to_CT_mask')
+    mr_mask_path = os.path.join(patient_folder, 'MR_to_CT_mask') # TODO: ændr til utils.get_path
     mr_mask_filelist = [ f.path for f in os.scandir(mr_mask_path) if f.is_file() ]
     mr_masks = []
     for pathstr in mr_mask_filelist:
@@ -66,7 +66,7 @@ def add_msd_to_json(patient_folder : str):
 
 def setup(output_name : str):
     '''
-    Load patient journal info and setup path for output
+    Setup path for output
     '''
     global output_path
     output_path = os.path.join(utils.get_path("path_output"), output_name)

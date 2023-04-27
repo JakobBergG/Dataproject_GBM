@@ -53,7 +53,7 @@ def move_mr_scans(patient_folder : str, destination_folder : str):
 
 def move_ct_scans(patient_folder : str, destination_folder : str):
     '''
-    Move the MR scans in patientfolder to destination_folder which nnUNet
+    Move the CT scans in patientfolder to destination_folder which nnUNet
       can use as input
     '''
     patient_filelist = [f.path for f in os.scandir(patient_folder)]

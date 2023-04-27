@@ -21,6 +21,7 @@ TIME_POINTS = ("time0", "time1", "time2", "time3")
 journal_info_path = os.path.join(utils.get_path("path_info"), "gbm_treatment_info.csv")
 output_path = "" # path of where to output the end metrics file - is specified in setup()
 
+# BIG TODO: use moved gtvs
 local_path_gtv = utils.get_path("local_path_gtv") #points to gtv subfolder starting from patient folder
 basepath = utils.get_path("path_data")
 
@@ -53,14 +54,14 @@ def load_journal_info_patients(path : str) -> dict:
         # now read info for all patients
         for row in rows:
             # create dict for each patient
-            patient_dict = {}
+            patient_journal = {}
             for i, name in enumerate(names):
                 if name == "Study_ID":
                     study_id = f"{row[i]:>04}" #pad with 4 zeros
                 elif name in to_read:
                     func = to_read[name]
-                    patient_dict[name] = func(row[i])
-            journal_info_patients[study_id] = patient_dict
+                    patient_journal[name] = func(row[i])
+            journal_info_patients[study_id] = patient_journal
     
     return journal_info_patients
 
@@ -80,6 +81,7 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
             gtvlist.append(pathstr)
 
     # check if no CT scan. if this is the case, stop
+    # assume no CT to start with
     has_CT = False
     # also get rtdose filename
     rtdose_filename = ""
@@ -88,25 +90,25 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
     for pathstr in base_filelist:
         if os.path.basename(pathstr).endswith('_RTDOSE_res.nii.gz'):
             rtdose_filename = pathstr
-        if os.path.basename(pathstr).endswith('CT_brain.nii.gz'):
+        if os.path.basename(pathstr).endswith('CT_res.nii.gz'):
             has_CT = True
 
     if not has_CT:
-        print("Warning: No CT scans")
-        return "no_ct_scan"
+        log.error(f"No CT scan for patient {patient_id}")
+        raise Exception(f"No CT scan for patient {patient_id}")
 
     # -----------------------------
     # CREATE DICTIONARY FOR PATIENT
     # -----------------------------
 
     # Extract date information from filenames
-    scans = {}
+    scans = {} # TODO fix name
     for gtv in gtvlist:
         filename = os.path.basename(gtv)
         patient_id, date, scantype, datatype = utils.parse_filename(filename)
         scans[date] = gtv #save the path for the date
 
-    # sort based on dates (first scan first)
+    # sort based on dates (earliest scan first) # TODO remove
     dates = sorted(scans.keys())
 
     info = {
@@ -115,6 +117,7 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
     }
 
     def write_timepoint(timepoint, date):
+        # TODO write docstring
         if date in scans:
             filename = scans[date]
             info[timepoint] = {
@@ -122,19 +125,19 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
                 "filename": filename
             }
         else:
-            print(f"Warning: Date for {timepoint} does not have matching scan")
+            log.warning(f"Date for {timepoint} does not have matching scan")
             info["flags"].append("bad_date_match")
             
            
 
     # add subdictionary for each time point which can be filled with metric values
-    # assign a timepoint to each date (we assume we have time3 and time2 always,
-    # so fill these out first
+    # assign a timepoint to each date
 
     # now match times with dates from journal, if they exist (and if journal exists)
 
     if journal_info is None: # stop if missing journal info
-        return "no_journal"
+        log.error(f"No journal info for patient {patient_id}")
+        raise Exception(f"No journal info for patient {patient_id}")
     else:
         time0_date = journal_info["MRIDiagDate_checked"]
         time1_date = journal_info["MRIPostopDate_checked"]
@@ -160,7 +163,7 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
     # for each time point, update time value to use relative time to time2 (in days)
     # warning if we are missing a time point.
     if "time3" not in info:
-        return "no_recurrence_scan"
+        return "no_recurrence_scan" # TODO: logging and errors
     elif "time2" not in info:
         return "no_baseline_scan"
     else:
@@ -173,7 +176,7 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
                 info["flags"].append(f"no_{timepoint}")
 
     # save information from journal info
-    if journal_info is not None:
+    if journal_info is not None: # TODO not necessary
         for key, value in journal_info.items():
             info[key] = value
     
@@ -208,18 +211,18 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
             if "RTdoseplan" in info:
                 info["target_dose_correct"] = target_dose == info["RTdoseplan"]
             
-            # 95% percentage overlap (if time is time3)
+            # 95% percentage overlap 
             rtdose = sitk.ReadImage(info["rtdose_filename"])
             gtv_resliced = utils.reslice_image(gtv, rtdose, is_label = True)
             dose_95 = metrics.dose_percentage_region(rtdose, target_dose, 0.95)
             percentage = metrics.mask_overlap(gtv_resliced, dose_95)
             if percentage == -1.0:
-                print(f"Warning: gtvvolume is 0 at time 3")
+                print(f"Warning: gtvvolume is 0 at time 3") # TODO logging and exceptions
                 info["flags"].append(f"empty_gtv_time3")
             else:
                 timepoint_info["percent_overlap_95_isodose"] = percentage
             
-            # Type of reccurence
+            # Type of reccurence TODO spell recurrence right
             label_image_resliced = utils.reslice_image(label_image, rtdose, is_label = True)
             reccurence_type = metrics.type_reccurence(label_image_resliced, dose_95)
             info["reccurence_type_guess"] = reccurence_type
@@ -234,7 +237,7 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
             timepoint_info["hd"] = hd
             timepoint_info["hd95"] = hd95
         
-    
+    # TODO maybe not its own function?
     info = metrics.growth(info)
     
     return info

@@ -3,6 +3,9 @@ import os
 import json
 from datetime import datetime
 import re
+import logging
+
+log = logging.getLogger(__name__)
 
 
 def get_path(location_name : str) -> str:
@@ -12,7 +15,7 @@ def get_path(location_name : str) -> str:
         "path_data": "data/",
         "path_info": "info/",
         "path_output": "output/",
-        "local_path_gtv": "predicted_gtvs",
+        "local_path_gtv": "predicted_gtvs", #TODO duplicate path # TODO: make moved gtvs path
         "local_path_brain_mr": "brain_mr",
         "local_path_brain_ct": "brain_ct",
         "local_path_brainmasks_mr": "brain_mr/output_brains",
@@ -22,7 +25,7 @@ def get_path(location_name : str) -> str:
     assert location_name in default_paths, f"Location name {location_name} not valid"
 
     if not os.path.isfile("settings.json"):
-        print("Warning: No settings.json, using default settings")
+        log.warning("No settings.json, using default settings")
         return default_paths[location_name]
 
     with open("settings.json", "r") as f:

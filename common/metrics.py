@@ -16,7 +16,7 @@ def volume_mask_cc(image : sitk.Image) -> float:
     return spacing[0] * spacing[1] * spacing[2] * volume_mask(image) / 1000.0
 
 
-def volume_component_cc(image : sitk.Image) -> float:
+def volume_component_cc(image : sitk.Image) -> list:
     '''Get volume pr. lession from component image in cubic centimetres'''
     spacing = image.GetSpacing()
     
@@ -29,7 +29,7 @@ def mask_overlap(gtv : sitk.Image, dose : sitk.Image) -> float:
     '''Get percentage of overlap between gtv and (95%) dose'''
     gtv_vol = volume_mask(gtv)
     if gtv_vol == 0:
-        print("Error: GTV volume is 0")
+        print("Error: GTV volume is 0") #TODO: logging and exceptions
         return -1.0
     else:
         return volume_mask(dose*gtv) / gtv_vol
@@ -38,14 +38,14 @@ def mask_overlap(gtv : sitk.Image, dose : sitk.Image) -> float:
 def dose_percentage_region(dose_image : sitk.Image, target_intensity : float, percentage : float = 0.95) -> float:
     '''Create a mask of where the dose is above a certain percentage of the
       target intensity (e.g. 95% of 60 Gy)'''
-    return dose_image > target_intensity * percentage
+    return dose_image >= target_intensity * percentage
 
 
 def get_target_dose (image: sitk.Image) -> int:
     '''Guess target dose from maximum value in dose image (54 or 60)'''
     MinMax = sitk.MinimumMaximumImageFilter()
     MinMax.Execute(image)
-    if MinMax.GetMaximum()>60:
+    if MinMax.GetMaximum() > 60:
         return 60
     else:
         return 54
@@ -84,6 +84,9 @@ def type_reccurence(label_image : sitk.Image, dose_mask : sitk.Image) -> int:
     Type3: All reccurence tumors has less than 20% overlap  with 95% dose (Distant reccurence)
     Type2: Both local and distant reccurence
     '''
+
+    #TODO: WTF
+
     stats = sitk.LabelShapeStatisticsImageFilter()
     stats.Execute(label_image)
     labels = stats.GetLabels()
@@ -91,7 +94,7 @@ def type_reccurence(label_image : sitk.Image, dose_mask : sitk.Image) -> int:
     local = 0
     distant = 0
     for t in tumors:
-        if mask_overlap(t,dose_mask)<0.2:
+        if mask_overlap(t, dose_mask)<0.2:
             distant += 1
         else:
             local += 1
@@ -141,10 +144,10 @@ def growth(dic):
     baseline_cc = dic["time2"]["total_volume_cc"]
     
     if first_cc == 0.0:
-        print("Warning: first_cc is 0")
+        print("Warning: first_cc is 0") #TODO logging and errors
         dic["flags"].append("first_cc_zero")
         return dic
-    if first_cc == 0.0:
+    if first_cc == 0.0: #TODO: baseline
         print("Warning: baseline_cc is 0")
         dic["flags"].append("baseline_cc_zero")
         return dic
@@ -153,13 +156,13 @@ def growth(dic):
         stamp= dic[i]["time"]
         time_dif = stamp - first_time_stamp
         cc = dic[i]["total_volume_cc"]
-        if time_dif > 0: 
+        if time_dif > 0: # if after first time stamp
             growth_since_first_scan = (cc-first_cc)/first_cc
             daily_growth_since_first_scan = growth_since_first_scan/time_dif
             dic[i]["growth_since_first_scan"] = growth_since_first_scan
             dic[i]["daily_growth_since_first_scan"] = daily_growth_since_first_scan
 
-        if stamp != 0.0:
+        if stamp != 0.0: # if not baseline
             growth_since_baseline = (cc-baseline_cc)/baseline_cc
             daily_growth_since_baseline = growth_since_baseline/stamp
             dic[i]["growth_since_baseline"] = growth_since_baseline
