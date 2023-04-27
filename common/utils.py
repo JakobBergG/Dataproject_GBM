@@ -7,6 +7,29 @@ import logging
 
 log = logging.getLogger(__name__)
 
+# default settings
+settings = {
+    "task_id_brain_segmentation_ct": 800,
+    "task_id_brain_segmentation_mr": 801,
+    "skull_stripping_dilation_radius_ct": [2, 2, 2], # expand 2 mm in all directions
+    "skull_stripping_dilation_radius_mr": [4, 4, 2], # also expand 2 mm : remember spacing is 0.5x0.5x1.0
+    "registration_dilation_radius_mr": [5, 5, 5],
+    "registration_dilation_radius_ct": [10, 10, 5]
+}
+
+# load settings file, change default settings
+if not os.path.isfile("settings.json"):
+    log.warning("No settings.json, using default settings")
+else:
+    with open("settings.json", "r") as f:
+        new_settings : dict = json.load(f)
+        for key, value in new_settings.items():
+            settings[key] = value
+
+# log settings
+for key, value in settings:
+    log.info("Setting {key} = {value}")
+
 
 def get_path(location_name : str) -> str:
     '''Given location_name (e.g. data, output), returns path given in settings.json
@@ -25,15 +48,13 @@ def get_path(location_name : str) -> str:
     }
     assert location_name in default_paths, f"Location name {location_name} not valid"
 
-    if not os.path.isfile("settings.json"):
-        log.warning("No settings.json, using default settings")
-        return default_paths[location_name]
-
-    with open("settings.json", "r") as f:
-        settings : dict = json.load(f)
-    
     # if path exists in settings, return path given there. Else, return default path
     return settings.get(location_name, default_paths[location_name])
+
+
+def get_setting(setting_name : str):
+    assert setting_name in settings, f"Setting {setting_name} not in settings"
+    return settings[setting_name]
 
 
 def reslice_image(itk_image : sitk.Image, itk_ref : sitk.Image , is_label : bool = False) -> sitk.Image:
