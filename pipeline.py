@@ -120,7 +120,11 @@ def main():
         # Execute the entire pipeline for the patient
         log.info(f"Starting pipeline execution for patient {patient_id}")
         run_pipeline(patient_folder)
-
+    # Sort MSD dictionary by average MSD
+    try:
+        registration.mask_registration_evaluation.setup()
+    except Exception as e:
+        log.error(f"MSD dictionary sort failed. Error message: {str(e)}")
 
 if __name__ == "__main__":
     sys.exit(main())
