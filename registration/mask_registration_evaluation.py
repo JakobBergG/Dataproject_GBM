@@ -55,7 +55,7 @@ def add_msd_to_json(patient_folder : str):
     patient_dic[patient_id].append(avg_msd)
 
     # Sort patient dictionary by average MSD
-    sorted_patients = sorted(patient_dic.items, key = lambda L: L[1][-1])
+    sorted_patients = sorted(patient_dic.items(), key = lambda L: L[1][-1])
     patient_dic = {key : value for key, value in sorted_patients}
 
     with open(json_file, "w", encoding="utf-8") as f:
