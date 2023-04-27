@@ -15,12 +15,13 @@ def get_path(location_name : str) -> str:
         "path_data": "data/",
         "path_info": "info/",
         "path_output": "output/",
-        "local_path_gtv": "predicted_gtvs", #TODO duplicate path # TODO: make moved gtvs path
+        "local_path_gtv": "predicted_gtvs",
         "local_path_brain_mr": "brain_mr",
         "local_path_brain_ct": "brain_ct",
         "local_path_brainmasks_mr": "brain_mr/output_brains",
         "local_path_brainmasks_ct": "brain_ct/output_brains",
-        "local_path_output_gtvs": "predicted_gtvs"
+        "local_path_moved_mr": "MR_to_CT_mask",
+        "local_path_moved_gtv": "MR_to_CT_gtv"
     }
     assert location_name in default_paths, f"Location name {location_name} not valid"
 

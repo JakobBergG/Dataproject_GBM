@@ -21,8 +21,7 @@ TIME_POINTS = ("time0", "time1", "time2", "time3")
 journal_info_path = os.path.join(utils.get_path("path_info"), "gbm_treatment_info.csv")
 output_path = "" # path of where to output the end metrics file - is specified in setup()
 
-# BIG TODO: use moved gtvs
-local_path_gtv = utils.get_path("local_path_gtv") #points to gtv subfolder starting from patient folder
+local_path_gtv = utils.get_path("local_path_moved_gtv") #points to gtv subfolder starting from patient folder
 basepath = utils.get_path("path_data")
 
 journal_info_patients : dict = {} #dictionary with journal info - is specified in setup()
@@ -70,6 +69,9 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
     '''Returns dictionary with metrics calculated for all time points
     Dictionary journal_info should contain information read from the .csv file
     '''
+    patient_id = os.path.basename(patientfolder)
+    
+    
     # Load all GTVs 
     
     gtv_path = os.path.join(patientfolder, local_path_gtv)
@@ -108,8 +110,6 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
         patient_id, date, scantype, datatype = utils.parse_filename(filename)
         scans[date] = gtv #save the path for the date
 
-    # sort based on dates (earliest scan first) # TODO remove
-    dates = sorted(scans.keys())
 
     info = {
         "rtdose_filename": rtdose_filename,
@@ -176,9 +176,8 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
                 info["flags"].append(f"no_{timepoint}")
 
     # save information from journal info
-    if journal_info is not None: # TODO not necessary
-        for key, value in journal_info.items():
-            info[key] = value
+    for key, value in journal_info.items():
+        info[key] = value
     
 
     # -----------------------------

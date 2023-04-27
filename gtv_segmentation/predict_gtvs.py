@@ -17,7 +17,7 @@ gtv_task_id = 600
 basepath = utils.get_path("path_data")
 
 local_path_brainmasks_mr = utils.get_path("local_path_brainmasks_mr")
-local_path_output_gtvs = utils.get_path("local_path_output_gtvs")
+local_path_output_gtvs = utils.get_path("local_path_gtv")
 
 def setup_prediction(nnUNet_gtv_task_id : int):
     '''

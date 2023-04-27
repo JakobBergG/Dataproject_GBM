@@ -66,8 +66,8 @@ dilate_filter_ct.SetForegroundValue(1)
 
 def register_MR_to_CT(patient_folder : str):
     patient_id = os.path.basename(patient_folder)
-    outfolder = os.path.join(patient_folder, 'MR_to_CT_mask') #TODO: lav om til utils
-    gtvfolder = os.path.join(patient_folder, 'MR_to_CT_gtv') #TODO: lav om til utils
+    outfolder = os.path.join(patient_folder, utils.get_path('local_path_moved_mr')) 
+    gtvfolder = os.path.join(patient_folder, utils.get_path('local_path_moved_gtv')) 
     if not os.path.isdir(outfolder):
         os.makedirs(outfolder) 
     if not os.path.isdir(gtvfolder):
@@ -95,7 +95,7 @@ def register_MR_to_CT(patient_folder : str):
     image_filelist = [ f.path for f in os.scandir(patient_folder) if f.is_file() ]
 
     # find all GTVs for the patient
-    patient_gtv_folder = os.path.join(patient_folder, utils.get_path('local_path_output_gtvs'))
+    patient_gtv_folder = os.path.join(patient_folder, utils.get_path('local_path_gtv'))
     patient_gtvs = [ f.path for f in os.scandir(patient_gtv_folder) if f.is_file() ] 
     
     # we expect to find one CT file, with corrosponding mask, for each patient
