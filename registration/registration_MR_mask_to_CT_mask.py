@@ -95,7 +95,7 @@ def register_MR_to_CT(patient_folder : str):
     image_filelist = [ f.path for f in os.scandir(patient_folder) if f.is_file() ]
 
     # find all GTVs for the patient
-    patient_gtv_folder = os.path.join(patient_folder, utils.get_path('local_path_output_gtvs'))
+    patient_gtv_folder = os.path.join(patient_folder, utils.get_path('local_path_gtv'))
     patient_gtvs = [ f.path for f in os.scandir(patient_gtv_folder) if f.is_file() ] 
     
     # we expect to find one CT file, with corrosponding mask, for each patient
