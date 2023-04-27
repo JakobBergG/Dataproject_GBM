@@ -71,6 +71,7 @@ def sort_msd_dict():
     '''
     Sort the patients in the dictionary by avg MSD value
     '''
+    global output_path
     with open(output_path, "r") as f:
         patient_dic : dict = json.load(f)
 
