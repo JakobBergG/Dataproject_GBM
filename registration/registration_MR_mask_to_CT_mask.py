@@ -51,23 +51,23 @@ def rigidParameterMap():
 # Dilation filters are defined #
 #------------------------------#
 
-# create 3D binary image filter used to expand the mr masks in 3D
+# create 3D binary image filter used to expand the mr masks 5 mm in 3D
 dilate_filter_mr = sitk.BinaryDilateImageFilter()
 dilate_filter_mr.SetKernelType(sitk.sitkBall)
-dilate_filter_mr.SetKernelRadius((10,10,5))
+dilate_filter_mr.SetKernelRadius((10,10,5)) # TODO: load from json
 dilate_filter_mr.SetForegroundValue(1)
 
-# create 3D binary image filter used to expand the mr masks in 3D
+# create 3D binary image filter used to expand the mr masks 5 mm in 3D
 dilate_filter_ct = sitk.BinaryDilateImageFilter()
 dilate_filter_ct.SetKernelType(sitk.sitkBall)
-dilate_filter_ct.SetKernelRadius((5,5,5))
+dilate_filter_ct.SetKernelRadius((5,5,5)) # TODO: load from json
 dilate_filter_ct.SetForegroundValue(1)
 
 
 def register_MR_to_CT(patient_folder : str):
     patient_id = os.path.basename(patient_folder)
-    outfolder = os.path.join(patient_folder, 'MR_to_CT_mask')
-    gtvfolder = os.path.join(patient_folder, 'MR_to_CT_gtv')
+    outfolder = os.path.join(patient_folder, 'MR_to_CT_mask') #TODO: lav om til utils
+    gtvfolder = os.path.join(patient_folder, 'MR_to_CT_gtv') #TODO: lav om til utils
     if not os.path.isdir(outfolder):
         os.makedirs(outfolder) 
     if not os.path.isdir(gtvfolder):
@@ -257,10 +257,10 @@ def register_MR_to_CT(patient_folder : str):
         #-----------------------------#
         
         # sum the parametermaps from the two rounds of registrations into one map.
-        sum = []
+        parameters_sum = []
         for i in range(0,6):
-            sum.append(str(transf0[0]["TransformParameters"][i] +transf1[0]["TransformParameters"][i])) 
-        transf0[0]["TransformParameters"]=tuple(sum)
+            parameters_sum.append(str(transf0[0]["TransformParameters"][i] +transf1[0]["TransformParameters"][i])) 
+        transf0[0]["TransformParameters"]=tuple(parameters_sum)
         
         # write the moved mr image
         sitk.WriteImage(mr_moved, os.path.join(outfolder, mr_file_name))

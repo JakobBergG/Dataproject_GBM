@@ -33,7 +33,6 @@ def run_pipeline(patient_folder : str):
     #
     # BRAIN SEGMENTATION
     #
-    # TODO: load these values from settings.json
     log.info(f"Starting brain segmentation for patient {patient_id}")
 
     try:
@@ -109,12 +108,14 @@ def main():
     # Load the base data path from the settings.json file
     basepath = utils.get_path("path_data")
     # Run setup
+    # TODO: load these values from settings.json
     brain_segmentation.predict_brain_masks.setup_prediction(nnUNet_ct_task_id=800, nnUNet_mr_task_id=801)
     analysis.patient_metrics.setup(f"patient_metrics_{date_str}.json")
+    gtv_segmentation.predict_gtvs.setup_prediction(nnUNet_gtv_task_id=600)
     registration.mask_registration_evaluation.setup(f"registration_mask_MSD_{date_str}.json")
     # Find all the patient folders in the main data folder
     patient_folders = [f.path for f in os.scandir(basepath) if f.is_dir()]
-    for patient_folder in patient_folders[:3]:
+    for patient_folder in patient_folders:
         patient_id = os.path.basename(patient_folder)
         # Execute the entire pipeline for the patient
         log.info(f"Starting pipeline execution for patient {patient_id}")

@@ -4,6 +4,7 @@ import SimpleITK as sitk
 import re
 
 # TODO: remove holes here
+# TODO: Get mask files directly
 
 basepath = utils.get_path("path_data")
 
