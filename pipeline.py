@@ -122,7 +122,7 @@ def main():
         run_pipeline(patient_folder)
     # Sort MSD dictionary by average MSD
     try:
-        registration.mask_registration_evaluation.setup()
+        registration.mask_registration_evaluation.sort_msd_dict()
     except Exception as e:
         log.error(f"MSD dictionary sort failed. Error message: {str(e)}")
 
