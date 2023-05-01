@@ -54,13 +54,13 @@ def rigidParameterMap():
 # create 3D binary image filter used to expand the mr masks 5 mm in 3D
 dilate_filter_mr = sitk.BinaryDilateImageFilter()
 dilate_filter_mr.SetKernelType(sitk.sitkBall)
-dilate_filter_mr.SetKernelRadius((10,10,5)) # TODO: load from json
+dilate_filter_mr.SetKernelRadius(utils.get_setting("registration_dilation_radius_mr")) 
 dilate_filter_mr.SetForegroundValue(1)
 
 # create 3D binary image filter used to expand the mr masks 5 mm in 3D
 dilate_filter_ct = sitk.BinaryDilateImageFilter()
 dilate_filter_ct.SetKernelType(sitk.sitkBall)
-dilate_filter_ct.SetKernelRadius((5,5,5)) # TODO: load from json
+dilate_filter_ct.SetKernelRadius(utils.get_setting("registration_dilation_radius_ct"))
 dilate_filter_ct.SetForegroundValue(1)
 
 
