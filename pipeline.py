@@ -36,16 +36,11 @@ def run_pipeline(patient_folder : str):
     log.info(f"Starting brain segmentation for patient {patient_id}")
 
     try:
-        brain_segmentation.predict_brain_masks.run_ct_prediction(patient_folder)
+        # TODO: load these values from settings.json
+        brain_segmentation.predict_brain_masks.run_brainmask_predictions(patient_folder, 800, 801)
     except Exception as e:
-       log.error(f"CT brain mask prediction failed for {patient_id}. Error message: {str(e)}")
+       log.error(f"Brain mask prediction failed for {patient_id}. Error message: {str(e)}")
        return
-    
-    try:
-        brain_segmentation.predict_brain_masks.run_mr_prediction(patient_folder)
-    except Exception as e:
-        log.error(f"MR brain mask prediction failed for {patient_id}. Error message: {str(e)}")
-        return
 
     #
     # CLEANING BRAIN MASKS
@@ -109,7 +104,6 @@ def main():
     basepath = utils.get_path("path_data")
     # Run setup
     # TODO: load these values from settings.json
-    brain_segmentation.predict_brain_masks.setup_prediction(nnUNet_ct_task_id=800, nnUNet_mr_task_id=801)
     analysis.patient_metrics.setup(f"patient_metrics_{date_str}.json")
     gtv_segmentation.predict_gtvs.setup_prediction(nnUNet_gtv_task_id=600)
     registration.mask_registration_evaluation.setup(f"registration_mask_MSD_{date_str}.json")
