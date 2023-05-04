@@ -7,9 +7,6 @@ import logging
 
 log = logging.getLogger(__name__)
 
-# TODO: get from settings.json
-MR_DILATION_RADIUS = (4, 4, 2)
-
 basepath = utils.get_path("path_data")
 
 local_path_brainmasks_ct = utils.get_path("local_path_brainmasks_ct")
@@ -46,10 +43,11 @@ def run_skull_stripping(patient_folder):
             ct_list.append(file)
 
     # now strip mr skulls
+    mr_dilation_radius = utils.get_setting("skull_stripping_dilation_radius_mr")
     for mr in mr_list:
         mr_name = os.path.basename(mr)
         mask_name = re.sub("_MR_res", "_MR_res_mask_cleaned", mr_name)
         output_name = re.sub("_MR_res", "_MR_res_stripped", mr_name)
         mask_path = os.path.join(patient_folder, local_path_brainmasks_mr, mask_name)
         output_path = os.path.join(patient_folder, local_path_brainmasks_mr, output_name)
-        strip_skull_and_save(mr, mask_path, MR_DILATION_RADIUS, output_path)
+        strip_skull_and_save(mr, mask_path, mr_dilation_radius, output_path)
