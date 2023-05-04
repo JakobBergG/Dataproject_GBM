@@ -30,9 +30,9 @@ def run_pipeline(patient_folder : str):
     '''
     patient_id = os.path.basename(patient_folder)
 
-    #
-    # BRAIN SEGMENTATION
-    #
+    #--------------------#
+    # BRAIN SEGMENTATION #
+    #--------------------#
     log.info(f"Starting brain segmentation for patient {patient_id}")
     nnUNet_ct_task_id = utils.get_setting("task_id_brain_segmentation_ct")
     nnUNet_mr_task_id = utils.get_setting("task_id_brain_segmentation_mr")
@@ -42,9 +42,7 @@ def run_pipeline(patient_folder : str):
        log.error(f"Brain mask prediction failed for {patient_id}. Error message: {str(e)}")
        return
 
-    #
-    # CLEANING BRAIN MASKS
-    #
+    # Clean brain masks
     log.info(f"Cleaning brain masks for patient {patient_id}")
     try:
         brain_segmentation.cleanup_brain_masks.cleanup_brain_mask(patient_folder)
@@ -52,9 +50,9 @@ def run_pipeline(patient_folder : str):
         log.error(f"Brain mask cleaning failed for {patient_id}. Error message: {str(e)}")
         return
     
-    # 
-    # SKULL-STRIPPING
-    #
+    #-----------------# 
+    # SKULL-STRIPPING #
+    #-----------------#
     log.info(f"Beginning skull-stripping for patient {patient_id}")
     try:
         skull_stripping.strip_skull_from_mask.run_skull_stripping(patient_folder)
@@ -62,9 +60,9 @@ def run_pipeline(patient_folder : str):
         log.error(f"Skull-stripping failed for {patient_id}. Error message: {str(e)}")
         return
 
-    #
-    # GTV segmentation
-    #
+    #------------------#
+    # GTV segmentation #
+    #------------------#
     log.info(f"Starting GTV segmentation for patient {patient_id}")
     nnUNet_gtv_task_id = utils.get_setting("task_id_gtv_segmentation")
     try:
@@ -73,9 +71,9 @@ def run_pipeline(patient_folder : str):
         log.error(f"GTV-segmentation failed for {patient_id}. Error message: {str(e)}")
         return
     
-    #
-    # REGISTRATION (MR to CT)
-    #
+    #-------------------------#
+    # REGISTRATION (MR to CT) #
+    #-------------------------#
     log.info(f"Starting registration for patient {patient_id}")
     try:
         registration.registration_MR_mask_to_CT_mask.register_MR_to_CT(patient_folder)
@@ -83,15 +81,16 @@ def run_pipeline(patient_folder : str):
         log.error(f"Registration failed for {patient_id}. Error message: {str(e)}")
         return
     
+    # Evaluate registraion
     try:
         registration.mask_registration_evaluation.add_msd_to_json(patient_folder)
     except Exception as e:
         log.error(f"Registration evaluation failed for {patient_id}. Error message: {str(e)}")
         log.info("Continuing despite mask registration fail...")
     
-    #
-    # Calculate metrics
-    #
+    #---------------#
+    # DATA ANALYSIS #
+    #---------------#
     log.info(f"Calculating metrics for patient {patient_id}")
     try:
         analysis.patient_metrics.run_patient_metrics(patient_folder)
