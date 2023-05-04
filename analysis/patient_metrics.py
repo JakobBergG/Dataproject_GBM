@@ -209,14 +209,14 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
         
         if timepoint == "time3":
             # target dose. 
-            target_dose = metrics.get_target_dose(gtv)
+            rtdose = sitk.ReadImage(info["rtdose_filename"])
+            target_dose = metrics.get_target_dose(rtdose)
             info["target_dose"] = target_dose
             # Check if target dose matches journal
             if "RTdoseplan" in info:
                 info["target_dose_correct"] = target_dose == info["RTdoseplan"]
             
             # 95% percentage overlap 
-            rtdose = sitk.ReadImage(info["rtdose_filename"])
             gtv_resliced = utils.reslice_image(gtv, rtdose, is_label = True)
             dose_95 = metrics.dose_percentage_region(rtdose, target_dose, 0.95)
             try:
