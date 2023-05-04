@@ -21,7 +21,7 @@ settings = {
     "minimum_lession_size": 20,
     # paths
     "path_data": "data/",
-    "path_info": "info/",
+    "path_info": "info/gbm_treatment_info.csv",
     "path_output": "output/",
     "local_path_gtv": "predicted_gtvs",
     "local_path_brain_mr": "brain_mr",
@@ -30,8 +30,6 @@ settings = {
     "local_path_brainmasks_ct": "brain_ct/output_brains",
     "local_path_moved_mr": "MR_to_CT_mask",
     "local_path_moved_gtv": "MR_to_CT_gtv",
-    # filenames
-    "filename_journal": "gbm_treatment_info.csv"
 }
 
 # load settings file, change default settings

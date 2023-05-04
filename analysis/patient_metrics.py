@@ -17,7 +17,7 @@ MINIMUM_VOXELS_LESION = utils.get_setting("minumum_lession_size") # if lesions c
 
 TIME_POINTS = ["time0", "time1", "time2", "time3"]
 
-journal_info_path = os.path.join(utils.get_path("path_info"), utils.get_path("filename_journal"))
+journal_info_path = utils.get_path("path_info")
 output_path = "" # path of where to output the end metrics file - is specified in setup()
 
 local_path_gtv = utils.get_path("local_path_moved_gtv") #points to gtv subfolder starting from patient folder
