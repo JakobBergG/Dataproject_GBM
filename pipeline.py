@@ -34,10 +34,10 @@ def run_pipeline(patient_folder : str):
     # BRAIN SEGMENTATION
     #
     log.info(f"Starting brain segmentation for patient {patient_id}")
-
+    nnUNet_ct_task_id = utils.get_setting("task_id_brain_segmentation_ct")
+    nnUNet_mr_task_id = utils.get_setting("task_id_brain_segmentation_mr")
     try:
-        # TODO: load these values from settings.json
-        brain_segmentation.predict_brain_masks.run_brainmask_predictions(patient_folder, 800, 801)
+        brain_segmentation.predict_brain_masks.run_brainmask_predictions(patient_folder, nnUNet_ct_task_id, nnUNet_mr_task_id)
     except Exception as e:
        log.error(f"Brain mask prediction failed for {patient_id}. Error message: {str(e)}")
        return
@@ -66,9 +66,9 @@ def run_pipeline(patient_folder : str):
     # GTV segmentation
     #
     log.info(f"Starting GTV segmentation for patient {patient_id}")
+    nnUNet_gtv_task_id = utils.get_setting("task_id_gtv_segmentation")
     try:
-        # TODO: Load task ids from settings
-        gtv_segmentation.predict_gtvs.run_gtv_prediction(patient_folder, nnUNet_gtv_task_id=600)
+        gtv_segmentation.predict_gtvs.run_gtv_prediction(patient_folder, nnUNet_gtv_task_id)
     except Exception as e:
         log.error(f"GTV-segmentation failed for {patient_id}. Error message: {str(e)}")
         return
