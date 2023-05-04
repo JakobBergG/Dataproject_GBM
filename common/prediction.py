@@ -49,10 +49,11 @@ def create_scan_links(patient_folder : str, destination_folder : str,
         newname = re.sub(old_file_ending, new_file_ending, oldname)
         dest = os.path.join(destination_folder, newname)
         source_full_path = os.path.abspath(source)
-        try:
-            os.symlink(source_full_path, dest)
-        except Exception as e:
-            raise Exception("Could not create symbolic link. If on Windows, check that running as administrator;", str(e))
+        if not os.path.exists(dest):
+            try:
+                    os.symlink(source_full_path, dest)
+            except Exception as e:
+                raise Exception("Could not create symbolic link. If on Windows, check that running as administrator;", str(e))
 
 
 def run_prediction(scans_folder : str, scans_file_ending,
