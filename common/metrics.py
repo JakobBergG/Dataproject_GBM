@@ -28,12 +28,10 @@ def volume_component_cc(image : sitk.Image) -> list:
 def mask_overlap(gtv : sitk.Image, dose : sitk.Image) -> float:
     '''Get percentage of overlap between gtv and (95%) dose'''
     gtv_vol = volume_mask(gtv)
-    if gtv_vol == 0:
-        print("Error: GTV volume is 0") #TODO: logging and exceptions
-        return -1.0
-    else:
+    if gtv_vol>0:
         return volume_mask(dose*gtv) / gtv_vol
-
+    else:
+        raise Exception("GTV volune is 0")
 
 def dose_percentage_region(dose_image : sitk.Image, target_intensity : float, percentage : float = 0.95) -> float:
     '''Create a mask of where the dose is above a certain percentage of the
@@ -78,11 +76,11 @@ def label_image_connected_components(gtv_image : sitk.Image, minimum_lesion_size
 
 
 
-def type_reccurence(label_image : sitk.Image, dose_mask : sitk.Image) -> int:
-    '''Get type of reccurence. 
-    Type1: All reccurence tumors has 80% or more overlap with 95% dose (Local reccurence)
-    Type3: All reccurence tumors has less than 20% overlap  with 95% dose (Distant reccurence)
-    Type2: Both local and distant reccurence
+def type_recurrence(label_image : sitk.Image, dose_mask : sitk.Image) -> int:
+    '''Get type of recurrence. 
+    Type1: All recurrence tumors has 80% or more overlap with 95% dose (Local recurrence)
+    Type3: All recurrence tumors has less than 20% overlap  with 95% dose (Distant recurrence)
+    Type2: Both local and distant recurrence
     '''
 
     #TODO: WTF
@@ -107,7 +105,7 @@ def type_reccurence(label_image : sitk.Image, dose_mask : sitk.Image) -> int:
         
 
 def get_hd(baseline : sitk.Image,rec : sitk.Image) -> tuple:
-    '''Get hausdorff distance between tumor area at baseline and tumor area at reccurrence
+    '''Get hausdorff distance between tumor area at baseline and tumor area at recurrence
     Returns tuple (hd, hd95)'''
     rec = utils.reslice_image(rec, baseline, is_label=True)
     baseline_array = sitk.GetArrayFromImage(baseline)
@@ -130,43 +128,5 @@ def msd(ct_mask : sitk.Image, mr_mask : sitk.Image) -> float:
     return mean_surface_distance
 
 
-def growth(dic):
-    timepoints= ["time3","time2"]
-    if "no_time1" not in dic["flags"]:
-        timepoints.append("time1")
-    
-    if "no_time0" not in dic["flags"]:
-        timepoints.append("time0")
-    
-    first_time = timepoints[-1]
-    first_time_stamp = dic[first_time]["time"]
-    first_cc = dic[first_time]["total_volume_cc"]
-    baseline_cc = dic["time2"]["total_volume_cc"]
-    
-    if first_cc == 0.0:
-        print("Warning: first_cc is 0") #TODO logging and errors
-        dic["flags"].append("first_cc_zero")
-        return dic
-    if first_cc == 0.0: #TODO: baseline
-        print("Warning: baseline_cc is 0")
-        dic["flags"].append("baseline_cc_zero")
-        return dic
-
-    for i in timepoints:
-        stamp= dic[i]["time"]
-        time_dif = stamp - first_time_stamp
-        cc = dic[i]["total_volume_cc"]
-        if time_dif > 0: # if after first time stamp
-            growth_since_first_scan = (cc-first_cc)/first_cc
-            daily_growth_since_first_scan = growth_since_first_scan/time_dif
-            dic[i]["growth_since_first_scan"] = growth_since_first_scan
-            dic[i]["daily_growth_since_first_scan"] = daily_growth_since_first_scan
-
-        if stamp != 0.0: # if not baseline
-            growth_since_baseline = (cc-baseline_cc)/baseline_cc
-            daily_growth_since_baseline = growth_since_baseline/stamp
-            dic[i]["growth_since_baseline"] = growth_since_baseline
-            dic[i]["daily_growth_since_baseline"] = daily_growth_since_baseline
-    return dic
 
 

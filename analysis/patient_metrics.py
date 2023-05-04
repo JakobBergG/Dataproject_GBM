@@ -10,15 +10,14 @@ import re
 
 log = logging.getLogger(__name__)
 
-# TODO: replace print with logging
 
-# TODO: LOAD FROM settings.json
-MINIMUM_VOXELS_LESION = 20 # if lesions contain fewer voxels than this, do not
+
+MINIMUM_VOXELS_LESION = utils.get_setting("minumum_lession_size") # if lesions contain fewer voxels than this, do not
                            # per-lesion metrics.   
 
-TIME_POINTS = ("time0", "time1", "time2", "time3")
+TIME_POINTS = ["time0", "time1", "time2", "time3"]
 
-journal_info_path = os.path.join(utils.get_path("path_info"), "gbm_treatment_info.csv")
+journal_info_path = os.path.join(utils.get_path("path_info"), utils.get_path("filename_journal"))
 output_path = "" # path of where to output the end metrics file - is specified in setup()
 
 local_path_gtv = utils.get_path("local_path_moved_gtv") #points to gtv subfolder starting from patient folder
@@ -103,12 +102,12 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
     # CREATE DICTIONARY FOR PATIENT
     # -----------------------------
 
-    # Extract date information from filenames
-    scans = {} # TODO fix name
+    # Extract date information from gtv filenames and save in dictonary
+    date_dic = {} 
     for gtv in gtvlist:
         filename = os.path.basename(gtv)
         patient_id, date, scantype, datatype = utils.parse_filename(filename)
-        scans[date] = gtv #save the path for the date
+        date_dic[date] = gtv #save the path for the date
 
 
     info = {
@@ -117,16 +116,18 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
     }
 
     def write_timepoint(timepoint, date):
-        # TODO write docstring
-        if date in scans:
-            filename = scans[date]
+        '''Checks if input date has a matching scan and saves the matching 
+        filname at input timepoint in dictionary.
+        If no matching scan is found a warning is raised'''
+        if date in date_dic:
+            filename = date_dic[date]
             info[timepoint] = {
                 "time": date,
                 "filename": filename
             }
         else:
             log.warning(f"Date for {timepoint} does not have matching scan")
-            info["flags"].append("bad_date_match")
+            info["flags"].append(f"bad_date_match_at_{timepoint}")
             
            
 
@@ -161,19 +162,23 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
    
     # Check if scan exists at time2 and 3
     # for each time point, update time value to use relative time to time2 (in days)
-    # warning if we are missing a time point.
+    # Raise error if scan at baseline or recurrence is missing.
+    # warning if we are missing a scan at another timepoint.
     if "time3" not in info:
-        return "no_recurrence_scan" # TODO: logging and errors
+        log.error("No scan found at recurrence timepoint for patient {patient_id}")
+        raise Exception("No scan found at recurrence timepoint for patient {patient_id}")
     elif "time2" not in info:
-        return "no_baseline_scan"
+        log.error("No scan found at baseline for patient {patient_id}")
+        raise Exception("No scan found at baseline for patient {patient_id}")
     else:
         base_date = info["time2"]["time"]
         for timepoint in TIME_POINTS:
             if timepoint in info:
                 info[timepoint]["time"] = utils.date_to_relative_time(info[timepoint]["time"], base_date)
             else:
-                print(f"Warning: missing time point {timepoint} for patient {patient_id}")
+                log.warning(f"Warning: missing time point {timepoint} for patient {patient_id}")
                 info["flags"].append(f"no_{timepoint}")
+                TIME_POINTS.remove(timepoint)
 
     # save information from journal info
     for key, value in journal_info.items():
@@ -214,20 +219,21 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
             rtdose = sitk.ReadImage(info["rtdose_filename"])
             gtv_resliced = utils.reslice_image(gtv, rtdose, is_label = True)
             dose_95 = metrics.dose_percentage_region(rtdose, target_dose, 0.95)
-            percentage = metrics.mask_overlap(gtv_resliced, dose_95)
-            if percentage == -1.0:
-                print(f"Warning: gtvvolume is 0 at time 3") # TODO logging and exceptions
-                info["flags"].append(f"empty_gtv_time3")
-            else:
+            try:
+                percentage = metrics.mask_overlap(gtv_resliced, dose_95)
                 timepoint_info["percent_overlap_95_isodose"] = percentage
+            except Exception as e:
+                log.error(f"{str(e)} at timepoint {timepoint}")
+                raise Exception(f"{str(e)} at timepoint {timepoint}")
+                
             
-            # Type of reccurence TODO spell recurrence right
+            # Type of recurrence 
             label_image_resliced = utils.reslice_image(label_image, rtdose, is_label = True)
-            reccurence_type = metrics.type_reccurence(label_image_resliced, dose_95)
-            info["reccurence_type_guess"] = reccurence_type
+            recurrence_type = metrics.type_recurrence(label_image_resliced, dose_95)
+            info["recurrence_type_guess"] = recurrence_type
             # see if matches with Anouks progression type
             if "ProgressionType" in info:
-                info["reccurence_type_correct"] = reccurence_type == info["ProgressionType"]
+                info["recurrence_type_correct"] = recurrence_type == info["ProgressionType"]
             
             # Hausdorff
             gtv_baseline = sitk.ReadImage(info["time2"]["filename"])
@@ -236,9 +242,38 @@ def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
             timepoint_info["hd"] = hd
             timepoint_info["hd95"] = hd95
         
-    # TODO maybe not its own function?
-    info = metrics.growth(info)
+    # Calculate growth and growth rate between timpoints
+    # Find first available scan and baseline scan and use as baselines
+    first_time = TIME_POINTS[0]
+    first_time_stamp = info[first_time]["time"]
+    first_cc = info[first_time]["total_volume_cc"]
+    baseline_cc = info["time2"]["total_volume_cc"]
     
+    if first_cc == 0.0:
+        log.warning(f"Volume of first available gtv is 0 for patient {patient_id}") 
+        info["flags"].append("first_cc_zero")
+    elif baseline_cc == 0.0: #
+        log.warning(f"Volume of baseline gtv is 0 for patient {patient_id}")
+        info["flags"].append("baseline_cc_zero")
+    else:
+        for i in TIME_POINTS:
+            stamp = info[i]["time"]
+            time_dif = stamp - first_time_stamp
+            cc = info[i]["total_volume_cc"]
+            
+            if time_dif > 0: # if not first time stamp
+                growth_since_first_scan = (cc-first_cc)/first_cc
+                daily_growth_since_first_scan = growth_since_first_scan/time_dif
+                info[i]["growth_since_first_scan"] = growth_since_first_scan
+                info[i]["daily_growth_since_first_scan"] = daily_growth_since_first_scan
+
+            if stamp != 0.0: # if not baseline
+                growth_since_baseline = (cc-baseline_cc)/baseline_cc
+                daily_growth_since_baseline = growth_since_baseline/stamp
+                info[i]["growth_since_baseline"] = growth_since_baseline
+                info[i]["daily_growth_since_baseline"] = daily_growth_since_baseline
+
+
     return info
     
 
@@ -285,7 +320,6 @@ def run_patient_metrics(patient_folder : str):
     # overwrite file
     with open(output_path, "w+", encoding="utf-8") as f:
         json.dump(info_patients, f, ensure_ascii=False, indent = 4)
-
-
-print("All done.")
+    
+    log.info(f"Metrics calculated for patient {patient_id}")
 

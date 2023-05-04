@@ -18,6 +18,8 @@ settings = {
     "skull_stripping_dilation_radius_mr": [4, 4, 2], # also expand 2 mm : remember spacing is 0.5x0.5x1.0
     "registration_dilation_radius_mr": [10, 10, 5],
     "registration_dilation_radius_ct": [5, 5, 5],
+    # metrics settings
+    "minimum_lession_size": 20,
     # paths
     "path_data": "data/",
     "path_info": "info/",
@@ -28,7 +30,9 @@ settings = {
     "local_path_brainmasks_mr": "brain_mr/output_brains",
     "local_path_brainmasks_ct": "brain_ct/output_brains",
     "local_path_moved_mr": "MR_to_CT_mask",
-    "local_path_moved_gtv": "MR_to_CT_gtv"
+    "local_path_moved_gtv": "MR_to_CT_gtv",
+    # filenames
+    "filename_journal": "gbm_treatment_info.csv"
 }
 
 # load settings file, change default settings
