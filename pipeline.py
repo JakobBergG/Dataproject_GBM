@@ -34,10 +34,10 @@ def run_pipeline(patient_folder : str):
     # BRAIN SEGMENTATION
     #
     log.info(f"Starting brain segmentation for patient {patient_id}")
-
+    nnUNet_ct_task_id = utils.get_setting("task_id_brain_segmentation_ct")
+    nnUNet_mr_task_id = utils.get_setting("task_id_brain_segmentation_mr")
     try:
-        # TODO: load these values from settings.json
-        brain_segmentation.predict_brain_masks.run_brainmask_predictions(patient_folder, 800, 801)
+        brain_segmentation.predict_brain_masks.run_brainmask_predictions(patient_folder, nnUNet_ct_task_id, nnUNet_mr_task_id)
     except Exception as e:
        log.error(f"Brain mask prediction failed for {patient_id}. Error message: {str(e)}")
        return
@@ -66,8 +66,9 @@ def run_pipeline(patient_folder : str):
     # GTV segmentation
     #
     log.info(f"Starting GTV segmentation for patient {patient_id}")
+    nnUNet_gtv_task_id = utils.get_setting("task_id_gtv_segmentation")
     try:
-        gtv_segmentation.predict_gtvs.run_prediction(patient_folder)
+        gtv_segmentation.predict_gtvs.run_gtv_prediction(patient_folder, nnUNet_gtv_task_id)
     except Exception as e:
         log.error(f"GTV-segmentation failed for {patient_id}. Error message: {str(e)}")
         return
@@ -100,12 +101,14 @@ def run_pipeline(patient_folder : str):
 
 
 def main():
+    # The system must be setup to allow permission to create symbolic links to
+    # files. This is tested with the following function, which returns an
+    # error if no permission
+    utils.test_symbolic_link_permission()
     # Load the base data path from the settings.json file
     basepath = utils.get_path("path_data")
     # Run setup
-    # TODO: load these values from settings.json
     analysis.patient_metrics.setup(f"patient_metrics_{date_str}.json")
-    gtv_segmentation.predict_gtvs.setup_prediction(nnUNet_gtv_task_id=600)
     registration.mask_registration_evaluation.setup(f"registration_mask_MSD_{date_str}.json")
     # Find all the patient folders in the main data folder
     patient_folders = [f.path for f in os.scandir(basepath) if f.is_dir()]

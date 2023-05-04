@@ -31,5 +31,5 @@ def run_gtv_prediction(patient_folder : str, nnUNet_gtv_task_id : int):
     
     # now run prediction
     log.info(f"Running GTV prediction for patient {patient_id}")
-    run_prediction(patient_folder, "_MR_res_stripped.nii.gz", input_dest,
+    run_prediction(brainmasks_folder, "_MR_res_stripped.nii.gz", input_dest,
                    "_gtv_0000.nii.gz", nnUNet_gtv_task_id, output_dest)
