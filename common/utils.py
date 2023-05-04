@@ -82,3 +82,16 @@ def parse_filename(filename : str) -> tuple:
 def date_to_relative_time(date : datetime, base_date : datetime) -> float:
     '''Returns date with relative time in days relative to base date'''
     return (date - base_date).total_seconds() / 86400
+
+
+def test_symbolic_link_permission():
+    '''This function raises an exception if the system is not allowed to create
+    symbolic links. On windows, you must run in administrator mode'''
+    with open("_symlink_test", "w") as f:
+        f.write("test")
+    try:
+        os.symlink("_symlink_test", "_symlink_test_link")
+        os.remove("_symlink_test")
+        os.remove("_symlink_test_link")
+    except:
+        raise Exception("Not allowed to create symbolic links. If on Windows, run in adminstrator mode")

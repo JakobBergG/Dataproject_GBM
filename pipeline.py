@@ -101,10 +101,13 @@ def run_pipeline(patient_folder : str):
 
 
 def main():
+    # The system must be setup to allow permission to create symbolic links to
+    # files. This is tested with the following function, which returns an
+    # error if no permission
+    utils.test_symbolic_link_permission()
     # Load the base data path from the settings.json file
     basepath = utils.get_path("path_data")
     # Run setup
-    # TODO: load these values from settings.json
     analysis.patient_metrics.setup(f"patient_metrics_{date_str}.json")
     registration.mask_registration_evaluation.setup(f"registration_mask_MSD_{date_str}.json")
     # Find all the patient folders in the main data folder
