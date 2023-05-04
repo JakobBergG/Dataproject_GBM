@@ -1,8 +1,5 @@
 import os
 import common.utils as utils
-import argparse
-import shutil
-import re
 from common.prediction import run_prediction
 import logging
 
