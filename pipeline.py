@@ -67,7 +67,8 @@ def run_pipeline(patient_folder : str):
     #
     log.info(f"Starting GTV segmentation for patient {patient_id}")
     try:
-        gtv_segmentation.predict_gtvs.run_prediction(patient_folder)
+        # TODO: Load task ids from settings
+        gtv_segmentation.predict_gtvs.run_gtv_prediction(patient_folder, nnUNet_gtv_task_id=600)
     except Exception as e:
         log.error(f"GTV-segmentation failed for {patient_id}. Error message: {str(e)}")
         return
@@ -105,7 +106,6 @@ def main():
     # Run setup
     # TODO: load these values from settings.json
     analysis.patient_metrics.setup(f"patient_metrics_{date_str}.json")
-    gtv_segmentation.predict_gtvs.setup_prediction(nnUNet_gtv_task_id=600)
     registration.mask_registration_evaluation.setup(f"registration_mask_MSD_{date_str}.json")
     # Find all the patient folders in the main data folder
     patient_folders = [f.path for f in os.scandir(basepath) if f.is_dir()]
