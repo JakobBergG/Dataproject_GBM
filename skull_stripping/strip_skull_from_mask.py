@@ -1,7 +1,6 @@
 import os
 import common.utils as utils
 import SimpleITK as sitk
-import argparse
 import re
 import logging
 
