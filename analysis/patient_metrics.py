@@ -65,7 +65,7 @@ def load_journal_info_patients(path : str) -> dict:
 
 
 def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
-    '''Returns dictionary with metrics calculated for all time points
+    '''Returns dictionary with metrics calculated for all time points for a single patient
     Dictionary journal_info should contain information read from the .csv file
     '''
     patient_id = os.path.basename(patientfolder)
