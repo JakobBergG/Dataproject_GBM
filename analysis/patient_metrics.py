@@ -12,7 +12,7 @@ log = logging.getLogger(__name__)
 
 
 
-MINIMUM_VOXELS_LESION = utils.get_setting("minumum_lession_size") # if lesions contain fewer voxels than this, do not
+MINIMUM_VOXELS_LESION = utils.get_setting("minimum_lession_size") # if lesions contain fewer voxels than this, do not
                            # per-lesion metrics.   
 
 TIME_POINTS = ["time0", "time1", "time2", "time3"]
