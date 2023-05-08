@@ -10,6 +10,7 @@ import gtv_segmentation.predict_gtvs
 import registration.registration_MR_mask_to_CT_mask
 import registration.mask_registration_evaluation
 import analysis.patient_metrics
+import analysis.patient_metrics_to_csv
 
 
 # setup of logging
@@ -108,20 +109,34 @@ def main():
     # Load the base data path from the settings.json file
     basepath = utils.get_path("path_data")
     # Run setup
-    analysis.patient_metrics.setup(f"patient_metrics_{date_str}.json")
+    patient_metrics_filename = f"patient_metrics_{date_str}"
+    analysis.patient_metrics.setup(patient_metrics_filename + ".json")
     registration.mask_registration_evaluation.setup(f"registration_mask_MSD_{date_str}.json")
     # Find all the patient folders in the main data folder
     patient_folders = [f.path for f in os.scandir(basepath) if f.is_dir()]
+    # Run piepeline for all patients
     for patient_folder in patient_folders:
         patient_id = os.path.basename(patient_folder)
         # Execute the entire pipeline for the patient
         log.info(f"Starting pipeline execution for patient {patient_id}")
         run_pipeline(patient_folder)
+
+    # Stuff to do after the pipeline has been run for all patients:
+
     # Sort MSD dictionary by average MSD
     try:
         registration.mask_registration_evaluation.sort_msd_dict()
     except Exception as e:
         log.error(f"MSD dictionary sort failed. Error message: {str(e)}")
+    # Convert patient_metrics json to csv
+    try:
+        analysis.patient_metrics_to_csv.convert_json_to_csv(
+            patient_metrics_filename + ".json",
+            patient_metrics_filename + ".csv"
+            )
+    except Exception as e:
+        log.error(f"Converting patient metrics json to csv failed. Error message: {str(e)}")
+
 
 if __name__ == "__main__":
     sys.exit(main())
