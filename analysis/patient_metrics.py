@@ -32,10 +32,10 @@ def load_journal_info_patients(path : str) -> dict:
     # these following columns should be read, and the following functions should be called
     to_read = {
         "Study_ID": str,
-        "MRIDiagDate_checked": str,
-        "MRIPostopDate_checked": str,
-        "RT_MRIDate": str,
-        "ProgressionDate": str,
+        "MRIDiagDate_checked": str,     # time 0
+        "MRIPostopDate_checked": str,   # time 1
+        "RT_MRIDate": str,              # time 2
+        "ProgressionDate": str,         # time 3
         "RTdoseplan": lambda x : int(float(re.sub(",", ".", x))),
         "Age_at_diagn": lambda x : float(re.sub(",", ".", x)),
         "Sex" : str,
