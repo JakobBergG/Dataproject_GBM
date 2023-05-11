@@ -62,7 +62,7 @@ def get_output_patient_path(patient_id):
         patient_id = str(patient_id)
     path = os.path.join(get_path("path_output"), patient_id)
     # create folder if does not exist
-    if not os.path.exists(path):
+    if not os.path.exists(path): 
         os.mkdir(path)
     return path
 
