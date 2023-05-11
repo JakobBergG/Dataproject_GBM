@@ -54,26 +54,26 @@ def main():
     utils.test_symbolic_link_permission()
     # Load the base data path from the settings.json file
     basepath = utils.get_path("path_data")
-    # Run setup
-    patient_metrics_filename = f"patient_metrics_{date_str}"
-    analysis.patient_metrics.setup(patient_metrics_filename + ".json")
-    registration.mask_registration_evaluation.setup(f"registration_mask_MSD_{date_str}.json")
     # Find all the patient folders in the main data folder
     patient_folders = [f.path for f in os.scandir(basepath) if f.is_dir()]
     # Run piepeline for all patients
     for patient_folder in patient_folders:
         patient_id = os.path.basename(patient_folder)
         # Execute the entire pipeline for the patient
-        log.info(f"Starting registration execution for patient {patient_id}")
+        log.info(f"Starting pipeline execution for patient {patient_id}")
         run_pipeline(patient_folder)
 
     # Stuff to do after the pipeline has been run for all patients:
 
     # Sort MSD dictionary by average MSD
+    registration_eval_filename = f"registration_mask_MSD_{date_str}.json"
     try:
-        registration.mask_registration_evaluation.sort_msd_dict()
+        registration.mask_registration_evaluation.sort_msd_dict(registration_eval_filename)
     except Exception as e:
         log.error(f"MSD dictionary sort failed. Error message: {str(e)}")
+    # Convert patient_metrics json to csv
+    
+
 
 if __name__ == "__main__":
     sys.exit(main())
