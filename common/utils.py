@@ -60,7 +60,7 @@ def get_setting(setting_name : str):
 def get_output_patient_path(patient_id):
     if not isinstance(patient_id, str):
         patient_id = str(patient_id)
-    path = os.join(get_path("path_output"), patient_id)
+    path = os.path.join(get_path("path_output"), patient_id)
     # create folder if does not exist
     if not os.path.exists(path):
         os.mkdir(path)
