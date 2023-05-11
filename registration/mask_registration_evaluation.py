@@ -8,16 +8,16 @@ import logging
 
 log = logging.getLogger(__name__)
 
-output_path = ''
-
-def add_msd_to_json(patient_folder : str):
+def add_msd_to_json(patient_folder : str, output_name : str):
     '''
     Calculates Mean Surface Distance between MR and CT mask for each MR mask and
     adds the MSDs and their average value to dictionary in JSON file.
     If JSON file does not exist, it creates a new dictionary and a new JSON file.
     '''
 
+    output_path = os.path.join(utils.get_path("path_output"), output_name)
     patient_id = os.path.basename(patient_folder)
+    output_patient_folder = utils.get_output_patient_path(patient_id)
 
     json_filename = os.path.basename(output_path)
     if os.path.isfile(output_path):
@@ -27,7 +27,7 @@ def add_msd_to_json(patient_folder : str):
         patient_dic = {}
     
     # Find CT brain file
-    ct_mask_path = os.path.join(patient_folder, utils.get_path('local_path_brainmasks_ct'))
+    ct_mask_path = os.path.join(output_patient_folder, utils.get_path('local_path_brainmasks_ct'))
     ct_mask_filelist = [ f.path for f in os.scandir(ct_mask_path) if f.is_file() ]
     ct_mask = ''
     for pathstr in ct_mask_filelist:
@@ -39,7 +39,7 @@ def add_msd_to_json(patient_folder : str):
         raise Exception(f"No CT file for patient {patient_id}")
     
     # Find registered MR brain file
-    mr_mask_path = os.path.join(patient_folder, utils.get_path('local_path_moved_mr')) 
+    mr_mask_path = os.path.join(output_patient_folder, utils.get_path('local_path_moved_mr')) 
     mr_mask_filelist = [ f.path for f in os.scandir(mr_mask_path) if f.is_file() ]
     mr_masks = []
     for pathstr in mr_mask_filelist:
@@ -66,17 +66,12 @@ def add_msd_to_json(patient_folder : str):
     
     log.info(f"Succesfully added MSDs for {patient_id} to {json_filename}.")
 
-def setup(output_name : str):
-    '''
-    Setup path for output
-    '''
-    global output_path
-    output_path = os.path.join(utils.get_path("path_output"), output_name)
 
-def sort_msd_dict():
+def sort_msd_dict(output_name : str):
     '''
     Sort the patients in the dictionary by avg MSD value
     '''
+    output_path = os.path.join(utils.get_path("path_output"), output_name)
     with open(output_path, "r") as f:
         patient_dic : dict = json.load(f)
 

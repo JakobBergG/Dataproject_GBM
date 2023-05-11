@@ -36,8 +36,10 @@ def cleanup_brain_mask(patient_folder : str):
      Cleans up all brain masks for patient data path patient_folder
      '''
      patient_id = os.path.basename(patient_folder)
-     path_mr = os.path.join(patient_folder,local_path_brainmasks_mr)  
-     path_ct = os.path.join(patient_folder,local_path_brainmasks_ct)  
+     output_patient_folder = utils.get_output_patient_path(patient_id)
+
+     path_mr = os.path.join(output_patient_folder,local_path_brainmasks_mr)  
+     path_ct = os.path.join(output_patient_folder,local_path_brainmasks_ct)  
      
      # find all files in mask folder
      mr_filelist = [f.path for f in os.scandir(path_mr)]

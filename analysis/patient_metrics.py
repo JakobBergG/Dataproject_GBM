@@ -64,16 +64,16 @@ def load_journal_info_patients(path : str) -> dict:
     return journal_info_patients
 
 
-def get_patient_metrics(patientfolder, journal_info : dict) -> dict:
+def get_patient_metrics(patientfolder : str, journal_info : dict) -> dict:
     '''Returns dictionary with metrics calculated for all time points for a single patient
     Dictionary journal_info should contain information read from the .csv file
     '''
     patient_id = os.path.basename(patientfolder)
-    
+    output_patient_folder = utils.get_output_patient_path(patient_id)
     
     # Load all GTVs 
     
-    gtv_path = os.path.join(patientfolder, local_path_gtv)
+    gtv_path = os.path.join(output_patient_folder, local_path_gtv)
     gtv_filelist =[ f.path for f in os.scandir(gtv_path) if f.is_file() ]
     gtvlist = []
 

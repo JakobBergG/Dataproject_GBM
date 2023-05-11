@@ -14,20 +14,21 @@ local_path_brainmasks_mr = utils.get_path("local_path_brainmasks_mr")
 
 def run_brainmask_predictions(patient_folder : str, nnUNet_ct_task_id : int, nnUNet_mr_task_id : int):
     patient_id = os.path.basename(patient_folder)
+    output_patient_folder = utils.get_output_patient_path(patient_id)
 
     # CT predictions:
     
     # start off by creating a lot of folders
     # create brain_ct folder if not exists
-    brain_ct_folder = os.path.join(patient_folder, local_path_brain_ct)
+    brain_ct_folder = os.path.join(output_patient_folder, local_path_brain_ct)
     if not os.path.exists(brain_ct_folder):
         os.mkdir(brain_ct_folder)
     # create nnUNet input folder if not exists
     nnUNet_input_folder = os.path.join(brain_ct_folder, "nnUNet_input")
     if not os.path.exists(nnUNet_input_folder):
         os.mkdir(nnUNet_input_folder)
-    #create output folder if not exists¨
-    output_dest = os.path.join(patient_folder, local_path_brainmasks_ct)
+    #create output folder if not exists
+    output_dest = os.path.join(output_patient_folder, local_path_brainmasks_ct)
     if not os.path.exists(output_dest):
         os.mkdir(output_dest)
 
@@ -43,7 +44,7 @@ def run_brainmask_predictions(patient_folder : str, nnUNet_ct_task_id : int, nnU
     
     # start off by creating a lot of folders
     # create brain_mr folder if not exists
-    brain_mr_folder = os.path.join(patient_folder, local_path_brain_mr)
+    brain_mr_folder = os.path.join(output_patient_folder, local_path_brain_mr)
     if not os.path.exists(brain_mr_folder):
         os.mkdir(brain_mr_folder)
     # create nnUNet input folder if not exists
@@ -51,7 +52,7 @@ def run_brainmask_predictions(patient_folder : str, nnUNet_ct_task_id : int, nnU
     if not os.path.exists(nnUNet_input_folder):
         os.mkdir(nnUNet_input_folder)
     #create output folder if not exists¨
-    output_dest = os.path.join(patient_folder, local_path_brainmasks_mr)
+    output_dest = os.path.join(output_patient_folder, local_path_brainmasks_mr)
     if not os.path.exists(output_dest):
         os.mkdir(output_dest)
 

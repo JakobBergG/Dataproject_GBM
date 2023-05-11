@@ -18,14 +18,15 @@ def run_gtv_prediction(patient_folder : str, nnUNet_gtv_task_id : int):
     Run GTV prediction for all MR scans
     '''
     patient_id = os.path.basename(patient_folder)
+    output_patient_folder = utils.get_output_patient_path(patient_id)
 
-    brainmasks_folder = os.path.join(patient_folder, local_path_brainmasks_mr)
+    brainmasks_folder = os.path.join(output_patient_folder, local_path_brainmasks_mr)
     input_dest = os.path.join(brainmasks_folder, "nnUNet_input")
     # create nnUNet input folder if not exists
     if not os.path.exists(input_dest):
         os.mkdir(input_dest)
     #create output folder if not exists¨
-    output_dest = os.path.join(patient_folder, local_path_output_gtvs)
+    output_dest = os.path.join(output_patient_folder, local_path_output_gtvs)
     if not os.path.exists(output_dest):
         os.mkdir(output_dest)
     

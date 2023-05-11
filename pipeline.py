@@ -83,8 +83,9 @@ def run_pipeline(patient_folder : str):
         return
     
     # Evaluate registraion
+    registration_eval_filename = f"registration_mask_MSD_{date_str}.json"
     try:
-        registration.mask_registration_evaluation.add_msd_to_json(patient_folder)
+        registration.mask_registration_evaluation.add_msd_to_json(patient_folder, registration_eval_filename)
     except Exception as e:
         log.error(f"Registration evaluation failed for {patient_id}. Error message: {str(e)}")
         log.info("Continuing despite mask registration fail...")
@@ -110,7 +111,6 @@ def main():
     # Run setup
     patient_metrics_filename = f"patient_metrics_{date_str}"
     analysis.patient_metrics.setup(patient_metrics_filename + ".json")
-    registration.mask_registration_evaluation.setup(f"registration_mask_MSD_{date_str}.json")
     # Find all the patient folders in the main data folder
     patient_folders = [f.path for f in os.scandir(basepath) if f.is_dir()]
     # Run piepeline for all patients
@@ -123,8 +123,9 @@ def main():
     # Stuff to do after the pipeline has been run for all patients:
 
     # Sort MSD dictionary by average MSD
+    registration_eval_filename = f"registration_mask_MSD_{date_str}.json"
     try:
-        registration.mask_registration_evaluation.sort_msd_dict()
+        registration.mask_registration_evaluation.sort_msd_dict(registration_eval_filename)
     except Exception as e:
         log.error(f"MSD dictionary sort failed. Error message: {str(e)}")
     # Convert patient_metrics json to csv

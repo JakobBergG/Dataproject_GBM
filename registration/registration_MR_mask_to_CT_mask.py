@@ -66,8 +66,9 @@ dilate_filter_ct.SetForegroundValue(1)
 
 def register_MR_to_CT(patient_folder : str):
     patient_id = os.path.basename(patient_folder)
-    outfolder = os.path.join(patient_folder, utils.get_path('local_path_moved_mr')) 
-    gtvfolder = os.path.join(patient_folder, utils.get_path('local_path_moved_gtv')) 
+    output_patient_folder = utils.get_output_patient_path(patient_id)
+    outfolder = os.path.join(output_patient_folder, utils.get_path('local_path_moved_mr')) 
+    gtvfolder = os.path.join(output_patient_folder, utils.get_path('local_path_moved_gtv')) 
     if not os.path.isdir(outfolder):
         os.makedirs(outfolder) 
     if not os.path.isdir(gtvfolder):
@@ -84,18 +85,18 @@ def register_MR_to_CT(patient_folder : str):
     #------------------------------------------------------------#
 
     # loop over all the files in the nn-Unet output folder for CT brain segmentation 
-    ct_mask_path = os.path.join(patient_folder, utils.get_path('local_path_brainmasks_ct'))
+    ct_mask_path = os.path.join(output_patient_folder, utils.get_path('local_path_brainmasks_ct'))
     ct_mask_filelist = [ f.path for f in os.scandir(ct_mask_path) if f.is_file() ]
 
     # loop over all the files in the nn-Unet output folder for MR brain segmentation 
-    mr_mask_path = os.path.join(patient_folder, utils.get_path('local_path_brainmasks_mr'))
+    mr_mask_path = os.path.join(output_patient_folder, utils.get_path('local_path_brainmasks_mr'))
     mr_mask_filelist = [ f.path for f in os.scandir(mr_mask_path) if f.is_file() ]
 
     # loop over all original scans for the patient
     image_filelist = [ f.path for f in os.scandir(patient_folder) if f.is_file() ]
 
     # find all GTVs for the patient
-    patient_gtv_folder = os.path.join(patient_folder, utils.get_path('local_path_gtv'))
+    patient_gtv_folder = os.path.join(output_patient_folder, utils.get_path('local_path_gtv'))
     patient_gtvs = [ f.path for f in os.scandir(patient_gtv_folder) if f.is_file() ] 
     
     # we expect to find one CT file, with corrosponding mask, for each patient

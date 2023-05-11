@@ -30,6 +30,7 @@ def run_skull_stripping(patient_folder):
     Skullstrip all MR scans for patient
     '''
     patient_id = os.path.basename(patient_folder)
+    output_patient_folder = utils.get_output_patient_path(patient_id)
     log.info(f"Stripping MR skulls for patient {patient_id}")
     # find all mr scans
     patient_filelist = [f.path for f in os.scandir(patient_folder)]
@@ -47,6 +48,6 @@ def run_skull_stripping(patient_folder):
         mr_name = os.path.basename(mr)
         mask_name = re.sub("_MR_res", "_MR_res_mask_cleaned", mr_name)
         output_name = re.sub("_MR_res", "_MR_res_stripped", mr_name)
-        mask_path = os.path.join(patient_folder, local_path_brainmasks_mr, mask_name)
-        output_path = os.path.join(patient_folder, local_path_brainmasks_mr, output_name)
+        mask_path = os.path.join(output_patient_folder, local_path_brainmasks_mr, mask_name)
+        output_path = os.path.join(output_patient_folder, local_path_brainmasks_mr, output_name)
         strip_skull_and_save(mr, mask_path, mr_dilation_radius, output_path)

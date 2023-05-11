@@ -57,6 +57,15 @@ def get_setting(setting_name : str):
     return settings[setting_name]
 
 
+def get_output_patient_path(patient_id):
+    if not isinstance(patient_id, str):
+        patient_id = str(patient_id)
+    path = os.join(get_path("path_output"), patient_id)
+    # create folder if does not exist
+    if not os.path.exists(path):
+        os.mkdir(path)
+    return path
+
 def reslice_image(itk_image : sitk.Image, itk_ref : sitk.Image , is_label : bool = False) -> sitk.Image:
     '''Reslice one image to the grid of another image (when they are registered)'''
     resample = sitk.ResampleImageFilter()
