@@ -222,22 +222,27 @@ def get_patient_metrics(patientfolder : str, journal_info : dict) -> dict:
             try:
                 percentage = metrics.mask_overlap(gtv_resliced, dose_95)
                 timepoint_info["percent_overlap_95_isodose"] = percentage
+                info["classical_recurrence_type"] = metrics.classical_type_recurrence(percentage)
             except Exception as e:
                 log.error(f"{str(e)} at timepoint {timepoint}")
                 raise Exception(f"{str(e)} at timepoint {timepoint}")
-                
+            
+            #Classical type of recurrence
+            
+            
+            
+            # Find baseline gtv
+            gtv_baseline = sitk.ReadImage(info["time2"]["filename"])
             
             # Type of recurrence 
-            label_image_resliced = utils.reslice_image(label_image, rtdose, is_label = True)
-            recurrence_type = metrics.type_recurrence(label_image_resliced, dose_95)
+            label_image_resliced = utils.reslice_image(label_image, gtv_baseline, is_label = True)
+            recurrence_type = metrics.type_recurrence(label_image_resliced, gtv_baseline)
             info["recurrence_type_guess"] = recurrence_type
             # see if matches with Anouks progression type
             if "ProgressionType" in info:
                 info["recurrence_type_correct"] = recurrence_type == info["ProgressionType"]
             
             # Hausdorff
-            gtv_baseline = sitk.ReadImage(info["time2"]["filename"])
-            
             hd, hd95 = metrics.get_hd(gtv_baseline, gtv)
             timepoint_info["hd"] = hd
             timepoint_info["hd95"] = hd95

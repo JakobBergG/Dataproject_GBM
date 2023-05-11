@@ -25,13 +25,13 @@ def volume_component_cc(image : sitk.Image) -> list:
     component_sizes = [spacing[0] * spacing[1] * spacing[2] * stats.GetNumberOfPixels(l) /1000 for l in stats.GetLabels()]
     return component_sizes
 
-def mask_overlap(gtv : sitk.Image, dose : sitk.Image) -> float:
+def mask_overlap(image1 : sitk.Image, image2 : sitk.Image) -> float:
     '''Get percentage of overlap between gtv and (95%) dose'''
-    gtv_vol = volume_mask(gtv)
-    if gtv_vol>0:
-        return volume_mask(dose*gtv) / gtv_vol
+    vol1 = volume_mask(image1)
+    if vol1>0:
+        return volume_mask(image2*image1) / vol1
     else:
-        raise Exception("GTV volune is 0")
+        raise Exception("Volune of mask is 0")
 
 def dose_percentage_region(dose_image : sitk.Image, target_intensity : float, percentage : float = 0.95) -> float:
     '''Create a mask of where the dose is above a certain percentage of the
@@ -76,14 +76,13 @@ def label_image_connected_components(gtv_image : sitk.Image, minimum_lesion_size
 
 
 
-def type_recurrence(label_image : sitk.Image, dose_mask : sitk.Image) -> int:
+def type_recurrence(label_image : sitk.Image, baseline : sitk.Image) -> int:
     '''Get type of recurrence. 
-    Type1: All recurrence tumors has 80% or more overlap with 95% dose (Local recurrence)
-    Type3: All recurrence tumors has less than 20% overlap  with 95% dose (Distant recurrence)
+    Type1: Local recurrence. (Overlap between baseline and recurrence GTV)
+    Type3: Distant recurrence. (No overlap)
     Type2: Both local and distant recurrence
     '''
 
-    #TODO: WTF
 
     stats = sitk.LabelShapeStatisticsImageFilter()
     stats.Execute(label_image)
@@ -92,17 +91,32 @@ def type_recurrence(label_image : sitk.Image, dose_mask : sitk.Image) -> int:
     local = 0
     distant = 0
     for t in tumors:
-        if mask_overlap(t, dose_mask)<0.2:
-            distant += 1
-        else:
+        if mask_overlap(t, baseline)>0:
             local += 1
+        else:
+            distant += 1
     if distant > 0 and local > 0:
         return 2
     elif distant > 0:
         return 3
     elif local > 0:
         return 1
-        
+
+def classical_type_recurrence(percentage):
+    '''Classical type of recurrence:
+        Central: >95% of recurrence gtv within 95% isodose area
+        In-field: 80%-95% of recurrence gtv within 95% isodose area    
+        Marginal: 20%-80% of recurrence gtv within 95% isodose area
+        Distant: <20% of recurrence gtv within 95% isodose area
+        '''
+    if percentage > 0.95:
+        return "Central"
+    elif percentage > 0.8:
+        return "In-field"
+    elif percentage > 0.2:
+        return "Marginal"
+    else: 
+        return "Distant"
 
 def get_hd(baseline : sitk.Image,rec : sitk.Image) -> tuple:
     '''Get hausdorff distance between tumor area at baseline and tumor area at recurrence
