@@ -18,7 +18,7 @@ def rigidParameterMap():
     parameterMapRigid['FixedInternalImagePixelType'] = ['float']
     parameterMapRigid['MovingInternalImagePixelType'] = ['float']
     
-    parameterMapRigid['AutomaticScalesEstimation']= ['false']
+    parameterMapRigid['AutomaticScalesEstimation']= ['true']
     parameterMapRigid['Scales']= ['1000.0']
     parameterMapRigid['AutomaticTransformInitialization']= ['true']
     parameterMapRigid['AutomaticTransformInitializationMethod']= ['CenterOfGravity']
