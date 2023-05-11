@@ -18,7 +18,7 @@ def rigidParameterMap():
     parameterMapRigid['FixedInternalImagePixelType'] = ['float']
     parameterMapRigid['MovingInternalImagePixelType'] = ['float']
     
-    parameterMapRigid['AutomaticScalesEstimation']= ['true']
+    parameterMapRigid['AutomaticScalesEstimation']= ['false']
     parameterMapRigid['Scales']= ['1000.0']
     parameterMapRigid['AutomaticTransformInitialization']= ['true']
     parameterMapRigid['AutomaticTransformInitializationMethod']= ['CenterOfGravity']
@@ -35,7 +35,7 @@ def rigidParameterMap():
     parameterMapRigid['ImagePyramidSchedule']= ['16','16','16','8','8','8', '4','4','4']
     
     parameterMapRigid['NumberOfSpatialSamples']=['2048']
-    parameterMapRigid['Optimizer']= ['AdaptiveStocohasticGradientDescent']
+    parameterMapRigid['Optimizer']= ['AdaptiveStochasticGradientDescent']
     parameterMapRigid['Registration']= ['MultiResolutionRegistration']
     parameterMapRigid['ResampleInterpolator']= ['FinalBSplineInterpolator']
     parameterMapRigid['Resampler']= ['DefaultResampler']
