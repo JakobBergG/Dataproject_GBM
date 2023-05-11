@@ -31,7 +31,7 @@ def run_pipeline(patient_folder : str):
     #-------------------------#
     log.info(f"Starting registration for patient {patient_id}")
     try:
-        registration.registration_MR_mask_to_CT_mask.register_MR_to_CT(patient_folder)
+        registration.registration_MR_mask_to_CT_mask_test.register_MR_to_CT(patient_folder)
     except Exception as e:
         log.error(f"Registration failed for {patient_id}. Error message: {str(e)}")
         return
