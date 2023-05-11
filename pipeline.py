@@ -128,6 +128,14 @@ def main():
         registration.mask_registration_evaluation.sort_msd_dict(registration_eval_filename)
     except Exception as e:
         log.error(f"MSD dictionary sort failed. Error message: {str(e)}")
+
+    # Save histogram plot of MSD values
+    msd_histogram_filename = f"MSD_histogram_{date_str}.png"
+    try:
+        registration.mask_registration_evaluation.sort_msd_dict(registration_eval_filename, msd_histogram_filename)
+    except Exception as e:
+        log.error(f"MSD histogram plot failed. Error message: {str(e)}")
+    
     # Convert patient_metrics json to csv
     try:
         analysis.patient_metrics_to_csv.convert_json_to_csv(
