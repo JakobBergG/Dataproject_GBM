@@ -82,7 +82,7 @@ At the point of recurrence, 'time3', the following is also calculated:
 
 - **The target dose** (54 Gy or 60 Gy) is determined using the maximum intensity of the radiation therapy planning image. This is cross-checked with the available clinical treatment data for the patient.
 - **The percentage overlap of the GTV with the 95% isodose area** - if the target dose is 60 Gy, the 95% isodose area is any part of the brain that receives more than 95% of 60 Gy.
-- **The Hausdorff distance** between the recurring GTV at 'time3' and the baseline GTV at 'time2'. (see p. 19 [here](https://www.researchgate.net/publication/359797561_Common_Limitations_of_Image_Processing_Metrics_A_Picture_Story)) The 95% percentile Hausdorff distance is also calculated
+- **The Hausdorff distance** between the recurring GTV at 'time3' and the baseline GTV at 'time2'. (see p. 18 [here](https://www.researchgate.net/publication/359797561_Common_Limitations_of_Image_Processing_Metrics_A_Picture_Story)) The 95% percentile Hausdorff distance is also calculated
 
 Finally, the type of recurrence is also categorized in two different ways:
 
@@ -103,4 +103,88 @@ Each patient in our data has been visually scored in this manner by a clinical p
  
 
 ## Result From Running on Data
-[Hvor mange objekter blev fjernet i cleanup brain masks p
+[Hvor mange objekter blev fjernet i cleanup brain masks på vores data]
+[Hvordan klarer registrering sig - histogram]
+Her vil det desuden være fint med en kvalitativ beskrivelse af de registreringer, der er dårlige. Kan man desuden sætte en grænse for MSD, der afgør, om en registrering er god eller dårlig?
+[Hvordan passer Anouks recurrence type med vores automatiske gæt?]
+
+## Technical details
+The rest of this document describes how to actually set up and run the pipeline.
+
+### Python environment
+The file 'requirements.txt' can be used to create a conda environment with the required python packages.
+
+### nnU-Net
+The pipeline uses the deep learning software nnU-Net to perform brain and GTV segmentation. A guide on how to set up and train a nnU-Net model, as needed in the pipeline, can be found at the GitHub site for nnU-Net: https://github.com/MIC-DKFZ/nnUNet.  
+
+The pipeline assumes that there are 3 available nnU-Net models present on the machine on which it is run: One for CT brain segmentation, one for MR brain segmentation and one for GTV segmentation. Our models was trained on [HVILKET DATA OG HVOR MEGET]
+
+### Required data and format
+Both the MR and CT scans from the patients must be in compressed Neuroimaging Informatics Technology Initiative format also known as NIfTi. Files in this format have the following filename extension: ".nii.gz". The files further need to have the correct naming in order for the pipeline to be able to calculate the relevant metrics. The naming needs to correspond to the following structure: 
+
+- "PATIENT-IDENTIFIER_DATE_TYPE.FILE-EXTENSION"
+
+PATIENT-IDENTIFIER: a unique string that identifies the corresponding patient.
+DATE: the date of the given scan in the format "YYYYMMDD".
+TYPE: a string that needs to be either "MR_res",  "CT_res" or "RTDOSE_res".
+FILE-EXTENSION: corresponding to the required file format ".nii.gz".
+
+Finally the pipeline needs a patient journal containing clinical data for each patient. The journal should contain information about the following values:
+
+
+- Patient Identifier: unique identifier for each patient.
+- Diagnosis Date: date of the diagnosis scan.
+- Post Operation Date: date of the postoperative scan.
+- Radiotherapy Date: date of the radiotherapy planning scan.
+- Recurrence Date: date of the recurrence scan.
+- Radiotherapy dose: the dose of radiation given in gray (Gy). 
+- Patient age: age of the patient at diagnosis.
+- Sex: the gender of the patient.
+- Progression type: the type of progression lesions.
+
+###" Folder structure
+In order to run the pipeline on a dataset the data of the different patients must be stored in a certain folder structure. This is necessary to ensure that the different steps in the pipeline are able to locate the needed data. The entire dataset needs to be stored in a main input folder, which contains a subfolder for each patient. The names of the  different patient folders need to be distinct (e.g. patient id's), so the pipeline can separate the patients. In each patient folder the scans for the corresponding patient are stored. An example of this structure with the correct naming of the scans is shown below:
+
+```json
+- Main
+  - 0114
+    - 0114_20230504_MR_res.nii.gz
+    - 0114_20230507_MR_res.nii.gz
+    - 0114_20230511_CT_res.nii.gz
+    - 0114_20230511_RTDOSE_res.nii.gz
+    - 0114_20230519_MR_res.nii.gz
+  - 3443
+    - 3443_20230625_MR_res.nii.gz
+    - 3443_20230629_CT_res.nii.gz
+    - 3443_20230629_RTDOSE_res.nii.gz
+    - 3443_20230701_MR_res.nii.gz
+    - 3443_20230704_MR_res.nii.gz
+.
+
+```
+
+## How to run
+
+The pipeline is run by running the script 'pipeline.py'. To specify settings such as the path of the input data folder and the output folder, a 'settings.json' file must be created. This file further needs to specify a task id which specifies the nn-Unet model to use for the specific tasks in the steps of the pipeline. Furthermore, the size in voxels of the dilation filters used in registration and skull-stripping can be specified. Lastly, one can also specify the minimum size in voxels required for a lesion to be considered a tumor. If nothing is specified, the default paths and settings defined in "utils.py" will be used. An example of a 'settings.json' file can be seen below:
+
+```json
+{   
+    # task id for nnU-Net models
+    "task_id_brain_segmentation_ct":  800,
+    "task_id_brain_segmentation_mr":  801,
+    "task_id_gtv_segmentation": 600,
+    
+    # dilation dimensions
+    "skull_stripping_dilation_radius_mr": [4, 4, 2], 
+    "registration_dilation_radius_mr": [10, 10, 5],
+    "registration_dilation_radius_ct": [5, 5, 5],
+    "minimum_lession_size": 20,
+    
+    # data paths
+    "path_data": ".../glioblastoma/input_data/",
+    "path_journal": "info/gbm_treatment_info.csv",
+    "path_output": "output/",
+
+}
+```
+When the above-mentioned process has been done, the pipeline can be executed by running the 'pipeline.py' file. 
