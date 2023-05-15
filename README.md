@@ -104,10 +104,10 @@ Each patient in our data has been visually scored in this manner by a clinical p
  
 
 ## Result From Running on Data
-[Hvor mange objekter blev fjernet i cleanup brain masks på vores data]
+[Hvor mange objekter blev fjernet i cleanup brain masks pÃ¥ vores data]
 [Hvordan klarer registrering sig - histogram]
-Her vil det desuden være fint med en kvalitativ beskrivelse af de registreringer, der er dårlige. Kan man desuden sætte en grænse for MSD, der afgør, om en registrering er god eller dårlig?
-[Hvordan passer Anouks recurrence type med vores automatiske gæt?]
+Her vil det desuden vÃ¦re fint med en kvalitativ beskrivelse af de registreringer, der er dÃ¥rlige. Kan man desuden sÃ¦tte en grÃ¦nse for MSD, der afgÃ¸r, om en registrering er god eller dÃ¥rlig?
+[Hvordan passer Anouks recurrence type med vores automatiske gÃ¦t?]
 
 ## Technical details
 The rest of this document describes how to actually set up and run the pipeline.
@@ -170,22 +170,16 @@ The pipeline is run by running the script 'pipeline.py'. To specify settings suc
 
 ```
 {   
-    # task id for nnU-Net models
     "task_id_brain_segmentation_ct":  800,
     "task_id_brain_segmentation_mr":  801,
     "task_id_gtv_segmentation": 600,
-    
-    # dilation dimensions
     "skull_stripping_dilation_radius_mr": [4, 4, 2], 
     "registration_dilation_radius_mr": [10, 10, 5],
     "registration_dilation_radius_ct": [5, 5, 5],
     "minimum_lession_size": 20,
-    
-    # data paths
     "path_data": ".../glioblastoma/input_data/",
     "path_journal": "info/gbm_treatment_info.csv",
-    "path_output": "output/",
-
+    "path_output": "output/"
 }
 ```
 When the above-mentioned process has been done, the pipeline can be executed by running the 'pipeline.py' file. 
