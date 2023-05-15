@@ -82,7 +82,7 @@ At the point of recurrence, 'time3', the following is also calculated:
 
 - **The target dose** (54 Gy or 60 Gy) is determined using the maximum intensity of the radiation therapy planning image. This is cross-checked with the available clinical treatment data for the patient.
 - **The percentage overlap of the GTV with the 95% isodose area** - if the target dose is 60 Gy, the 95% isodose area is any part of the brain that receives more than 95% of 60 Gy.
-- **The Hausdorff distance** between the recurring GTV at 'time3' and the baseline GTV at 'time2'. [see p. 19 https://www.researchgate.net/publication/359797561_Common_Limitations_of_Image_Processing_Metrics_A_Picture_Story] The 95% percentile Hausdorff distance is also calculated
+- **The Hausdorff distance** between the recurring GTV at 'time3' and the baseline GTV at 'time2'. (see p. 19 [here] (https://www.researchgate.net/publication/359797561_Common_Limitations_of_Image_Processing_Metrics_A_Picture_Story)) The 95% percentile Hausdorff distance is also calculated
 
 Finally, the type of recurrence is also categorized in two different ways:
 
@@ -111,6 +111,7 @@ Her vil det desuden være fint med en kvalitativ beskrivelse af de registreringer
 
 
 ## Technical Details
+The rest of this document describes how to actually set up and run the pipeline.
 
 ### Setup and Train nn-Unet
 
