@@ -18,7 +18,7 @@ settings = {
     "registration_dilation_radius_mr": [10, 10, 5],
     "registration_dilation_radius_ct": [5, 5, 5],
     # metrics settings
-    "minimum_lession_size": 20,
+    "minimum_lesion_size": 20,
     # paths
     "path_data": "data/",
     "path_info": "info/gbm_treatment_info.csv",

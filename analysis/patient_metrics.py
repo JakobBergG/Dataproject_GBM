@@ -11,11 +11,10 @@ import re
 log = logging.getLogger(__name__)
 
 
-
-MINIMUM_VOXELS_LESION = utils.get_setting("minimum_lession_size") # if lesions contain fewer voxels than this, do not
-                           # per-lesion metrics.   
-
 TIME_POINTS = ["time0", "time1", "time2", "time3"]
+
+# if lesions contain fewer voxels than this, do not calculate per-lesion metrics.
+minimum_voxels_lesion = utils.get_setting("minimum_lesion_size")
 
 journal_info_path = utils.get_path("path_info")
 output_path = "" # path of where to output the end metrics file - is specified in setup()
@@ -202,7 +201,7 @@ def get_patient_metrics(patientfolder : str, journal_info : dict) -> dict:
         timepoint_info["total_volume_cc"] = metrics.volume_mask_cc(gtv)
 
         # number of lesions
-        label_image, n_normal_lesions, n_tiny_lesions = metrics.label_image_connected_components(gtv, MINIMUM_VOXELS_LESION)
+        label_image, n_normal_lesions, n_tiny_lesions = metrics.label_image_connected_components(gtv, minimum_voxels_lesion)
         timepoint_info["n_normal_lesions"] = n_normal_lesions
         timepoint_info["n_tiny_lesions"] = n_tiny_lesions
 
