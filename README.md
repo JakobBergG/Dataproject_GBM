@@ -6,7 +6,8 @@ Following is a description on how to use and the different steps of our data ana
 ## Description of the pipeline
 The figure below illustrates the input and resulting output of each step in the pipeline. These steps are described in further detail in the sections below.
 
-![](/README_pictures/pipeline.png =100x100)
+
+![](/README_pictures/pipeline.png)
 
 
 ### Input Data
@@ -55,7 +56,7 @@ In this step the GTV for each MR scan is segmented. The pipeline activates the G
 
 The segmented GTV illustrated in 3D:
 
-![](README_pictures/3dgtv.png)
+![](README_pictures/3dgtv.png){width = 50%}
 
 ### Registration: MR to CT grid
 Each MR scan is registered to the grid of the CT scan using the function "*register_MR_to_CT*" from "*registration/registration_MR_mask_to_CT_mask.py*". To perform the registration using SimpleElastix, we need the brain masks from the brain segmentation step. The final registration is a result of two separate rounds of registration: 
