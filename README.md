@@ -13,7 +13,7 @@ The figure below illustrates the input and resulting output of each step in the 
 
 For each patient, the pipeline takes as input up to four MR scans from different timepoints as well as a single CT scan. The scans are 3D images. Whereas 2D images are made up of pixels, 3D images are made up of voxels. Each voxel represents the brightness in the scan of a small cuboid volume. The number and size of the voxels vary with each scan, but a typical MR scan is 520x520x176 voxels with each voxel having a size of 0.5mm x 0.5mm x 1.0mm. An example of a MR scan and a CT scan can be seen in the below illustration.
 
-![alt text](https://gitlab.com/dcpt-research/gbm_recurrence_patterns/-/blob/seq/README_pictures/MRandCTExa.png "Image Title")
+![alt text](https://gitlab.com/dcpt-research/gbm_recurrence_patterns/-/blob/seq/README_pictures/MRandCTExa.png)
 
 
 The table below gives an overview of the possible different scans for each patient. It shows the chronological order of the scans, what type of scan is made at each time stamp, a description of each scan and what the different time stamps are called in the code. Some patients don't have all of the below mentioned scans. 
@@ -33,29 +33,29 @@ Besides the scans, the pipeline also takes a patient journal for each patient as
 ### Brain Segmentation (MR and CT)
 The first step of the pipeline is brain segmentation. The pipeline activates the brain segmentation by running the function "*run_brainmask_predictions*" located in the script "*brain_segmentation/predict_brain_masks.py*". This function performs the brain segmentation on the CT scan and each of the MR scans for the patient. The result of the brain segmentation is a separate 3D file called a brain mask, where voxels that are part of the brain have value 1 and 0 otherwise. For each CT and MR scan the brain is segmented by using prediction from a pre-trained nnUNet model. An illustration of a MR scan and the corresponding brain segmentation is illustrated below:
 
-![alt text](https://gitlab.com/dcpt-research/gbm_recurrence_patterns/-/blob/seq/README_pictures/brainsegmentation.png "Image Title")
+![alt text](README_pictures/brainsegmentation.png)
 
 The brain segmentations may include small separate objects, that are not actually part of the brain, in the brain mask. [HOW MANY? IS IT A BIG PROBLEM?] For this reason, any small objects not part of the brain are removed using the function "*cleanup_brain_mask*" which is located in the script "*brain_segmentation/cleanup_brain_masks.py*". If two neighboring voxels are 1, i.e. segmented as brain, they are considered to be in the same component. Using SimpleITK's ConnectedComponentImageFilter all components in the brain segmentation are found and labeled. If more than one component is present, the largest component is kept, since this will be the actual brain. Any other components are removed. A brain mask before and after cleanup is illustrated below. Note this is one of the more severe examples and not representative of most scans.
 
 
-![alt text](https://gitlab.com/dcpt-research/gbm_recurrence_patterns/-/blob/seq/README_pictures/cleanmask.png "Image Title")
+![alt text](README_pictures/cleanmask.png )
 
 ### Skull-Stripping
 
 Since a brain mask for each MR and CT scan has been generated in the previous brain segmentation step, it is now possible to perform skull-stripping. The function "*run_skull_stripping*" from "*skull_stripping/strip_skull_from_mask.py*" applies the mask to each MR scan, i.e. everything from the scan that is not part of the brain mask is removed. An MR scan and its skull-stripped version is illustrated below:
 
-![alt text](https://gitlab.com/dcpt-research/gbm_recurrence_patterns/-/blob/seq/README_pictures/skullstriping.png "Image Title")
+![alt text](README_pictures/skullstriping.png "HELLLLLOOOO")
 
 ### GTV Segmentation
 
 In this step the GTV for each MR scan is segmented. The pipeline activates the GTV segmentation by running the function "*run_prediction*" from the script "*gtv_segmentation/predict_gtvs.py*". This function takes the skull-stripped MR scans from the previous step and returns a mask of the GTV. This mask is structured like the brain mask but here voxels that are part of the tumor have the value 1 and 0 otherwise. The segmentation is again created by using predictions from a pre-trained nnUNet model. A skull-stripped MR scan and the same scan with the segmented GTV marked in red is illustrated below: 
 
 
-![alt text](https://gitlab.com/dcpt-research/gbm_recurrence_patterns/-/blob/seq/README_pictures/gtvsegmentation.png "Image Title")
+![alt text](README_pictures/gtvsegmentation.png "Image Title")
 
 The segmented GTV illustrated in 3D:
 
-![alt text](https://gitlab.com/dcpt-research/gbm_recurrence_patterns/-/blob/seq/README_pictures/3dgtv.png "Image Title")
+![alt text](README_pictures/3dgtv.png "Image Title")
 
 ### Registration: MR to CT grid
 Each MR scan is registered to the grid of the CT scan using the function "*register_MR_to_CT*" from "*registration/registration_MR_mask_to_CT_mask.py*". To perform the registration using SimpleElastix, we need the brain masks from the brain segmentation step. The final registration is a result of two separate rounds of registration: 
@@ -64,7 +64,7 @@ In the first round the brain masks are used to skull-strip the MR and CT images,
 
 An MR scan and a CT scan in the grid of the CT before and after registration are illustrated below: 
 
-![alt text](https://gitlab.com/dcpt-research/gbm_recurrence_patterns/-/blob/seq/README_pictures/registrationexa.png "Image Title")
+![alt text](README_pictures/registrationexa.png "Image Title")
 
 After all MR scans for the patient have been registered, the performance of the registrations are evaluated using the function "*add_msd_to_json*" from the script "*registration/mask_registration_evaluation.py*". The mean surface distance in mm between the brain mask of each MR scan and the CT scan is calculated and saved in a JSON file.
 
@@ -99,15 +99,18 @@ Finally, the type of recurrence is also categorized in two different ways:
 - 2. Combined: Both local-only and non-local recurrence lesions are present (note this requires at least two recurrence lesions)
 - 3. Non-local: The recurring GTV has no overlap with the baseline GTV
 
-
-
+Each patient in our data has been visually scored in this manner by a clinical professional. Because of this, we cannot expect perfect consistency with the above definition. Nonetheless, the pipeline automatically categorizes the tumor according to the definition, and the automatic categorization is checked against the clinical definition as a quality check.
  
 
+## Result From Running on Data
+[Hvor mange objekter blev fjernet i cleanup brain masks på vores data]
+[Hvordan klarer registrering sig - histogram]
+Her vil det desuden være fint med en kvalitativ beskrivelse af de registreringer, der er dårlige. Kan man desuden sætte en grænse for MSD, der afgør, om en registrering er god eller dårlig?
+[Hvordan passer Anouks recurrence type med vores automatiske gæt?]
 
 
 
-
-## SETUP
+## Technical Details
 
 ### Setup and Train nn-Unet
 
