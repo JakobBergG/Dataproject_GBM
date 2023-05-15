@@ -1,6 +1,17 @@
 # README
 
-Following is a thorough description on how to use and the different steps of our data analysis pipeline which takes in radiology scans (MR and CT) from patients suffering from glioblastoma and returns an analysis of relevant metrics based on the scans.
+Following is a description on how to use and the different steps of our data analysis pipeline which takes in radiology scans (MR and CT) from patients suffering from glioblastoma and returns an analysis of relevant metrics based on the scans.
+
+
+## Description of the pipeline
+The figure below illustrates the input and resulting output of each step in the pipeline. These steps are described in further detail in the sections below.
+
+![alt text](https://gitlab.com/dcpt-research/gbm_recurrence_patterns/-/blob/seq/README_pictures/pipeline.png?raw=true)
+
+
+
+
+
 
 ## SETUP
 
