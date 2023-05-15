@@ -6,7 +6,7 @@ Following is a description on how to use and the different steps of our data ana
 ## Description of the pipeline
 The figure below illustrates the input and resulting output of each step in the pipeline. These steps are described in further detail in the sections below.
 
-![alt text](https://gitlab.com/dcpt-research/gbm_recurrence_patterns/-/blob/seq/README_pictures/pipeline.png "Image Title")
+![alt text](https://gitlab.com/dcpt-research/gbm_recurrence_patterns/-/blob/seq/README_pictures/pipeline.png)
 
 
 ### Input Data
@@ -72,7 +72,36 @@ After all MR scans for the patient have been registered, the performance of the 
 Now that the GTV's have been moved onto the CT grid in the previous step, it is possible in this final step to analyze the tumors of the patient using the function "*run_patient_metrics*" from "*analysis/patient_metrics.py*". For each patient, different metrics and recurrence type categorizations are performed. One of these metrics is not sufficient to describe the type of recurrence, but together, they can aid in describing the recurrence. For each time point 'time0', 'time1', 'time2' and 'time3' the following metrics are calculated:
 
 - The **number of days since 'time2'** ('time2' is the time point of treatment planning and considered the "baseline". This means the number of days since 'time2' will be negative for 'time0' and 'time1', and will always be 0 for 'time2').
-- 
+- **Number of lesions** (patients may have one big tumor or multiple smaller lesions)
+- The **volume of each lesion**
+- The **total volume** of all lesions
+- The **percentage growth in volume since the first available scan**
+- The **percentage growth in volume since the baseline** ('time2')
+
+At the point of recurrence, 'time3', the following is also calculated:
+
+- **The target dose** (54 Gy or 60 Gy) is determined using the maximum intensity of the radiation therapy planning image. This is cross-checked with the available clinical treatment data for the patient.
+- **The percentage overlap of the GTV with the 95% isodose area** - if the target dose is 60 Gy, the 95% isodose area is any part of the brain that receives more than 95% of 60 Gy.
+- **The Hausdorff distance** between the recurring GTV at 'time3' and the baseline GTV at 'time2'. [see p. 19 https://www.researchgate.net/publication/359797561_Common_Limitations_of_Image_Processing_Metrics_A_Picture_Story] The 95% percentile Hausdorff distance is also calculated
+
+Finally, the type of recurrence is also categorized in two different ways:
+
+**A "classical" categorization of the recurrence type** determined by the overlap between the recurring GTV and 95% isodose area. Specifically, the recurrence is calculated according to the following rules:
+
+- central: 95% of recurrence volume within the 95% isodose line
+- in-field: 80-95% of recurrence volume within the 95% isodose line
+- marginal: 20-80% of recurrence volume within the 95% isodose line
+- distant: <20% of recurrence volume within the 95% isodose line
+
+**A visual scoring categorization of the recurrence type**, where the overlap between the recurring GTV at 'time3' is compared to the baseline GTV at 'time2'. The recurrence type falls into one of three categories:
+
+- 1. Local-only: The recurring GTV has any overlap with the baseline GTV 
+- 2. Combined: Both local-only and non-local recurrence lesions are present (note this requires at least two recurrence lesions)
+- 3. Non-local: The recurring GTV has no overlap with the baseline GTV
+
+
+
+ 
 
 
 
