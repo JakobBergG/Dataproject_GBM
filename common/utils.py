@@ -66,11 +66,11 @@ def get_output_patient_path(patient_id):
         os.mkdir(path)
     return path
 
+
 def reslice_image(itk_image : sitk.Image, itk_ref : sitk.Image , is_label : bool = False) -> sitk.Image:
     '''Reslice one image to the grid of another image (when they are registered)'''
     resample = sitk.ResampleImageFilter()
     resample.SetReferenceImage(itk_ref)
-
     if is_label:
         resample.SetInterpolator(sitk.sitkNearestNeighbor)
     else:

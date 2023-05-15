@@ -254,6 +254,7 @@ def get_patient_metrics(patientfolder : str, journal_info : dict) -> dict:
     first_cc = info[first_time]["total_volume_cc"]
     baseline_cc = info["time2"]["total_volume_cc"]
     
+    # Calculate growth rates
     if first_cc == 0.0:
         log.warning(f"Volume of first available gtv is 0 for patient {patient_id}") 
         info["flags"].append("first_cc_zero")
