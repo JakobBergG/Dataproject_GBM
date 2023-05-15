@@ -6,7 +6,7 @@ Following is a description on how to use and the different steps of our data ana
 ## Description of the pipeline
 The figure below illustrates the input and resulting output of each step in the pipeline. These steps are described in further detail in the sections below.
 
-![alt text](https://gitlab.com/dcpt-research/gbm_recurrence_patterns/-/blob/seq/README_pictures/pipeline.png?raw=true)
+![alt text](https://gitlab.com/dcpt-research/gbm_recurrence_patterns/-/blob/seq/README_pictures/pipeline.png "Image Title")
 
 
 
