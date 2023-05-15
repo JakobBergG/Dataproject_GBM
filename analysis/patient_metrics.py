@@ -71,7 +71,7 @@ def get_patient_metrics(patientfolder : str, journal_info : dict) -> dict:
     patient_id = os.path.basename(patientfolder)
     output_patient_folder = utils.get_output_patient_path(patient_id)
     
-    # Load all GTVs 
+    # Find all GTVs and save in list'
     
     gtv_path = os.path.join(output_patient_folder, local_path_gtv)
     gtv_filelist =[ f.path for f in os.scandir(gtv_path) if f.is_file() ]
@@ -80,6 +80,8 @@ def get_patient_metrics(patientfolder : str, journal_info : dict) -> dict:
     for pathstr in gtv_filelist:
         if os.path.basename(pathstr).endswith('_gtv.nii.gz'):
             gtvlist.append(pathstr)
+
+    # Now load RTDOSE and CT scans
 
     # check if no CT scan. if this is the case, stop
     # assume no CT to start with
@@ -216,7 +218,10 @@ def get_patient_metrics(patientfolder : str, journal_info : dict) -> dict:
             if "RTdoseplan" in info:
                 info["target_dose_correct"] = target_dose == info["RTdoseplan"]
             
+
             # 95% percentage overlap 
+            # and Classical type of recurrence
+
             gtv_resliced = utils.reslice_image(gtv, rtdose, is_label = True)
             dose_95 = metrics.dose_percentage_region(rtdose, target_dose, 0.95)
             try:
@@ -227,14 +232,10 @@ def get_patient_metrics(patientfolder : str, journal_info : dict) -> dict:
                 log.error(f"{str(e)} at timepoint {timepoint}")
                 raise Exception(f"{str(e)} at timepoint {timepoint}")
             
-            #Classical type of recurrence
-            
-            
-            
-            # Find baseline gtv
-            gtv_baseline = sitk.ReadImage(info["time2"]["filename"])
-            
-            # Type of recurrence 
+
+            # Type of recurrence, visual scoring
+                        
+            gtv_baseline = sitk.ReadImage(info["time2"]["filename"]) # Find baseline gtv
             label_image_resliced = utils.reslice_image(label_image, gtv_baseline, is_label = True)
             recurrence_type = metrics.type_recurrence(label_image_resliced, gtv_baseline)
             info["recurrence_type_guess"] = recurrence_type
@@ -242,12 +243,12 @@ def get_patient_metrics(patientfolder : str, journal_info : dict) -> dict:
             if "ProgressionType" in info:
                 info["recurrence_type_correct"] = recurrence_type == info["ProgressionType"]
             
-            # Hausdorff
+            # Hausdorff distance
             hd, hd95 = metrics.get_hd(gtv_baseline, gtv)
             timepoint_info["hd"] = hd
             timepoint_info["hd95"] = hd95
         
-    # Calculate growth and growth rate between timpoints
+    # Calculate growth and growth rate between timepoints
     # Find first available scan and baseline scan and use as baselines
     first_time = TIME_POINTS[0]
     first_time_stamp = info[first_time]["time"]
@@ -297,7 +298,7 @@ def run_patient_metrics(patient_folder : str):
     Open the .json file with path metrics_path, calculate the metrics, add them
     to the .json file at output_name, and save it again
     '''
-    # load journal info for all patients
+    # get journal info
     
     patient_id = os.path.basename(patient_folder)
     log.info(f"\nCalculating metrics for patient {patient_id}")
