@@ -140,7 +140,7 @@ def main():
     try:
         analysis.patient_metrics_to_csv.convert_json_to_csv(
             patient_metrics_filename + ".json",
-            patient_metrics_filename + ".csv"
+            patient_metrics_filename + "_flattened.csv"
             )
     except Exception as e:
         log.error(f"Converting patient metrics json to csv failed. Error message: {str(e)}")
