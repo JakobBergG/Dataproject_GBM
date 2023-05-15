@@ -179,8 +179,7 @@ The pipeline is run by running the script 'pipeline.py'. To specify settings suc
     "minimum_lession_size": 20,
     "path_data": ".../glioblastoma/input_data/",
     "path_journal": "info/gbm_treatment_info.csv",
-    "path_output": "output/",
-
+    "path_output": "output/"
 }
 ```
 When the above-mentioned process has been done, the pipeline can be executed by running the 'pipeline.py' file. 
