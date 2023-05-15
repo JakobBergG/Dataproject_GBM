@@ -17,7 +17,7 @@ def volume_mask_cc(image : sitk.Image) -> float:
 
 
 def volume_component_cc(image : sitk.Image) -> list:
-    '''Get volume pr. lession from component image in cubic centimetres'''
+    '''Get volume pr. lesion from component image in cubic centimetres'''
     spacing = image.GetSpacing()
     
     stats = sitk.LabelShapeStatisticsImageFilter()
