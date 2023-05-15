@@ -22,8 +22,9 @@ def volume_component_cc(image : sitk.Image) -> list:
     
     stats = sitk.LabelShapeStatisticsImageFilter()
     stats.Execute(image)
-    component_sizes = [spacing[0] * spacing[1] * spacing[2] * stats.GetNumberOfPixels(l) /1000 for l in stats.GetLabels()]
+    component_sizes = [spacing[0] * spacing[1] * spacing[2] * stats.GetNumberOfPixels(l) / 1000 for l in stats.GetLabels()]
     return component_sizes
+
 
 def mask_overlap(image1 : sitk.Image, image2 : sitk.Image) -> float:
     '''Get percentage of overlap between gtv and (95%) dose'''
@@ -32,6 +33,7 @@ def mask_overlap(image1 : sitk.Image, image2 : sitk.Image) -> float:
         return volume_mask(image2*image1) / vol1
     else:
         raise Exception("Volune of mask is 0")
+
 
 def dose_percentage_region(dose_image : sitk.Image, target_intensity : float, percentage : float = 0.95) -> float:
     '''Create a mask of where the dose is above a certain percentage of the
@@ -75,15 +77,12 @@ def label_image_connected_components(gtv_image : sitk.Image, minimum_lesion_size
     return  label_image, n_normal_lesions, n_tiny_lesions
 
 
-
 def type_recurrence(label_image : sitk.Image, baseline : sitk.Image) -> int:
-    '''Get type of recurrence. 
+    '''Get type of recurrence by using the visual scoring method.
     Type1: Local recurrence. (Overlap between baseline and recurrence GTV)
     Type3: Distant recurrence. (No overlap)
     Type2: Both local and distant recurrence
     '''
-
-
     stats = sitk.LabelShapeStatisticsImageFilter()
     stats.Execute(label_image)
     labels = stats.GetLabels()
@@ -102,6 +101,7 @@ def type_recurrence(label_image : sitk.Image, baseline : sitk.Image) -> int:
     elif local > 0:
         return 1
 
+
 def classical_type_recurrence(percentage):
     '''Classical type of recurrence:
         Central: >95% of recurrence gtv within 95% isodose area
@@ -117,6 +117,7 @@ def classical_type_recurrence(percentage):
         return "Marginal"
     else: 
         return "Distant"
+
 
 def get_hd(baseline : sitk.Image,rec : sitk.Image) -> tuple:
     '''Get hausdorff distance between tumor area at baseline and tumor area at recurrence
