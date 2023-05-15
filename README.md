@@ -160,7 +160,7 @@ In order to run the pipeline on a dataset the data of the different patients mus
     - 3443_20230629_RTDOSE_res.nii.gz
     - 3443_20230701_MR_res.nii.gz
     - 3443_20230704_MR_res.nii.gz
-.
+  ...
 
 ```
 
