@@ -129,7 +129,7 @@ def get_patient_metrics(patientfolder : str, journal_info : dict) -> dict:
         else:
             log.warning(f"Date for {timepoint} does not have matching scan")
             info["flags"].append(f"bad_date_match_at_{timepoint}")
-            
+             
            
 
     # add subdictionary for each time point which can be filled with metric values
@@ -165,6 +165,9 @@ def get_patient_metrics(patientfolder : str, journal_info : dict) -> dict:
     # for each time point, update time value to use relative time to time2 (in days)
     # Raise error if scan at baseline or recurrence is missing.
     # warning if we are missing a scan at another timepoint.
+    
+    patient_timepoints = []
+    
     if "time3" not in info:
         log.error("No scan found at recurrence timepoint for patient {patient_id}")
         raise Exception("No scan found at recurrence timepoint for patient {patient_id}")
@@ -176,10 +179,10 @@ def get_patient_metrics(patientfolder : str, journal_info : dict) -> dict:
         for timepoint in TIME_POINTS:
             if timepoint in info:
                 info[timepoint]["time"] = utils.date_to_relative_time(info[timepoint]["time"], base_date)
+                patient_timepoints.append(timepoint)
             else:
                 log.warning(f"Warning: missing time point {timepoint} for patient {patient_id}")
                 info["flags"].append(f"no_{timepoint}")
-                TIME_POINTS.remove(timepoint)
 
     # save information from journal info
     for key, value in journal_info.items():
@@ -190,7 +193,7 @@ def get_patient_metrics(patientfolder : str, journal_info : dict) -> dict:
     # CALCULATE METRICS FOR PATIENT
     # -----------------------------
 
-    for timepoint in TIME_POINTS:
+    for timepoint in patient_timepoints:
         if timepoint not in info:
             continue
 
@@ -249,7 +252,7 @@ def get_patient_metrics(patientfolder : str, journal_info : dict) -> dict:
         
     # Calculate growth and growth rate between timepoints
     # Find first available scan and baseline scan and use as baselines
-    first_time = TIME_POINTS[0]
+    first_time = patient_timepoints[0]
     first_time_stamp = info[first_time]["time"]
     first_cc = info[first_time]["total_volume_cc"]
     baseline_cc = info["time2"]["total_volume_cc"]
@@ -262,7 +265,7 @@ def get_patient_metrics(patientfolder : str, journal_info : dict) -> dict:
         log.warning(f"Volume of baseline gtv is 0 for patient {patient_id}")
         info["flags"].append("baseline_cc_zero")
     else:
-        for i in TIME_POINTS:
+        for i in patient_timepoints:
             stamp = info[i]["time"]
             time_dif = stamp - first_time_stamp
             cc = info[i]["total_volume_cc"]
