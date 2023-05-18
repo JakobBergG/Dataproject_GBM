@@ -105,6 +105,9 @@ Each patient in our data has been visually scored in this manner by a clinical p
 
 ## Result From Running on Data
 [Hvor mange objekter blev fjernet i cleanup brain masks på vores data]
+
+In total, 84 brain mask predictions had small connected components not connected to the main brain. The total number of MR and CT scans in our dataset was 811, so 10.4% of the scans needed to be cleaned up. [HVAD BETYDER DETTE FOR KVALITETEN AF BRAIN SEGMENTATION?]
+
 [Hvordan klarer registrering sig - histogram]
 ![](readme_images/msd_histogram.png)
 Her vil det desuden være fint med en kvalitativ beskrivelse af de registreringer, der er dårlige. Kan man desuden sætte en grænse for MSD, der afgør, om en registrering er god eller dårlig?
