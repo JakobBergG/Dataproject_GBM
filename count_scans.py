@@ -13,13 +13,6 @@ n_mr = 0
 n_rtdose = 0
 n_patient = 0
 
-endings_to_consider = [
-    "_MR_res.nii.gz",
-    "_CT_res.nii.gz",
-    "_RTDOSE_res.nii.gz"
-]
-
-
 for patient_folder in patient_folders:
     n_patient += 1
     files = [f.path for f in os.scandir(patient_folder) if f.is_file]
