@@ -24,7 +24,7 @@ for patient_folder in patient_folders:
     n_patient += 1
     files = [f.path for f in os.scandir(patient_folder) if f.is_file]
     for file in files:
-        file_name = os.path.basename(files)
+        file_name = os.path.basename(file)
         if file_name.endswith("_MR_res.nii.gz"):
             n_mr += 1
         elif file_name.endswith("_CT_res.nii.gz"):
