@@ -4,6 +4,10 @@ output/
 settings.json
 
 
+# R extensions
+.RData
+.Rhistory
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
