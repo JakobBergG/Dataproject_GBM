@@ -113,6 +113,8 @@ In total, 84 brain mask predictions had small connected components not connected
 Her vil det desuden være fint med en kvalitativ beskrivelse af de registreringer, der er dårlige. Kan man desuden sætte en grænse for MSD, der afgør, om en registrering er god eller dårlig?
 [Hvordan passer Anouks recurrence type med vores automatiske gæt?]
 
+![](readme_images/recurrence_type_confusion_matrix.png)
+
 ## Technical details
 The rest of this document describes how to actually set up and run the pipeline.
 
