@@ -97,10 +97,16 @@ Finally, the type of recurrence is also categorized in two different ways:
 **A visual scoring categorization of the recurrence type**, where the overlap between the recurring GTV at 'time3' is compared to the baseline GTV at 'time2'. The recurrence type falls into one of three categories:
 
 - 1. Local-only: The recurring GTV has any overlap with the baseline GTV 
-- 2. Combined: Both local-only and non-local recurrence lesions are present (note this requires at least two recurrence lesions)
+- 2. Combined: Both local-only and non-local recurrence lesions are present
 - 3. Non-local: The recurring GTV has no overlap with the baseline GTV
 
-Each patient in our data has been visually scored in this manner by a clinical professional. Because of this, we cannot expect perfect consistency with the above definition. Nonetheless, the pipeline automatically categorizes the tumor according to the definition, and the automatic categorization is checked against the clinical definition as a quality check.
+Each patient in our data has been visually scored by a clinical professional. The definition of the different categories when scored based on visual analysis from a clinical professional is slightly different from the above mentioned definitions. They are as follows:
+
+- 1. Local-only: The recurring GTV is connected to the surgical cavity, i.e. the empty space from where the tumor was removed in surgery
+- 2. Combined: Both local-only and non-local recurrence lesions are present
+- 3. Non-local: The recurring GTV is not connected to the area of the surgical cavity
+
+The reason that the clinical definition isn’t used in the automatic categorization is given by the fact that it isn’t possible to separate the surgical cavity from the GTV’s in the automatic segmentation. We cannot expect perfect consistency between the two above definitions. Nonetheless, the pipeline automatically categorizes the tumor according to the first definition, and the automatic categorization is checked against the clinical definition as a quality check. 
 
 
 ## Result From Running on Data
