@@ -141,7 +141,7 @@ As mentioned in the [data analysis](#data-analysis) section, an automatic catego
 
 We should expect to see at least some consistency between the predictions and the target values, even though slightly different definitions are used for the target and prediction values. 
 
-![](readme_images/recurrence_type_confusion_matrix.png)
+![](readme_images/recurrence_type_confusion_matrix.png){width=50%}
 
 
 
