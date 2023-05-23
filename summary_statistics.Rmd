@@ -38,9 +38,23 @@ mean(recurrence_type_correct)
 Confusion matrix for "visual scoring"-type recurrence type guesses
 ```{r}
 library(cvms)
+library(dplyr)
 
-conf_mat <- confusion_matrix(targets = metrics$ProgressionType,
-                             predictions = metrics$recurrence_type_guess)
+t <- metrics$ProgressionType
+targets <- t %>% 
+  replace(t == 1, "Local-only") %>% 
+  replace(t == 2, "Combined") %>% 
+  replace(t == 3, "Non-local")
+p <- metrics$recurrence_type_guess
+
+predictions <- p %>% 
+  replace(p == 1, "Local-only") %>% 
+  replace(p == 2, "Combined") %>% 
+  replace(p == 3, "Non-local") 
+
+
+conf_mat <- confusion_matrix(targets = targets,
+                             predictions = predictions)
 
 plot_confusion_matrix(conf_mat$`Confusion Matrix`[[1]], add_sums=TRUE)
 ```
