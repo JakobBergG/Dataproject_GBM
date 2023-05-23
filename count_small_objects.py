@@ -30,5 +30,7 @@ for label_image in mr_files:
         print(f"{n} små objekter (MR) i {label_image}")
         mr_scans_with_small_objects +=1
 
+print(f"{ct_scans_with_small_objects =}")
+print(f"{mr_scans_with_small_objects =}")
 
 
