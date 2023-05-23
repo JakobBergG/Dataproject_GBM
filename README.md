@@ -1,6 +1,6 @@
 # README
 
-Following is a description on how to use and the different steps of our data analysis pipeline which takes in radiology scans (MR and CT) from patients suffering from glioblastoma and returns an analysis of relevant metrics based on the scans.
+The following is a description of the different steps of our data analysis pipeline as well as a guide on how to execute it. The pipeline takes in radiology scans (MR and CT) from patients suffering from glioblastoma and returns an analysis of relevant metrics based on the scans.
 
 
 ## Description of the pipeline
@@ -17,7 +17,7 @@ For each patient, the pipeline takes as input up to four MR scans from different
 ![](readme_images/MRandCTExa.png)
 
 
-The table below gives an overview of the possible different scans for each patient. It shows the chronological order of the scans, what type of scan is made at each time stamp, a description of each scan and what the different time stamps are called in the code. Some patients don't have all of the below mentioned scans. 
+The table below gives an overview of the possible different scans for each patient. It shows the chronological order of the scans, what type of scan is made at each time stamp, a description of each scan and what the different time stamps are called in the code. Some patients do not have all of the below mentioned scans. 
 
 
 | Name in code | Title        | Description                                         | Scan type(s) |
@@ -28,7 +28,7 @@ The table below gives an overview of the possible different scans for each patie
 | time3        | Recurrence   | Scan from when the tumor  is starting to recure.    | MR           |
 
 
-Besides the scans, the pipeline also takes a patient journal for each patient as input. This journal includes information about the dates of the different scans as well as the treatment intensity. The section "Technical Details" below describes this journal and the required format of the input data in further detail.
+Besides the scans, the pipeline also takes a patient journal for each patient as input. This journal includes information about the dates of the different scans as well as the treatment intensity. The section [Technical details](#technical-details) below describes this journal and the required format of the input data in further detail.
 
 
 ### Brain Segmentation (MR and CT)
@@ -96,33 +96,72 @@ Finally, the type of recurrence is also categorized in two different ways:
 
 **A visual scoring categorization of the recurrence type**, where the overlap between the recurring GTV at 'time3' is compared to the baseline GTV at 'time2'. The recurrence type falls into one of three categories:
 
-- 1. Local-only: The recurring GTV has any overlap with the baseline GTV 
-- 2. Combined: Both local-only and non-local recurrence lesions are present
-- 3. Non-local: The recurring GTV has no overlap with the baseline GTV
+1. Local-only: The recurring GTV has any overlap with the baseline GTV 
+2. Combined: Both local-only and non-local recurrence lesions are present
+3. Non-local: The recurring GTV has no overlap with the baseline GTV
 
 Each patient in our data has been visually scored by a clinical professional. The definition of the different categories when scored based on visual analysis from a clinical professional is slightly different from the above mentioned definitions. They are as follows:
 
-- 1. Local-only: The recurring GTV is connected to the surgical cavity, i.e. the empty space from where the tumor was removed in surgery
-- 2. Combined: Both local-only and non-local recurrence lesions are present
-- 3. Non-local: The recurring GTV is not connected to the area of the surgical cavity
+1. Local-only: The recurring GTV is connected to the surgical cavity, i.e. the empty space from where the tumor was removed in surgery
+2. Combined: Both local-only and non-local recurrence lesions are present
+3. Non-local: The recurring GTV is not connected to the area of the surgical cavity
 
-The reason that the clinical definition isn’t used in the automatic categorization is given by the fact that it isn’t possible to separate the surgical cavity from the GTV’s in the automatic segmentation. We cannot expect perfect consistency between the two above definitions. Nonetheless, the pipeline automatically categorizes the tumor according to the first definition, and the automatic categorization is checked against the clinical definition as a quality check. 
+The reason that the clinical definition isn not used in the automatic categorization is due to the fact that it is not possible to separate the surgical cavity from the GTV’s in the automatic segmentation. We therefore cannot expect perfect consistency between the two above definitions. Nonetheless, the pipeline automatically categorizes the tumor according to the first definition, and the automatic categorization is checked against the clinical definition as a quality check. 
 
 
 ## Result From Running on Data
 
-In total, 84 brain mask predictions had small connected components not connected to the main brain. The total number of MR and CT scans in our dataset was 811, so 10.4% of the scans needed to be cleaned up. This could due to the training data brain masks also having small components outside the of the brain, but after cleaning the brain masks, it does not seem to yield any problems. 
+The pipeline was used on scans from 175 different patients from Aarhus University Hospital (AUH) suffering from GBM. Here, the total number of scans amounted to 638 MR scans and 173 CT scans. Note that some patients did not have all of the five different scans described in section [Input data](#input-data) . Beside the scans, the data in the test run also consisted of a patient journal containing the required information (see the section on [required data and format](#required-data-and-format)) about the 175 patients and 173 RTDOSE files. All the data was preprocessed to comply with the required structure as described in the section [Required data and format](#required-data-and-format).
 
-[Hvordan klarer registrering sig - histogram]
+The three following subsections describe three different ways of measuring how the pipeline performed on the data.
+
+### Small objects outside brain masks
+
+During the process of [brain segmentation](#brain-segmentation-mr-and-ct) on the AUH data, a total of 84 brain mask predictions had small connected components not connected to the main brain. The total number of MR and CT scans in our dataset was 811, so 10.4% of the scans needed to be cleaned up. This is possibly caused by a small subset (3 CT scans and 24 MR scans) of the training material also having small objects outside the brain. The prediction error did not, however, prove to be an issue after the brain mask cleaning.
+
+### Registration performance
+
+As seen in the histogram, most [registrations](#registration-mr-to-ct-grid) have mean surface distance (MSD) scores below 3. In general, these are good registrations. If the MSD score is large, it is typically one of these two cases:
+
 ![](readme_images/msd_histogram.png)
-Her vil det desuden være fint med en kvalitativ beskrivelse af de registreringer, der er dårlige. Kan man desuden sætte en grænse for MSD, der afgør, om en registrering er god eller dårlig?
-[Hvordan passer Anouks recurrence type med vores automatiske gæt?]
+
+**A.** A small number of the MR scans have incomplete brain masks, which causes the MSD between the brain masks to be large. For most examples in this case the registration is fine, so the large MSD is not an issue. However, something might have caused the brain mask to be incomplete, so the analysis might be flawed, but the registration will still do fine. Below is an example of a good registration with an incomplete brain mask. Here the MSD is 6.57 mm.
+
+![](readme_images/good_registration_bad_msd.png)
+
+**B.** The MR scan is rotated in comparison to the CT scan, and the registration has not been able to fix the rotation issue. In this case the MSD reflects the performance of the registration, and the bad registration can cause the data analysis to be flawed. Below is an example of a bad registration with a rotation issue. Here the MSD is 5.65 mm.
+
+![](readme_images/registration_rotation.png)
+
+
+
+### Accuracy of automatic recurrence type categorization
+
+As mentioned in the [data analysis](#data-analysis) section, an automatic categorization of the recurrence corresponding to the visual scoring is performed for each patient. The below confusion matrix illustrates how the predictions compare to the true target values. 
+
+We should expect to see at least some consistency between the predictions and the target values, even though slightly different definitions are used for the target and prediction values. 
 
 ![](readme_images/recurrence_type_confusion_matrix.png)
 
 
 
+Each of the nine cells in the top-left represents a combination of a combination between a prediction and a target. 
+
 ![](readme_images/confusion_highlight.png)
+
+For example, 19 out of 158 or 12 % of all prediction-target pairs were “non-local”-”combined”, that is, the target was “non-local” and the prediction “combined”. Out of all the “non-local” targets, 70.4% were predicted to be “combined”, and out of all the recurrence types predicted as “combined”, 29.2% were in fact “non-local”.
+
+The green column and row represent the sum of each row or column, respectively.
+
+In total, 56.9% of the predictions were correct. It is apparent immediately that the guesses are far from perfect. In fact, a naive model only predicting “local-only” would have an accuracy of 65.2%. However, because the guesses are based on automatic segmentation and registration, and because the targets and predictions cannot be compared one-to-one, the results are not terrible. They do allow us to identify a few issues, however. 
+
+Firstly, the model has only predicted “non-local” once even though 27 out of 158 patients had “non-local” recurrences. One of the primary reasons for this is the difference in the definition of the three recurrence types between the automatic categorization and the clinical. As explained previously in the section [Data analysis](#data-analysis), this is because it is not possible to separate the surgical cavity from the GTV when performing GTV segmentation. This causes the surgical cavity to be segmented as part of the GTV, which in turn affects the categorization.
+
+Secondly, the model has categorized 30 “local-only” recurrences as being “combined”. This can also be explained by the fact that the surgical cavity may be marked in the GTV segmentation, as illustrated in the following scenario: Assume that a patient has a recurrence that is truly “non-local”. The GTV segmentation will then mark the new, non-local lesion, but it will also mark the surgical cavity as being GTV. This leads to one “non-local” lesion (the true new lesion) and one “local” lesion (the surgical cavity being categorized as GTV), thus giving a categorization as “combined”.
+
+### ??? Small conclusion : How do we think the pipeline performs, and how can it potentially be improved
+
+???
 
 ## Technical details
 
@@ -132,12 +171,12 @@ The rest of this document describes how to actually set up and run the pipeline.
 The file 'requirements.txt' can be used to create a conda environment with the required python packages.
 
 ### nnU-Net
-The pipeline uses the deep learning software nnU-Net to perform brain and GTV segmentation. A guide on how to set up and train a nnU-Net model, as needed in the pipeline, can be found at the GitHub site for nnU-Net: https://github.com/MIC-DKFZ/nnUNet.  
+The pipeline uses the deep learning software nnU-Net to perform brain and GTV segmentation. A guide on how to set up and train a nnU-Net model, as needed in the pipeline, can be found at the [GitHub site for nnU-Net](https://github.com/MIC-DKFZ/nnUNet). 
 
 The pipeline assumes that there are 3 available nnU-Net models present on the machine on which it is run: One for CT brain segmentation, one for MR brain segmentation and one for GTV segmentation. Our models was trained on 638 MR scans and 173 CT scans from Aarhus University Hospital (AUH). 
 
 ### Required data and format
-Both the MR and CT scans from the patients must be in compressed Neuroimaging Informatics Technology Initiative format also known as NIfTi. Files in this format have the following filename extension: ".nii.gz". The files further need to have the correct naming in order for the pipeline to be able to calculate the relevant metrics. The naming needs to correspond to the following structure: 
+Both the MR and CT scans from the patients must be in compressed Neuroimaging Informatics Technology Initiative format also known as NIfTi. Files in this format have the  filename extension `.nii.gz`. The files further need to have the correct naming in order for the pipeline to be able to calculate the relevant metrics. The naming needs to correspond to the following structure: 
 
 ​	`PATIENT-IDENTIFIER`_`DATE_TYPE`.`FILE-EXTENSION`
 
