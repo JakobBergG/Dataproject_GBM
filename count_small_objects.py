@@ -15,11 +15,11 @@ def size_second_largest(label_file : str, ignore_threshold = 5) -> bool:
     '''
     label_image = sitk.ReadImage(label_file)
     connected_component = sitk.ConnectedComponentImageFilter()
-    connected_component.Execute(label_image)
+    component_image = connected_component.Execute(label_image)
     n = connected_component.GetObjectCount()
     if n >= 2:
         stats = sitk.LabelShapeStatisticsImageFilter()
-        stats.Execute(label_image)
+        stats.Execute(component_image)
         component_sizes = sorted([stats.GetNumberOfPixels(l) for l in stats.GetLabels()], reverse=True)
         if component_sizes[1] > ignore_threshold: # er den andenstørste for stor?
             return component_sizes[1]
