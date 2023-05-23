@@ -114,7 +114,12 @@ Her vil det desuden være fint med en kvalitativ beskrivelse af de registreringe
 
 ![](readme_images/recurrence_type_confusion_matrix.png)
 
+
+
+![](readme_images/confusion_highlight.png)
+
 ## Technical details
+
 The rest of this document describes how to actually set up and run the pipeline.
 
 ### Python environment
