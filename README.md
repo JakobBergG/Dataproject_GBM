@@ -12,7 +12,7 @@ The figure below illustrates the input and resulting output of each step in the 
 
 ### Input Data
 
-For each patient, the pipeline takes as input up to four MR scans from different timepoints as well as a single CT scan. The scans are 3D images. Whereas 2D images are made up of pixels, 3D images are made up of voxels. Each voxel represents the brightness in the scan of a small cuboid volume. The number and size of the voxels vary with each scan, but a typical MR scan is 520 $\times$ 520 $\times$ 176 voxels with each voxel having a size of 0.5mm  $\times$ 0.5mm  $\times$ 1.0mm. An example of a MR scan and a CT scan can be seen in the below illustration.
+For each patient, the pipeline takes as input up to four MR scans from different timepoints as well as a single CT scan and a RTDOSE file, which holds info on the radiation therapy planning. The scans are 3D images. Whereas 2D images are made up of pixels, 3D images are made up of voxels. Each voxel represents the brightness in the scan of a small cuboid volume. The number and size of the voxels vary with each scan, but a typical MR scan is 520 $\times$ 520 $\times$ 176 voxels with each voxel having a size of 0.5mm  $\times$ 0.5mm  $\times$ 1.0mm. An example of a MR scan and a CT scan can be seen in the below illustration.
 
 ![](readme_images/MRandCTExa.png)
 
@@ -36,7 +36,7 @@ The first step of the pipeline is brain segmentation. The pipeline activates the
 
 ![](readme_images/brainsegmentation.png)
 
-The brain segmentations may include small separate objects, that are not actually part of the brain, in the brain mask. [HOW MANY? IS IT A BIG PROBLEM?] For this reason, any small objects not part of the brain are removed using the function `cleanup_brain_mask` which is located in the script `brain_segmentation/cleanup_brain_masks.py`. If two neighboring voxels are 1, i.e. segmented as brain, they are considered to be in the same component. Using SimpleITK's ConnectedComponentImageFilter all components in the brain segmentation are found and labeled. If more than one component is present, the largest component is kept, since this will be the actual brain. Any other components are removed. A brain mask before and after cleanup is illustrated below. Note this is one of the more severe examples and not representative of most scans.
+The brain segmentations may include small separate objects, that are not actually part of the brain, in the brain mask. For this reason, any small objects not part of the brain are removed using the function `cleanup_brain_mask` which is located in the script `brain_segmentation/cleanup_brain_masks.py`. If two neighboring voxels are 1, i.e. segmented as brain, they are considered to be in the same component. Using SimpleITK's ConnectedComponentImageFilter all components in the brain segmentation are found and labeled. If more than one component is present, the largest component is kept, since this will be the actual brain. Any other components are removed. A brain mask before and after cleanup is illustrated below. Note this is one of the more severe examples and not representative of most scans.
 
 
 ![](readme_images/cleanmask.png)
@@ -104,9 +104,8 @@ Each patient in our data has been visually scored in this manner by a clinical p
 
 
 ## Result From Running on Data
-[Hvor mange objekter blev fjernet i cleanup brain masks på vores data]
 
-In total, 84 brain mask predictions had small connected components not connected to the main brain. The total number of MR and CT scans in our dataset was 811, so 10.4% of the scans needed to be cleaned up. [HVAD BETYDER DETTE FOR KVALITETEN AF BRAIN SEGMENTATION?]
+In total, 84 brain mask predictions had small connected components not connected to the main brain. The total number of MR and CT scans in our dataset was 811, so 10.4% of the scans needed to be cleaned up. This could due to the training data brain masks also having small components outside the of the brain, but after cleaning the brain masks, it does not seem to yield any problems. 
 
 [Hvordan klarer registrering sig - histogram]
 ![](readme_images/msd_histogram.png)
