@@ -59,12 +59,16 @@ def main():
     analysis.patient_metrics.setup(patient_metrics_filename + ".json")
     # Find all the patient folders in the main data folder
     patient_folders = [f.path for f in os.scandir(basepath) if f.is_dir()]
+
+    rotation_issue_patients = [4404, 5133, 4375, 4464, 4490, 5061, 5274]
+
     # Run piepeline for all patients
     for patient_folder in patient_folders:
         patient_id = os.path.basename(patient_folder)
-        # Execute the entire pipeline for the patient
-        log.info(f"Starting pipeline execution for patient {patient_id}")
-        run_pipeline(patient_folder)
+        if patient_id in rotation_issue_patients:
+            # Execute the entire pipeline for the patient
+            log.info(f"Starting pipeline execution for patient {patient_id}")
+            run_pipeline(patient_folder)
 
     # Stuff to do after the pipeline has been run for all patients:
 
