@@ -134,7 +134,22 @@ def main():
     patient_ids = [os.path.basename(patient_folder) for patient_folder in patient_folders]
 
     # Section that prints settings to user and asks if it is OK
-    log.info(f'''The following steps of the pipeline will be run:
+
+    log.info(f'''
+    Looking for patient folders in the input data folder:
+        {os.path.abspath(utils.get_path("path_data"))}
+    
+    Looking for patient journal info at:
+        {os.path.abspath(utils.get_path("path_info"))}
+
+    Output will be saved to the output folder
+        {os.path.abspath(utils.get_path("path_output"))}
+    
+    Logfile will be saved at:
+        {log_path}
+    ''')
+
+    log.info(f'''\nThe following steps of the pipeline will be run:
     Brain segmentation: {utils.get_setting("run_brain_segmentation")}
     Cleanup brain masks: {utils.get_setting("run_cleanup_brain_masks")}
     Skull stripping: {utils.get_setting("run_skull_stripping")}
