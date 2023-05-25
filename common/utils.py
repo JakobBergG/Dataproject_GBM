@@ -39,7 +39,7 @@ settings = {
     "run_registration_evaluation": True, #also includes sorting MSD values and creating histogram in the end
     "run_data_analysis": True, # also includes flattening to csv in the end
 
-    "only_run_selected_patients": True,
+    "only_run_selected_patients": False,
     "selected_patients": ["0114", "0540"]
 }
 

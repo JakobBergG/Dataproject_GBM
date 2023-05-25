@@ -144,9 +144,12 @@ def main():
     Data analysis: {utils.get_setting("run_data_analysis")}
     ''')
 
-    log.info(f'''\nThe pipeline will be run for the following {len(patient_ids)} patients:
-    {patient_ids}
-    ''')
+    if utils.get_setting("only_run_selected_patients"):
+        log.info(f'''\nThe pipeline will be run for the following {len(patient_ids)} patients:
+        {patient_ids}
+        ''')
+    else:
+        log.info(f"The pipeline will be run for all {len(patient_ids)} patients.")
 
     settings_to_print = ["task_id_brain_segmentation_ct",
                          "task_id_brain_segmentation_mr",
@@ -162,8 +165,8 @@ def main():
     settings_string = ",\n".join(f"{key}: {value}" \
                                 for key, value in utils.settings.items() \
                                 if key in settings_to_print)
-    log.info(f'''\nYou have selected the following settings:
-    {settings_string}
+    log.info(f'''\nYou have selected the following settings: 
+{settings_string}
     ''')
     log.info("(settings can be changed in settings.json)")
     print("Do you wish to run the pipeline with these settings? To continue, type: yes")
