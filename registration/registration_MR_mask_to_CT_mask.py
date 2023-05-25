@@ -200,6 +200,8 @@ def register_MR_to_CT(patient_folder : str):
         elastix = sitk.ElastixImageFilter()
         elastix.SetFixedImage(ct_stripped)
         elastix.SetMovingImage(mr_stripped)
+
+        elastix.SetFixedMask(ct_mask_dilated)
         
         # activate log file and define output folder and parameters.
         elastix.LogToFileOn()
