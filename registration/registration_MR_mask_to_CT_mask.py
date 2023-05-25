@@ -198,8 +198,8 @@ def register_MR_to_CT(patient_folder : str):
         # defining the images used in the first round of registration
         # we use the brain masks from the scans in the first round
         elastix = sitk.ElastixImageFilter()
-        elastix.SetFixedImage(ct_mask_dilated)
-        elastix.SetMovingImage(mr_mask_dilated)
+        elastix.SetFixedImage(ct_mask)
+        elastix.SetMovingImage(mr_mask)
         
         # activate log file and define output folder and parameters.
         elastix.LogToFileOn()
