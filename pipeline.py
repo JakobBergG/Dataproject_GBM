@@ -135,7 +135,8 @@ def main():
 
     # Section that prints settings to user and asks if it is OK
 
-    log.info(f'''Looking for patient folders in the input data folder:
+    log.info(f'''
+    Looking for patient folders in the input data folder:
         {os.path.abspath(utils.get_path("path_data"))}
     
     Looking for patient journal info at:
