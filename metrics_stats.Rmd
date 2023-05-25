@@ -1,0 +1,48 @@
+
+
+
+```{r}
+metrics <- read.csv2("output/patient_metrics_2023-05-15_12-19-10_flattened.csv")
+```
+
+Percentage of target dose matches journal
+
+```{r}
+target_dose_correct <- metrics$target_dose_correct == "True"
+mean(target_dose_correct)
+```
+
+
+Average number of lesions
+
+```{r}
+print(c("time0: ",toString(mean(metrics$time0_n_normal_lesions, na.rm=TRUE))))
+print(c("time1: ",toString(mean(metrics$time1_n_normal_lesions, na.rm=TRUE))))
+print(c("time2: ",toString(mean(metrics$time2_n_normal_lesions, na.rm=TRUE))))
+print(c("time3: ",toString(mean(metrics$time3_n_normal_lesions, na.rm=TRUE))))
+```
+
+```{r}
+print(c("time0: ",toString(mean(metrics$time0_n_tiny_lesions, na.rm=TRUE))))
+print(c("time1: ",toString(mean(metrics$time1_n_tiny_lesions, na.rm=TRUE))))
+print(c("time2: ",toString(mean(metrics$time2_n_tiny_lesions, na.rm=TRUE))))
+print(c("time3: ",toString(mean(metrics$time3_n_tiny_lesions, na.rm=TRUE))))
+```
+
+Percentage of correct "visual scoring"-type recurrence type guesses
+```{r}
+recurrence_type_correct <- metrics$recurrence_type_correct == "True"
+mean(recurrence_type_correct)
+```
+
+Confusion matrix for "visual scoring"-type recurrence type guesses
+```{r}
+library(cvms)
+
+conf_mat <- confusion_matrix(targets = metrics$ProgressionType,
+                             predictions = metrics$recurrence_type_guess)
+
+plot_confusion_matrix(conf_mat$`Confusion Matrix`[[1]], add_sums=TRUE)
+```
+
+
