@@ -25,6 +25,8 @@ log.addHandler(logging.StreamHandler(sys.stdout))
 
 
 def run_pipeline(patient_folder : str):
+
+    patient_id = os.path.basename(patient_folder)
     
     #-------------------------#
     # REGISTRATION (MR to CT) #
