@@ -237,6 +237,8 @@ def register_MR_to_CT(patient_folder : str):
         # we use the entire scans in the second round
         elastix.SetFixedImage(ct_image)
         elastix.SetMovingImage(mr_image)
+
+        elastix.SetFixedMask(ct_mask_dilated)
         
         # execute Elastix and save the moved MR file and the paramtermap used by Elastix
         mr_moved = elastix.Execute()
