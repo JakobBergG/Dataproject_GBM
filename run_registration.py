@@ -60,7 +60,7 @@ def main():
     # Find all the patient folders in the main data folder
     patient_folders = [f.path for f in os.scandir(basepath) if f.is_dir()]
 
-    rotation_issue_patients = [4404, 5133, 4375, 4464, 4490, 5061, 5274]
+    rotation_issue_patients = ['4404', '5133', '4375', '4464', '4490', '5061', '5274']
 
     # Run piepeline for all patients
     for patient_folder in patient_folders:
