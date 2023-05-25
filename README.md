@@ -122,7 +122,7 @@ During the process of [brain segmentation](#brain-segmentation-mr-and-ct) on the
 
 ## Registration performance
 
-As seen in the histogram, most [registrations](#registration-mr-to-ct-grid) have mean surface distance (MSD) scores below 3. In general, these are good registrations. If the MSD score is large, it is typically one of these two cases:
+As seen in the histogram, most [registrations](#registration-mr-to-ct-grid) have mean surface distance (MSD) scores below 3 mm. In general, these are good registrations. If the MSD score is large, it is typically one of these two cases:
 
 ![](readme_images/msd_histogram.png)
 
@@ -231,10 +231,19 @@ The pipeline is run by running the script `pipeline.py`. To specify settings suc
     "skull_stripping_dilation_radius_mr": [4, 4, 2], 
     "registration_dilation_radius_mr": [10, 10, 5],
     "registration_dilation_radius_ct": [5, 5, 5],
-    "minimum_lession_size": 20,
+    "minimum_lesion_size": 20,
     "path_data": ".../glioblastoma/input_data/",
     "path_journal": "info/gbm_treatment_info.csv",
-    "path_output": "output/"
+    "path_output": "output/",
+    "run_brain_segmentation": true,
+    "run_cleanup_brain_masks": true,
+    "run_skull_stripping": true,
+    "run_gtv_segmentation": true,
+    "run_registration": true,
+    "run_registration_evaluation": true,
+    "run_data_analysis": true, 
+    "only_run_selected_patients": true,
+    "selected_patients": ["0114", "0540"]
 }
 ```
 When the above-mentioned process has been done, the pipeline can be executed by running the 'pipeline.py' file. 
