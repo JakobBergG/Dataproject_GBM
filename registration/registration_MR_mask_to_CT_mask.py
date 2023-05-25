@@ -191,15 +191,15 @@ def register_MR_to_CT(patient_folder : str):
         # define specific parametermap for first round of registration
         parameterMapRigid['AutomaticTransformInitialization']= ['true']
         parameterMapRigid['AutomaticTransformInitializationMethod']= ['CenterOfGravity']
-        parameterMapRigid['Metric']= ['AdvancedKappaStatistic']
+        parameterMapRigid['Metric']= ['AdvancedMattesMutualInformation']
         parameterMapRigid['NumberOfResolutions']= ['3']
         parameterMapRigid['ImagePyramidSchedule']= ['16','16','16','8','8','8', '4','4','4']
         
         # defining the images used in the first round of registration
         # we use the brain masks from the scans in the first round
         elastix = sitk.ElastixImageFilter()
-        elastix.SetFixedImage(ct_mask)
-        elastix.SetMovingImage(mr_mask)
+        elastix.SetFixedImage(ct_stripped)
+        elastix.SetMovingImage(mr_stripped)
         
         # activate log file and define output folder and parameters.
         elastix.LogToFileOn()
