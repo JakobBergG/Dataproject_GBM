@@ -155,7 +155,7 @@ def register_MR_to_CT(patient_folder : str):
     ct_stripped = sitk.Mask(ct_image,ct_mask)
 
     
-    # we use the brainmask plus a margin of 20 mm around in the second round of registration
+    # we use the brainmask plus a margin of 20 mm around in the first round of registration
     ct_mask_dilated = dilate_filter_ct.Execute(ct_mask)
     
     for (mr_file, mr_mask, gtv_file)  in zip(mr_list, mr_masks, gtv_list):
@@ -180,9 +180,6 @@ def register_MR_to_CT(patient_folder : str):
         
         # strip MR image based on MR mask for first round of registration
         mr_stripped = sitk.Mask(mr_image,mr_mask)
-        
-        # we use the brainmask plus a margin of 20 mm around in the second round of registration
-        mr_mask_dilated = dilate_filter_mr.Execute(mr_mask)
 
         #-----------------------------#
         # First round of registration #
@@ -191,14 +188,18 @@ def register_MR_to_CT(patient_folder : str):
         # define specific parametermap for first round of registration
         parameterMapRigid['AutomaticTransformInitialization']= ['true']
         parameterMapRigid['AutomaticTransformInitializationMethod']= ['CenterOfGravity']
+        parameterMapRigid['Metric']= ['AdvancedMattesMutualInformation']
         parameterMapRigid['NumberOfResolutions']= ['3']
         parameterMapRigid['ImagePyramidSchedule']= ['16','16','16','8','8','8', '4','4','4']
         
         # defining the images used in the first round of registration
-        # we use skull-stripped versions of the scans in the first round
+        # we use the skull stripped scans in the first round
         elastix = sitk.ElastixImageFilter()
         elastix.SetFixedImage(ct_stripped)
         elastix.SetMovingImage(mr_stripped)
+
+        # we use the dilated ct mask as the area in which the loss function is evaluated
+        elastix.SetFixedMask(ct_mask_dilated)
         
         # activate log file and define output folder and parameters.
         elastix.LogToFileOn()
@@ -224,6 +225,7 @@ def register_MR_to_CT(patient_folder : str):
         
         # define specific parametermap for first second of registration
         parameterMapRigid['AutomaticTransformInitialization']= ['false']
+        parameterMapRigid['Metric']= ['AdvancedMattesMutualInformation']
         parameterMapRigid['NumberOfResolutions']= ['2']
         parameterMapRigid['ImagePyramidSchedule']= ['4','4','4', '2','2','2' ]         
         elastix.SetParameterMap(parameterMapRigid)
@@ -235,10 +237,6 @@ def register_MR_to_CT(patient_folder : str):
         # we use the entire scans in the second round
         elastix.SetFixedImage(ct_image)
         elastix.SetMovingImage(mr_image)
-        
-        # in this round we also use a moving and fixed mask.
-        elastix.SetFixedMask(ct_mask_dilated)
-        elastix.SetMovingMask(mr_mask_dilated)
         
         # execute Elastix and save the moved MR file and the paramtermap used by Elastix
         mr_moved = elastix.Execute()
