@@ -124,7 +124,7 @@ During the process of [brain segmentation](#brain-segmentation-mr-and-ct) on the
 
 As seen in the histogram, most [registrations](#registration-mr-to-ct-grid) have mean surface distance (MSD) scores below 2 mm. These are good registrations. If the MSD score is large, it is typically one of these two cases:
 
-![](readme_images/msd_histogram.png)
+![](readme_images/msd_histogram_final.png)
 
 **A.** A small number of the MR scans have incomplete brain masks, which causes the MSD between the brain masks to be large. For most examples in this case the registration is fine, so the large MSD is not an issue. However, something might have caused the brain mask to be incomplete, so the analysis might be flawed, but the registration will still do fine. Below is an example of a good registration with an incomplete brain mask. Here the MSD is 6.57 mm.
 
