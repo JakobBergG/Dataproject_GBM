@@ -122,7 +122,7 @@ During the process of [brain segmentation](#brain-segmentation-mr-and-ct) on the
 
 ## Registration performance
 
-As seen in the histogram, most [registrations](#registration-mr-to-ct-grid) have mean surface distance (MSD) scores below 3 mm. In general, these are good registrations. If the MSD score is large, it is typically one of these two cases:
+As seen in the histogram, most [registrations](#registration-mr-to-ct-grid) have mean surface distance (MSD) scores below 2 mm. These are good registrations. If the MSD score is large, it is typically one of these two cases:
 
 ![](readme_images/msd_histogram.png)
 
@@ -130,7 +130,7 @@ As seen in the histogram, most [registrations](#registration-mr-to-ct-grid) have
 
 ![](readme_images/good_registration_bad_msd.png)
 
-**B.** The MR scan is rotated in comparison to the CT scan, and the registration has not been able to fix the rotation issue. In this case the MSD reflects the performance of the registration, and the bad registration can cause the data analysis to be flawed. Below is an example of a bad registration with a rotation issue. Here the MSD is 5.65 mm.
+**B.** The MR scan is rotated in comparison to the CT scan, and the registration has not been able to fix the rotation issue. The bad registration might cause the analysis to be flawed. This problem is often combined with an incomplete brain mask, but there is one example of a bad registration, where the brain mask is fine. Here the MSD reflects the bad registration performance. Below is this example of a bad registration with a rotation issue. Here the MSD is 5.65 mm.
 
 ![](readme_images/registration_rotation.png)
 
@@ -210,7 +210,7 @@ Finally the pipeline needs a patient journal containing clinical data for each p
 ## Folder structure
 In order to run the pipeline on a dataset the data of the different patients must be stored in a certain folder structure. This is necessary to ensure that the different steps in the pipeline are able to locate the needed data. The entire dataset needs to be stored in a main input folder, which contains a subfolder for each patient. The names of the  different patient folders need to be distinct (e.g. patient id's), so the pipeline can separate the patients. In each patient folder the scans for the corresponding patient are stored. An example of this structure with the correct naming of the scans is shown below:
 
-```diff
+```
 - Main
   - 0114
     - 0114_20230504_MR_res.nii.gz
