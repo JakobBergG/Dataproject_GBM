@@ -230,7 +230,9 @@ In order to run the pipeline on a dataset the data of the different patients mus
 
 ## How to run
 
-The pipeline is run by running the script `pipeline.py`. To specify settings such as the path of the input data folder and the output folder, a `settings.json` file must be created. This file further needs to specify a task id which specifies the nn-Unet model to use for the specific tasks in the steps of the pipeline. Furthermore, the size in voxels of the dilation filters used in registration and skull-stripping can be specified. Lastly, one can also specify the minimum size in voxels required for a lesion to be considered a tumor. If nothing is specified, the default paths and settings defined in `utils.py` will be used. An example of a `settings.json` file can be seen below:
+The pipeline is run by running the script `pipeline.py`. To specify settings such as the path of the input data folder and the output folder, a `settings.json` file must be created. This file further needs to specify a task id which specifies the nn-Unet model to use for the specific tasks in the steps of the pipeline. Furthermore, the size in voxels of the dilation filters used in registration and skull-stripping can be specified. In the below example, both the MR and CT scans are dilated by 5 mm in each direction in registration, but the parameters are different. This is because the MR scans have a spacing of of 0.5mm$\times$0.5mm$\times$1.0mm, while CT scans have a spacing of 1.0mm$\times$1.0mm$\times$1.0mm. Lastly, one can also specify the minimum size in voxels required for a lesion to be considered a tumor (this is only used when calculating individual volumes of tumors).
+
+ If nothing is specified, the default paths and settings defined in `utils.py` will be used. An example of a `settings.json` file can be seen below:
 
 ```json
 {   
@@ -251,7 +253,7 @@ The pipeline is run by running the script `pipeline.py`. To specify settings suc
     "run_registration": true,
     "run_registration_evaluation": true,
     "run_data_analysis": true, 
-    "only_run_selected_patients": true,
+    "only_run_selected_patients": false,
     "selected_patients": ["0114", "0540"]
 }
 ```
