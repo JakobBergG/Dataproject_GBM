@@ -201,7 +201,7 @@ Finally the pipeline needs a patient journal containing clinical data for each p
 ## Folder structure
 In order to run the pipeline on a dataset the data of the different patients must be stored in a certain folder structure. This is necessary to ensure that the different steps in the pipeline are able to locate the needed data. The entire dataset needs to be stored in a main input folder, which contains a subfolder for each patient. The names of the  different patient folders need to be distinct (e.g. patient id's), so the pipeline can separate the patients. In each patient folder the scans for the corresponding patient are stored. An example of this structure with the correct naming of the scans is shown below:
 
-```diff
+```
 - Main
   - 0114
     - 0114_20230504_MR_res.nii.gz
