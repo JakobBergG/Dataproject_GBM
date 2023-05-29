@@ -203,8 +203,6 @@ Finally the pipeline needs a patient journal containing clinical data for each p
 - Radiotherapy Date: date of the radiotherapy planning scan.
 - Recurrence Date: date of the recurrence scan.
 - Radiotherapy dose: the dose of radiation given in gray (Gy). 
-- Patient age: age of the patient at diagnosis.
-- Sex: the gender of the patient.
 - Progression type: the type of progression lesions.
 
 ## Folder structure

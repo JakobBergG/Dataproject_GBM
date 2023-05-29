@@ -36,8 +36,6 @@ def load_journal_info_patients(path : str) -> dict:
         "RT_MRIDate": str,              # time 2
         "ProgressionDate": str,         # time 3
         "RTdoseplan": lambda x : int(float(re.sub(",", ".", x))),
-        "Age_at_diagn": lambda x : float(re.sub(",", ".", x)),
-        "Sex" : str,
         "ProgressionType": int
     }
 
