@@ -249,6 +249,11 @@ def get_patient_metrics(patientfolder : str, journal_info : dict) -> dict:
             hd, hd95 = metrics.get_hd(gtv_baseline, gtv)
             timepoint_info["hd"] = hd
             timepoint_info["hd95"] = hd95
+
+            # Calculate Hausdorff distance between recurrence GTV and 95% isodose area
+            hd_isodose, hd95_isodose = metrics.get_hd(dose_95, gtv)
+            timepoint_info["hd_recurrence_isodose"] = hd_isodose
+            timepoint_info["hd95_recurrence_isodose"] = hd95_isodose
         
     # Calculate growth and growth rate between timepoints
     # Find first available scan and baseline scan and use as baselines
