@@ -44,7 +44,7 @@ The brain segmentations may include small separate objects, that are not actuall
 
 ## Skull-stripping
 
-Since a brain mask for each MR and CT scan has been generated in the previous brain segmentation step, it is now possible to perform skull-stripping. The function `run_skull_stripping` from `skull_stripping/strip_skull_from_mask.py` applies the mask to each MR scan, i.e. everything from the scan that is not part of the brain mask is removed. An MR scan and its skull-stripped version is illustrated below:
+Since a brain mask for each MR and CT scan has been generated in the previous brain segmentation step, it is now possible to perform skull-stripping. The function `run_skull_stripping` from `skull_stripping/strip_skull_from_mask.py` applies the mask to each MR scan, i.e. everything from the scan that is not part of the brain mask is removed. The brain mask should cover the entire brain, but to ensure that no parts of the brain are removed when skull-stripping, the brain mask is expanded by 2 mm in all directions before being applied to the scan. An MR scan and its skull-stripped version is illustrated below:
 
 ![](readme_images/skullstriping.png)
 
@@ -230,7 +230,7 @@ In order to run the pipeline on a dataset the data of the different patients mus
 
 ## How to run
 
-The pipeline is run by running the script `pipeline.py`. To specify settings such as the path of the input data folder and the output folder, a `settings.json` file must be created. This file further needs to specify a task id which specifies the nn-Unet model to use for the specific tasks in the steps of the pipeline. Furthermore, the size in voxels of the dilation filters used in registration and skull-stripping can be specified. Lastly, one can also specify the minimum size in voxels required for a lesion to be considered a tumor. If nothing is specified, the default paths and settings defined in `utils.py` will be used. An example of a `settings.json` file can be seen below:
+The pipeline is run by running the script `pipeline.py`. To specify settings such as the path of the input data folder and the output folder, a `settings.json` file must be created. This file further needs to specify a task id which specifies the nn-Unet model to use for the specific tasks in the steps of the pipeline. Furthermore, the size in voxels of the dilation filters used in registration and skull-stripping can be specified. It is also possible to specify the minimum size in voxels required for a lesion to be considered a tumor. Lastly it can be specified which parts of the pipeline and on which patients a specific exectution of the pipelin is supposed to run. If the key `only_run_selected_patiens` is set to `true` the pipeline only run on the patients which `PATIENT-IDENTIFIER` is in the list of the key `selected_patients`. If nothing is specified, the default paths and settings defined in `utils.py` will be used. An example of a `settings.json` file can be seen below:
 
 ```json
 {   
