@@ -44,7 +44,7 @@ The brain segmentations may include small separate objects, that are not actuall
 
 ## Skull-stripping
 
-Since a brain mask for each MR and CT scan has been generated in the previous brain segmentation step, it is now possible to perform skull-stripping. The function `run_skull_stripping` from `skull_stripping/strip_skull_from_mask.py` applies the mask to each MR scan, i.e. everything from the scan that is not part of the brain mask is removed. The brain mask should cover the entire brain, but to ensure that no parts of the brain are removed when skull-stripping, the brain mask is expanded by 2 mm in all directions before being applied to the scan. An MR scan and its skull-stripped version is illustrated below:
+Since a brain mask for each MR and CT scan has been generated in the previous brain segmentation step, it is now possible to perform skull-stripping. The function `run_skull_stripping` from `skull_stripping/strip_skull_from_mask.py` applies the mask to each MR scan, i.e. everything from the scan that is not part of the brain mask is removed. An MR scan and its skull-stripped version is illustrated below:
 
 ![](readme_images/skullstriping.png)
 
@@ -122,15 +122,15 @@ During the process of [brain segmentation](#brain-segmentation-mr-and-ct) on the
 
 ## Registration performance
 
-As seen in the histogram, most [registrations](#registration-mr-to-ct-grid) have mean surface distance (MSD) scores below 2 mm. These are good registrations. If the MSD score is large, it is typically one of these two cases:
+As seen in the histogram, most [registrations](#registration-mr-to-ct-grid) have mean surface distance (MSD) scores below 3 mm. In general, these are good registrations. If the MSD score is large, it is typically one of these two cases:
 
-![](readme_images/msd_histogram_final.png)
+![](readme_images/msd_histogram.png)
 
 **A.** A small number of the MR scans have incomplete brain masks, which causes the MSD between the brain masks to be large. For most examples in this case the registration is fine, so the large MSD is not an issue. However, something might have caused the brain mask to be incomplete, so the analysis might be flawed, but the registration will still do fine. Below is an example of a good registration with an incomplete brain mask. Here the MSD is 6.57 mm.
 
 ![](readme_images/good_registration_bad_msd.png)
 
-**B.** The MR scan is rotated in comparison to the CT scan, and the registration has not been able to fix the rotation issue. The bad registration might cause the analysis to be flawed. This problem is often combined with an incomplete brain mask, but there is one example of a bad registration, where the brain mask is fine. Here the MSD reflects the bad registration performance. Below is this example of a bad registration with a rotation issue. Here the MSD is 5.65 mm.
+**B.** The MR scan is rotated in comparison to the CT scan, and the registration has not been able to fix the rotation issue. In this case the MSD reflects the performance of the registration, and the bad registration can cause the data analysis to be flawed. Below is an example of a bad registration with a rotation issue. Here the MSD is 5.65 mm.
 
 ![](readme_images/registration_rotation.png)
 
@@ -203,12 +203,14 @@ Finally the pipeline needs a patient journal containing clinical data for each p
 - Radiotherapy Date: date of the radiotherapy planning scan.
 - Recurrence Date: date of the recurrence scan.
 - Radiotherapy dose: the dose of radiation given in gray (Gy). 
+- Patient age: age of the patient at diagnosis.
+- Sex: the gender of the patient.
 - Progression type: the type of progression lesions.
 
 ## Folder structure
 In order to run the pipeline on a dataset the data of the different patients must be stored in a certain folder structure. This is necessary to ensure that the different steps in the pipeline are able to locate the needed data. The entire dataset needs to be stored in a main input folder, which contains a subfolder for each patient. The names of the  different patient folders need to be distinct (e.g. patient id's), so the pipeline can separate the patients. In each patient folder the scans for the corresponding patient are stored. An example of this structure with the correct naming of the scans is shown below:
 
-```
+```diff
 - Main
   - 0114
     - 0114_20230504_MR_res.nii.gz
@@ -228,7 +230,7 @@ In order to run the pipeline on a dataset the data of the different patients mus
 
 ## How to run
 
-The pipeline is run by running the script `pipeline.py`. To specify settings such as the path of the input data folder and the output folder, a `settings.json` file must be created. This file further needs to specify a task id which specifies the nn-Unet model to use for the specific tasks in the steps of the pipeline. Furthermore, the size in voxels of the dilation filters used in registration and skull-stripping can be specified. It is also possible to specify the minimum size in voxels required for a lesion to be considered a tumor. Lastly it can be specified which parts of the pipeline and on which patients a specific exectution of the pipelin is supposed to run. If the key `only_run_selected_patiens` is set to `true` the pipeline only run on the patients which `PATIENT-IDENTIFIER` is in the list of the key `selected_patients`. If `only_run_selected_patiens` is set to `false` the pipeline will run on all the patients. If nothing is specified, the default paths and settings defined in `utils.py` will be used. An example of a `settings.json` file can be seen below:
+The pipeline is run by running the script `pipeline.py`. To specify settings such as the path of the input data folder and the output folder, a `settings.json` file must be created. This file further needs to specify a task id which specifies the nn-Unet model to use for the specific tasks in the steps of the pipeline. Furthermore, the size in voxels of the dilation filters used in registration and skull-stripping can be specified. Lastly, one can also specify the minimum size in voxels required for a lesion to be considered a tumor. If nothing is specified, the default paths and settings defined in `utils.py` will be used. An example of a `settings.json` file can be seen below:
 
 ```json
 {   
