@@ -187,7 +187,7 @@ The pipeline assumes that there are 3 available nnU-Net models present on the ma
 ## Required data and format
 Both the MR and CT scans from the patients must be in compressed Neuroimaging Informatics Technology Initiative format also known as NIfTi. Files in this format have the  filename extension `.nii.gz`. The files further need to have the correct naming in order for the pipeline to be able to calculate the relevant metrics. The naming needs to correspond to the following structure: 
 
-​	`PATIENT-IDENTIFIER`_`DATE_TYPE`.`FILE-EXTENSION`
+​	`PATIENT-IDENTIFIER`_`DATE`_`TYPE`.`FILE-EXTENSION`
 
 * `PATIENT-IDENTIFIER`: a unique string that identifies the corresponding patient.
 * `DATE`: the date of the given scan in the format `YYYYMMDD`.
