@@ -124,7 +124,7 @@ During the process of [brain segmentation](#brain-segmentation-mr-and-ct) on the
 
 As seen in the histogram, most [registrations](#registration-mr-to-ct-grid) have mean surface distance (MSD) scores below 2 mm. These are good registrations. If the MSD score is large, it is typically one of these two cases:
 
-![](readme_images/msd_histogram.png)
+![](readme_images/msd_histogram_final.png)
 
 **A.** A small number of the MR scans have incomplete brain masks, which causes the MSD between the brain masks to be large. For most examples in this case the registration is fine, so the large MSD is not an issue. However, something might have caused the brain mask to be incomplete, so the analysis might be flawed, but the registration will still do fine. Below is an example of a good registration with an incomplete brain mask. Here the MSD is 6.57 mm.
 
@@ -158,6 +158,15 @@ In total, 56.9% of the predictions were correct. It is apparent immediately that
 Firstly, the model has only predicted “non-local” three times even though 27 out of 158 patients had “non-local” recurrences. One of the primary reasons for this is the difference in the definition of the three recurrence types between the automatic categorization and the clinical. As explained previously in the section [Data analysis](#data-analysis), this is because it is not possible to separate the surgical cavity from the GTV when performing GTV segmentation. This causes the surgical cavity to be segmented as part of the GTV, which in turn affects the categorization.
 
 Secondly, the model has categorized 31 “local-only” recurrences as being “combined”. This can also be explained by the fact that the surgical cavity may be marked in the GTV segmentation, as illustrated in the following scenario: Assume that a patient has a recurrence that is truly “non-local”. The GTV segmentation will then mark the new, non-local lesion, but it will also mark the surgical cavity as being GTV. This leads to one “non-local” lesion (the true new lesion) and one “local” lesion (the surgical cavity being categorized as GTV), thus giving a categorization as “combined”.
+
+For the same reasons, although we have no "true" values to compare against, we can expect the classical recurrence type predictions to be leaning too heavly towards "Central".  A summary of the classical recurrence type categorization can be seen below:
+
+|          | n    | Proportion |
+| -------- | ---- | ---------- |
+| Central  | 121  | 76.6%      |
+| In-field | 14   | 8.9%       |
+| Marginal | 18   | 11.4%      |
+| Distant  | 5    | 3.2%       |
 
 ## ??? Small conclusion : How do we think the pipeline performs, and how can it potentially be improved
 
