@@ -182,7 +182,7 @@ The file 'requirements.txt' can be used to create a conda environment with the r
 ## nnU-Net
 The pipeline uses the deep learning software nnU-Net to perform brain and GTV segmentation. A guide on how to set up and train a nnU-Net model, as needed in the pipeline, can be found at the [GitHub repository for nnU-Net](https://github.com/MIC-DKFZ/nnUNet). 
 
-The pipeline assumes that there are 3 available nnU-Net models present on the machine on which it is run: One for CT brain segmentation, one for MR brain segmentation and one for GTV segmentation. The models used for running on the AUH data were trained on 638 MR scans and 173 CT scans from Aarhus University Hospital (AUH).  The models can be found [here](https://drive.google.com/file/d/1xhi2TyTpy1scalAjjHibUAsZSG8bOiii/view?usp=sharing).
+The pipeline assumes that there are 3 available nnU-Net models present on the machine on which it is run: One for CT brain segmentation, one for MR brain segmentation and one for GTV segmentation. The models used for running on the AUH data were trained on a subset of the 638 MR scans and 173 CT scans from Aarhus University Hospital (AUH). For example, 80 scans were used for training the MR brain segmentation model.  The models can be found [here](https://drive.google.com/file/d/1xhi2TyTpy1scalAjjHibUAsZSG8bOiii/view?usp=sharing).
 
 ## Required data and format
 Both the MR and CT scans from the patients must be in compressed [NIfTI format](https://en.wikipedia.org/wiki/Neuroimaging_Informatics_Technology_Initiative). Files in this format have the  filename extension `.nii.gz`. The files further need to have the correct naming in order for the pipeline to be able to calculate the relevant metrics. The naming needs to correspond to the following structure: 
