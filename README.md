@@ -104,7 +104,7 @@ Finally, the type of recurrence is also categorized in two different ways:
 Each patient in our data has been visually scored by a clinical professional. The definition of the different categories when scored based on visual analysis from a clinical professional is slightly different from the above mentioned definitions. They are as follows:
 
 1. Local-only: The recurring GTV is connected to the surgical cavity, i.e. the empty space from where the tumor was removed in surgery
-2. Combined: Both local-only and non-local recurrence lesions are present
+2. Combined: Both local and non-local recurrence lesions are present
 3. Non-local: The recurring GTV is not connected to the area of the surgical cavity
 
 The reason that the clinical definition is not used in the automatic categorization is due to the fact that it is not possible to separate the surgical cavity from the GTV’s in the automatic segmentation. We therefore cannot expect perfect consistency between the two above definitions. Nonetheless, the pipeline automatically categorizes the tumor according to the first definition, and the automatic categorization is checked against the clinical definition as a quality check. 
@@ -122,9 +122,9 @@ During the process of [brain segmentation](#brain-segmentation-mr-and-ct) on the
 
 ## Registration performance
 
-As seen in the histogram, most [registrations](#registration-mr-to-ct-grid) have mean surface distance (MSD) scores below 3 mm. In general, these are good registrations. If the MSD score is large, it is typically one of these two cases:
+As seen in the histogram, most [registrations](#registration-mr-to-ct-grid) have mean surface distance (MSD) scores below 2 mm. These are good registrations. If the MSD score is large, it is typically one of these two cases:
 
-![](readme_images/msd_histogram.png)
+![](readme_images/msd_histogram_final.png)
 
 **A.** A small number of the MR scans have incomplete brain masks, which causes the MSD between the brain masks to be large. For most examples in this case the registration is fine, so the large MSD is not an issue. However, something might have caused the brain mask to be incomplete, so the analysis might be flawed, but the registration will still do fine. Below is an example of a good registration with an incomplete brain mask. Here the MSD is 6.57 mm.
 
