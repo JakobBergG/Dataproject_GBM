@@ -84,7 +84,7 @@ At the point of recurrence, 'time3', the following is also calculated:
 
 - **The target dose** (54 Gy or 60 Gy) is determined using the maximum intensity of the radiation therapy planning image. This is cross-checked with the available clinical treatment data for the patient.
 - **The percentage overlap of the GTV with the 95% isodose area** - if the target dose is 60 Gy, the 95% isodose area is any part of the brain that receives more than 95% of 60 Gy.
-- **The Hausdorff distance** between the recurring GTV at 'time3' and the baseline GTV at 'time2'. (see p. 18 [here](https://www.researchgate.net/publication/359797561_Common_Limitations_of_Image_Processing_Metrics_A_Picture_Story)) The 95% percentile Hausdorff distance is also calculated
+- **The Hausdorff distance** between the recurring GTV at 'time3' and the baseline GTV at 'time2'. (see p. 18 [here](https://www.researchgate.net/publication/359797561_Common_Limitations_of_Image_Processing_Metrics_A_Picture_Story)) The 95% percentile Hausdorff distance is also calculated, as well as the Hausdorff distance and the 95% percentile Hausdorff distance between the recurring GTV and the 95% isodose area.
 
 Finally, the type of recurrence is also categorized in two different ways:
 
@@ -98,7 +98,7 @@ Finally, the type of recurrence is also categorized in two different ways:
 **A visual scoring categorization of the recurrence type**, where the overlap between the recurring GTV at 'time3' is compared to the baseline GTV at 'time2'. The recurrence type falls into one of three categories:
 
 1. Local-only: The recurring GTV has any overlap with the baseline GTV 
-2. Combined: Both local-only and non-local recurrence lesions are present
+2. Combined: Both local and non-local recurrence lesions are present
 3. Non-local: The recurring GTV has no overlap with the baseline GTV
 
 Each patient in our data has been visually scored by a clinical professional. The definition of the different categories when scored based on visual analysis from a clinical professional is slightly different from the above mentioned definitions. They are as follows:
@@ -107,7 +107,7 @@ Each patient in our data has been visually scored by a clinical professional. Th
 2. Combined: Both local-only and non-local recurrence lesions are present
 3. Non-local: The recurring GTV is not connected to the area of the surgical cavity
 
-The reason that the clinical definition isn not used in the automatic categorization is due to the fact that it is not possible to separate the surgical cavity from the GTV’s in the automatic segmentation. We therefore cannot expect perfect consistency between the two above definitions. Nonetheless, the pipeline automatically categorizes the tumor according to the first definition, and the automatic categorization is checked against the clinical definition as a quality check. 
+The reason that the clinical definition is not used in the automatic categorization is due to the fact that it is not possible to separate the surgical cavity from the GTV’s in the automatic segmentation. We therefore cannot expect perfect consistency between the two above definitions. Nonetheless, the pipeline automatically categorizes the tumor according to the first definition, and the automatic categorization is checked against the clinical definition as a quality check. 
 
 
 # Results from running on data
