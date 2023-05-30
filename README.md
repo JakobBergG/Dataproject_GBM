@@ -44,7 +44,7 @@ The brain segmentations may include small separate objects, that are not actuall
 
 ## Skull-stripping
 
-Since a brain mask for each MR and CT scan has been generated in the previous brain segmentation step, it is now possible to perform skull-stripping. The function `run_skull_stripping` from `skull_stripping/strip_skull_from_mask.py` applies the mask to each MR scan, i.e. everything from the scan that is not part of the brain mask is removed. The brain mask should cover the entire brain, but to ensure that no part of the brain is removed when skull-stripping, the brain mask is expanded by 2 mm in all directions before being applied to the scan. An MR scan and its skull-stripped version is illustrated below:
+Since a brain mask for each MR and CT scan has been generated in the previous brain segmentation step, it is now possible to perform skull-stripping. The function `run_skull_stripping` from `skull_stripping/strip_skull_from_mask.py` applies the mask to each MR scan, i.e. everything from the scan that is not part of the brain mask is removed. The brain mask should cover the entire brain, but to ensure that no parts of the brain are removed when skull-stripping, the brain mask is expanded by 2 mm in all directions before being applied to the scan. An MR scan and its skull-stripped version is illustrated below:
 
 ![](readme_images/skullstriping.png)
 
@@ -122,15 +122,15 @@ During the process of [brain segmentation](#brain-segmentation-mr-and-ct) on the
 
 ## Registration performance
 
-As seen in the histogram, most [registrations](#registration-mr-to-ct-grid) have mean surface distance (MSD) scores below 2 mm. These are good registrations. If the MSD score is large, it is typically one of these two cases:
+As seen in the histogram, most [registrations](#registration-mr-to-ct-grid) have mean surface distance (MSD) scores below 3 mm. In general, these are good registrations. If the MSD score is large, it is typically one of these two cases:
 
-![](readme_images/msd_histogram_final.png)
+![](readme_images/msd_histogram.png)
 
 **A.** A small number of the MR scans have incomplete brain masks, which causes the MSD between the brain masks to be large. For most examples in this case the registration is fine, so the large MSD is not an issue. However, something might have caused the brain mask to be incomplete, so the analysis might be flawed, but the registration will still do fine. Below is an example of a good registration with an incomplete brain mask. Here the MSD is 6.57 mm.
 
 ![](readme_images/good_registration_bad_msd.png)
 
-**B.** The MR scan is rotated in comparison to the CT scan, and the registration has not been able to fix the rotation issue. The bad registration might cause the analysis to be flawed. This problem is often combined with an incomplete brain mask, but there is one example of a bad registration, where the brain mask is fine. Here the MSD reflects the bad registration performance. Below is this example of a bad registration with a rotation issue. Here the MSD is 5.65 mm.
+**B.** The MR scan is rotated in comparison to the CT scan, and the registration has not been able to fix the rotation issue. In this case the MSD reflects the performance of the registration, and the bad registration can cause the data analysis to be flawed. Below is an example of a bad registration with a rotation issue. Here the MSD is 5.65 mm.
 
 ![](readme_images/registration_rotation.png)
 
@@ -155,9 +155,9 @@ The green column and row represent the sum of each row or column, respectively.
 
 In total, 56.9% of the predictions were correct. It is apparent immediately that the guesses are far from perfect. In fact, a naive model only predicting “local-only” would have an accuracy of 65.2%. However, because the guesses are based on automatic segmentation and registration, and because the targets and predictions cannot be compared one-to-one, the results are not terrible. They do allow us to identify a few issues, however. 
 
-Firstly, the model has only predicted “non-local” three times even though 27 out of 158 patients had “non-local” recurrences. One of the primary reasons for this is the difference in the definition of the three recurrence types between the automatic categorization and the clinical. As explained previously in the section [Data analysis](#data-analysis), this is because it is not possible to separate the surgical cavity from the GTV when performing GTV segmentation. This causes the surgical cavity to be segmented as part of the GTV, which in turn affects the categorization.
+Firstly, the model has only predicted “non-local” three times even though 27 out of 158 patients had “non-local” recurrences. One of the primary reasons for this is the difference in the definition of the three recurrence types between the automatic categorization and the clinical. As explained previously in the section [Data analysis](#data-analysis), this difference exists because it is not possible to separate the surgical cavity from the GTV when performing GTV segmentation. This causes the surgical cavity to be segmented as part of the GTV even when the real recurring tumor is located far from the surgical cavity. This results in the recurrence tumor almost always having an overlap with the baseline tumor (i.e. violation the definition of non-local recurrence). 
 
-Secondly, the model has categorized 31 “local-only” recurrences as being “combined”. This can also be explained by the fact that the surgical cavity may be marked in the GTV segmentation, as illustrated in the following scenario: Assume that a patient has a recurrence that is truly “non-local”. The GTV segmentation will then mark the new, non-local lesion, but it will also mark the surgical cavity as being GTV. This leads to one “non-local” lesion (the true new lesion) and one “local” lesion (the surgical cavity being categorized as GTV), thus giving a categorization as “combined”.
+Secondly, the model has categorized 31 “local-only” recurrences as being “combined”. This can be explained by the GTV segmentation often segmenting small objects around the tumor as being part of the real tumor. As a result, if a tumor in fact is “local-only”, these small object may contribute to the recurrence type being classified as “combined”. 
 
 For the same reasons, although we have no "true" values to compare against, we can expect the classical recurrence type predictions to be leaning too heavly towards "Central".  A summary of the classical recurrence type categorization can be seen below:
 
@@ -180,12 +180,12 @@ The rest of this document describes how to actually set up and run the pipeline.
 The file 'requirements.txt' can be used to create a conda environment with the required python packages.
 
 ## nnU-Net
-The pipeline uses the deep learning software nnU-Net to perform brain and GTV segmentation. A guide on how to set up and train a nnU-Net model, as needed in the pipeline, can be found at the [GitHub site for nnU-Net](https://github.com/MIC-DKFZ/nnUNet). 
+The pipeline uses the deep learning software nnU-Net to perform brain and GTV segmentation. A guide on how to set up and train a nnU-Net model, as needed in the pipeline, can be found at the [GitHub repository for nnU-Net](https://github.com/MIC-DKFZ/nnUNet). 
 
-The pipeline assumes that there are 3 available nnU-Net models present on the machine on which it is run: One for CT brain segmentation, one for MR brain segmentation and one for GTV segmentation. Our models was trained on 638 MR scans and 173 CT scans from Aarhus University Hospital (AUH). 
+The pipeline assumes that there are 3 available nnU-Net models present on the machine on which it is run: One for CT brain segmentation, one for MR brain segmentation and one for GTV segmentation. The models used for running on the AUH data were trained on a subset of the 638 MR scans and 173 CT scans from Aarhus University Hospital (AUH). For example, 80 scans were used for training the MR brain segmentation model.  The models can be found [here](https://drive.google.com/file/d/1xhi2TyTpy1scalAjjHibUAsZSG8bOiii/view?usp=sharing).
 
 ## Required data and format
-Both the MR and CT scans from the patients must be in compressed Neuroimaging Informatics Technology Initiative format also known as NIfTi. Files in this format have the  filename extension `.nii.gz`. The files further need to have the correct naming in order for the pipeline to be able to calculate the relevant metrics. The naming needs to correspond to the following structure: 
+Both the MR and CT scans from the patients must be in compressed [NIfTI format](https://en.wikipedia.org/wiki/Neuroimaging_Informatics_Technology_Initiative). Files in this format have the  filename extension `.nii.gz`. The files further need to have the correct naming in order for the pipeline to be able to calculate the relevant metrics. The naming needs to correspond to the following structure: 
 
 ​	`PATIENT-IDENTIFIER`_`DATE_TYPE`.`FILE-EXTENSION`
 
@@ -203,12 +203,14 @@ Finally the pipeline needs a patient journal containing clinical data for each p
 - Radiotherapy Date: date of the radiotherapy planning scan.
 - Recurrence Date: date of the recurrence scan.
 - Radiotherapy dose: the dose of radiation given in gray (Gy). 
+- Patient age: age of the patient at diagnosis.
+- Sex: the gender of the patient.
 - Progression type: the type of progression lesions.
 
 ## Folder structure
 In order to run the pipeline on a dataset the data of the different patients must be stored in a certain folder structure. This is necessary to ensure that the different steps in the pipeline are able to locate the needed data. The entire dataset needs to be stored in a main input folder, which contains a subfolder for each patient. The names of the  different patient folders need to be distinct (e.g. patient id's), so the pipeline can separate the patients. In each patient folder the scans for the corresponding patient are stored. An example of this structure with the correct naming of the scans is shown below:
 
-```
+```diff
 - Main
   - 0114
     - 0114_20230504_MR_res.nii.gz
@@ -228,7 +230,9 @@ In order to run the pipeline on a dataset the data of the different patients mus
 
 ## How to run
 
-The pipeline is run by running the script `pipeline.py`. To specify settings such as the path of the input data folder and the output folder, a `settings.json` file must be created. This file further needs to specify a task id which specifies the nn-Unet model to use for the specific tasks in the steps of the pipeline. Furthermore, the size in voxels of the dilation filters used in registration and skull-stripping can be specified. It is also possible to specify the minimum size in voxels required for a lesion to be considered a tumor. Lastly it can be specified which parts of the pipeline and on which patients a specific exectution of the pipelin is supposed to run. If the key `only_run_selected_patiens` is set to `true` the pipeline only run on the patients which `PATIENT-IDENTIFIER` is in the list of the key `selected_patients`. If `only_run_selected_patiens` is set to `false` the pipeline will run on all the patients. If nothing is specified, the default paths and settings defined in `utils.py` will be used. An example of a `settings.json` file can be seen below:
+The pipeline is run by running the script `pipeline.py`. To specify settings such as the path of the input data folder and the output folder, a `settings.json` file must be created. This file further needs to specify a task id which specifies the nn-Unet model to use for the specific tasks in the steps of the pipeline. Furthermore, the size in voxels of the dilation filters used in registration and skull-stripping can be specified. In the below example, both the MR and CT scans are dilated by 5 mm in each direction in registration, but the parameters are different. This is because the MR scans have a spacing of of 0.5mm $\times$ 0.5mm $\times$ 1.0mm, while CT scans have a spacing of 1.0mm $\times$ 1.0mm $\times$ 1.0mm. Lastly, one can also specify the minimum size in voxels required for a lesion to be considered a tumor (this is only used when calculating individual volumes of tumors).
+
+ If nothing is specified, the default paths and settings defined in `utils.py` will be used. An example of a `settings.json` file can be seen below:
 
 ```json
 {   
@@ -249,7 +253,7 @@ The pipeline is run by running the script `pipeline.py`. To specify settings suc
     "run_registration": true,
     "run_registration_evaluation": true,
     "run_data_analysis": true, 
-    "only_run_selected_patients": true,
+    "only_run_selected_patients": false,
     "selected_patients": ["0114", "0540"]
 }
 ```
