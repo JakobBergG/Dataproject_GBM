@@ -130,7 +130,7 @@ As seen in the histogram, most [registrations](#registration-mr-to-ct-grid) have
 
 ![](readme_images/good_registration_bad_msd.png)
 
-**B.** The MR scan is rotated in comparison to the CT scan, and the registration has not been able to fix the rotation issue. In this case the MSD reflects the performance of the registration, and the bad registration can cause the data analysis to be flawed. Below is an example of a bad registration with a rotation issue. Here the MSD is 5.65 mm.
+**B.** The MR scan is rotated in comparison to the CT scan, and the registration has not been able to fix the rotation issue. This problem is often combined with an incomplete mask, but can also happen when the brain mask is fine. In this case the MSD reflects the performance of the registration, and the bad registration can cause the data analysis to be flawed. With our data, only one scan with a perfectly fine brain mask has a large MSD. This example of a bad registration with a rotation issue is shown below. Here the MSD is 5.65 mm.
 
 ![](readme_images/registration_rotation.png)
 
