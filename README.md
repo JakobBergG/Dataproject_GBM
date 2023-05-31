@@ -153,7 +153,7 @@ Each of the nine cells in the top-left represents a combination between a predic
 
 ![](readme_images/confusion_highlight.png){width=20%}
 
-If for example we look at the above cell, 17 out of 158 or 10.8 % of all prediction-target pairs were “non-local”-”combined”, that is, the target was “non-local” and the prediction “combined”. Out of all the “non-local” targets, 63% were predicted to be “combined”, and out of all the recurrence types predicted as “combined”, 26.6% were in fact “non-local”.
+If, for example, we look at the above cell (Combined, Non-local), 17 out of 158 or 10.8 % of all prediction-target pairs were “non-local”-”combined”, that is, the target was “non-local” and the prediction “combined”. Out of all the “non-local” targets, 63% were predicted to be “combined”, and out of all the recurrence types predicted as “combined”, 26.6% were in fact “non-local”.
 
 The green column and row represent the sum of each row or column, respectively.
 
