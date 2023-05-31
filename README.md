@@ -1,5 +1,3 @@
-# Readme
-
 The following is a description of the different steps of our data analysis pipeline as well as a guide on how to execute it. The pipeline takes in radiology scans (MR and CT) from patients suffering from glioblastoma and returns an analysis of relevant metrics based on the scans. To get an intial understanding of the pipeline, we recommend reading the [project description](project_description.pdf) before continuing.
 
 [[_TOC_]]
@@ -176,8 +174,7 @@ Although we have no "true" values to compare against, we can expect the classica
 
 To summarize, the registration generally performs well, and when it does not, it is usually caused by problems with the segmentation of the brain (i.e. the brain mask). This could possibly be fixed by training the *nnU-Net* brain segmentation models on more data. As mentioned in the section [Small objects outside brain masks](#small-objects-outside-brain-masks), the quality of the current training data is also not perfect and could be improved by some preprocessing. The registration has minor problems when the scans are rotated in relation to each other. This could possibly be fixed through tuning the registration parameters.
 
-The segmentation of the GTV is also a source of problems: Firstly, as explained in the [evaluation of the results](#accuracy-of-automatic-recurrence-type-categorization), small objects, that cannot be removed, are segmented as part of the tumor. This could possibly also be fixed by training the *nnU-Net* GTV segmentation model on more data. Furthermore, the surgical cavity is often included in the GTV. This is especially a problem when categorizing the type of recurrence, but it also affects the rest of the analysis. This could potentially be improved by training a model on data where both the tumor and the surgical cavity are segmented and labeled separately. 
-
+The segmentation of the GTV is also a source of problems: Firstly, as explained in the [evaluation of the results](#accuracy-of-automatic-recurrence-type-categorization), small objects that cannot be removed are segmented as part of the tumor. This could possibly be fixed by training the *nnU-Net* GTV segmentation model on more data. Furthermore, the surgical cavity is often included in the GTV. This is especially a problem when categorizing the type of recurrence, but it also affects the rest of the analysis. This could potentially be improved by training a model on data where both the tumor and the surgical cavity are segmented and labeled separately. 
 
 # Technical details
 
