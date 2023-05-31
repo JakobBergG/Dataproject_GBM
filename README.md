@@ -141,7 +141,7 @@ Out of all the nine registrations with a large MSD, only one of the scans has a 
 
 ## Accuracy of automatic recurrence type categorization
 
-As mentioned in the [data analysis](#data-analysis) section, an automatic categorization of the recurrence type corresponding to the visual categorization is performed for each patient. The below confusion matrix illustrates how the predictions compare to the true target values. 
+As mentioned in the [data analysis](#data-analysis) section, an automatic categorization of the recurrence type corresponding to the visual categorization is performed for each patient. The below confusion matrix illustrates how the predictions (automatic categorization) compare to the true target values (clinical categorization). 
 
 We should expect to see at least some consistency between the predictions and the target values, even though slightly different definitions are used for the target and prediction values. 
 
@@ -151,9 +151,9 @@ We should expect to see at least some consistency between the predictions and th
 
 Each of the nine cells in the top-left represents a combination between a prediction and a target. 
 
-![](readme_images/confusion_highlight.png)
+![](readme_images/confusion_highlight.png){width=20%}
 
-For example, 17 out of 158 or 10.8 % of all prediction-target pairs were “non-local”-”combined”, that is, the target was “non-local” and the prediction “combined”. Out of all the “non-local” targets, 63% were predicted to be “combined”, and out of all the recurrence types predicted as “combined”, 26.6% were in fact “non-local”.
+If for example we look at the above cell, 17 out of 158 or 10.8 % of all prediction-target pairs were “non-local”-”combined”, that is, the target was “non-local” and the prediction “combined”. Out of all the “non-local” targets, 63% were predicted to be “combined”, and out of all the recurrence types predicted as “combined”, 26.6% were in fact “non-local”.
 
 The green column and row represent the sum of each row or column, respectively.
 
@@ -210,7 +210,7 @@ Finally the pipeline needs a patient journal containing clinical data for each p
 - Progression type: the type of progression lesions.
 
 ## Folder structure
-In order to run the pipeline on a dataset the data of the different patients must be stored in a certain folder structure. This is necessary to ensure that the different steps in the pipeline are able to locate the needed data. The entire dataset needs to be stored in a main input folder, which contains a subfolder for each patient. The names of the  different patient folders need to be distinct (e.g. patient id's), so the pipeline can separate the patients. In each patient folder the scans for the corresponding patient are stored. An example of this structure with the correct naming of the scans is shown below:
+In order to run the pipeline on a dataset, the data of the different patients must be stored in a certain folder structure. This is necessary to ensure that the different steps in the pipeline are able to locate the needed data. The entire dataset needs to be stored in a main input folder, which contains a subfolder for each patient. The names of the  different patient folders need to be distinct (e.g. patient id's), so the pipeline can separate the patients. In each patient folder, the scans for the corresponding patient are stored. An example of this structure with the correct naming of the scans is shown below:
 
 ```diff
 - Main
