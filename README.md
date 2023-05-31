@@ -1,4 +1,4 @@
-The following is a description of the different steps of our data analysis pipeline as well as a guide on how to execute it. The pipeline takes in radiology scans (MR and CT) from patients suffering from glioblastoma and returns an analysis of relevant metrics based on the scans. To get an intial understanding of the pipeline, we recommend reading the [project description](project_description.pdf) before continuing.
+The following is a description of the different steps of our data analysis pipeline as well as a guide on how to execute it. The pipeline takes in radiology scans (MR and CT) from patients suffering from glioblastoma and returns an analysis of relevant metrics based on the scans. To get an initial understanding of the pipeline, we recommend reading the [project description](project_description.pdf) before continuing.
 
 [[_TOC_]]
 
@@ -58,7 +58,7 @@ The segmented GTV illustrated in 3D:
 ![](readme_images/3dgtv.png){width=50%}
 
 ## Registration: MR to CT grid
-Each MR scan is registered to the grid of the CT scan using the function `register_MR_to_CT` from `registration/registration_MR_mask_to_CT_mask.py`. To perform the registration using *SimpleElastix*, we need the brain masks from the brain segmentation step. The final registration is the result of two separate rounds of registration: 
+Each MR scan is registered to the grid of the CT scan using the function `register_MR_to_CT` from `registration/registration_MR_to_CT.py`. To perform the registration using *SimpleElastix*, we need the brain masks from the brain segmentation step. The final registration is the result of two separate rounds of registration: 
 
 The first round of registration is performed on skull-stripped MR and CT images, which allows us to align the scans at the center of gravity of the brains to get a decent starting point. The first round can be considered a rough registration. Here, the intensity of each image is divided up into coarse bins, and the registration tries to match up these bins as well as possible.
 

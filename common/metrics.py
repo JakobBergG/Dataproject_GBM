@@ -29,7 +29,7 @@ def volume_component_cc(image : sitk.Image) -> list:
 def mask_overlap(image1 : sitk.Image, image2 : sitk.Image) -> float:
     '''Get percentage of overlap between gtv and (95%) dose'''
     vol1 = volume_mask(image1)
-    if vol1>0:
+    if vol1 > 0:
         return volume_mask(image2*image1) / vol1
     else:
         raise Exception("Volune of mask is 0")
@@ -90,7 +90,7 @@ def type_recurrence(label_image : sitk.Image, baseline : sitk.Image) -> int:
     local = 0
     distant = 0
     for t in tumors:
-        if mask_overlap(t, baseline)>0:
+        if mask_overlap(t, baseline) > 0:
             local += 1
         else:
             distant += 1
