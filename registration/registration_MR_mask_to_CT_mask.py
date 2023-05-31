@@ -218,6 +218,8 @@ def register_MR_to_CT(patient_folder : str):
         if os.path.exists(transformstring):
             os.remove(transformstring)
         os.rename(Transform, transformstring)
+
+        del elastix
         
         #------------------------------#
         # Second round of registration #
@@ -227,7 +229,13 @@ def register_MR_to_CT(patient_folder : str):
         parameterMapRigid['AutomaticTransformInitialization']= ['false']
         parameterMapRigid['Metric']= ['AdvancedMattesMutualInformation']
         parameterMapRigid['NumberOfResolutions']= ['2']
-        parameterMapRigid['ImagePyramidSchedule']= ['4','4','4', '2','2','2' ]         
+        parameterMapRigid['ImagePyramidSchedule']= ['4','4','4', '2','2','2' ]    
+
+        elastix = sitk.ElastixImageFilter()     
+
+        # activate log file and define output folder and parameters.
+        elastix.LogToFileOn()
+        elastix.SetOutputDirectory(outfolder)
         elastix.SetParameterMap(parameterMapRigid)
         
         # start the second round where the first round ended.
