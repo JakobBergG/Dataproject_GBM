@@ -103,15 +103,13 @@ Finally, the type of recurrence is also categorized in two different ways:
 2. Combined: Both local and non-local recurrence lesions are present
 3. Non-local: The recurring GTV is not connected to the area of the surgical cavity
 
-Instead of using this definition, the following slightly different definition is used in the pipeline:
+This clinical definition is not used in the automatic categorization because it is not possible to separate the surgical cavity from the GTV’s in the automatic segmentation. This causes the surgical cavity to be segmented as part of the GTV even when the real recurring tumor is located far from the surgical cavity. Because of this, the following rules are used to determine the recurrence type in the pipeline:
 
 1. Local-only: The recurring GTV has any overlap with the baseline GTV
 2. Combined: Both local and non-local recurrence lesions are present
 3. Non-local: The recurring GTV has no overlap with the baseline GTV
 
-The first, clinical definition is not used in the automatic categorization because it is not possible to separate the surgical cavity from the GTV’s in the automatic segmentation. 
-
-We cannot expect perfect consistency between the two above definitions. Nonetheless, the pipeline automatically categorizes the tumor according to the second definition, and the automatic categorization is checked against the clinical definition as a quality check.
+Because of the difference between the clinical definition and what is actually determined in the pipeline, we cannot expect perfect consistency between the two. Nonetheless, the pipeline automatically categorizes the tumor, and the automatic categorization is checked against the clinical definition as a quality check.
 
 # Results from running on data
 
@@ -159,7 +157,7 @@ The green column and row represent the sum of each row or column, respectively.
 
 In total, 56.9% of the predictions were correct. It is apparent immediately that the guesses are far from perfect. In fact, a naive model only predicting “local-only” would have an accuracy of 65.2%. However, because the guesses are based on automatic segmentation and registration, and because the targets and predictions cannot be compared one-to-one, the results are not terrible. They do allow us to identify a few issues, however. 
 
-Firstly, the model has only predicted “non-local” three times even though 27 out of 158 patients had “non-local” recurrences. One of the primary reasons for this is the difference in the definition of the three recurrence types between the automatic categorization and the clinical. As explained previously in the section [Data analysis](#data-analysis), this difference exists because it is not possible to separate the surgical cavity from the GTV when performing GTV segmentation. This causes the surgical cavity to be segmented as part of the GTV even when the real recurring tumor is located far from the surgical cavity. This results in the recurrence tumor almost always having an overlap with the baseline tumor (i.e. violation the definition of non-local recurrence). 
+Firstly, the model has only predicted “non-local” three times even though 27 out of 158 patients had “non-local” recurrences. This is because it is not possible to separate the surgical cavity from the tumor in GTV segmentation, and as explained in [Data analysis](#data-analysis), this means that the tumors are not categorized in complete correspondence with the clinical definition used for determining the target values found in the patient journal.
 
 Secondly, the model has categorized 31 “local-only” recurrences as being “combined”. This can be explained by the GTV segmentation often segmenting small objects around the tumor as being part of the real tumor. As a result, if a tumor in fact is “local-only”, these small object may contribute to the recurrence type being classified as “combined”. 
 
@@ -236,7 +234,7 @@ In order to run the pipeline on a dataset, the data of the different patients mu
 
 The pipeline is run by running the script `pipeline.py`. To specify settings such as the path of the input data folder and the output folder, a `settings.json` file must be created. This file further needs to specify a task id which specifies the *nnU-net* model to use for the specific tasks in the steps of the pipeline. Furthermore, the size in voxels of the dilation filters used in registration and skull-stripping can be specified. In the below example, both the MR and CT scans are dilated by 5 mm in each direction in registration, but the parameters are different. This is because the MR scans have a spacing of of 0.5mm $\times$ 0.5mm $\times$ 1.0mm, while CT scans have a spacing of 1.0mm $\times$ 1.0mm $\times$ 1.0mm. Lastly, one can also specify the minimum size in voxels required for a lesion to be considered a tumor (this is only used when calculating individual volumes of tumors).
 
-If the setting `only_run_selected_patients` is set to `true`, the pipeline will only run for the patients in `selected_patients`. Otherwise it will run for all patients in the input folder
+If the setting `only_run_selected_patients` is set to `true`, the pipeline will only run for the patients in `selected_patients`. Otherwise it will run for all patients in the input folder.
 
 If nothing is specified, the default paths and settings defined in `utils.py` will be used. An example of a `settings.json` file can be seen below:
 
