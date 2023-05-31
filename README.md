@@ -153,7 +153,7 @@ Each of the nine cells in the top-left represents a combination between a predic
 
 ![](readme_images/confusion_highlight.png){width=20%}
 
-If, for example, we look at the above cell (Combined, Non-local), 17 out of 158 or 10.8 % of all prediction-target pairs were “non-local”-”combined”, that is, the target was “non-local” and the prediction “combined”. Out of all the “non-local” targets, 63% were predicted to be “combined”, and out of all the recurrence types predicted as “combined”, 26.6% were in fact “non-local”.
+If, for example, we look at the above cell (Combined, Non-local), 17 out of 158 or 10.8 % of all prediction-target pairs were ”combined”-“non-local”, that is, the prediction was “combined” and the target was “non-local”. Out of all the “non-local” targets, 63% were predicted to be “combined”, and out of all the recurrence types predicted as “combined”, 26.6% were in fact “non-local”.
 
 The green column and row represent the sum of each row or column, respectively.
 
@@ -163,7 +163,7 @@ Firstly, the model has only predicted “non-local” three times even though 27
 
 Secondly, the model has categorized 31 “local-only” recurrences as being “combined”. This can be explained by the GTV segmentation often segmenting small objects around the tumor as being part of the real tumor. As a result, if a tumor in fact is “local-only”, these small object may contribute to the recurrence type being classified as “combined”. 
 
-For the same reasons, although we have no "true" values to compare against, we can expect the classical recurrence type predictions to be leaning too heavly towards "Central".  A summary of the classical recurrence type categorization can be seen below:
+Although we have no "true" values to compare against, we can expect the classical recurrence type predictions to be leaning too heavly towards "Central", because of the problem with separating the surgical cavity from the GTV.  A summary of the classical recurrence type categorization can be seen below:
 
 |          | n    | Proportion |
 | -------- | ---- | ---------- |
