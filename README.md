@@ -141,7 +141,7 @@ Out of all the nine registrations with a large MSD, only one of the scans has a 
 
 ## Accuracy of automatic recurrence type categorization
 
-As mentioned in the [data analysis](#data-analysis) section, an automatic categorization of the recurrence type corresponding to the visual categorization is performed for each patient. The below confusion matrix illustrates how the predictions (automatic categorization) compare to the true target values (clinical categorization). 
+As mentioned in the [data analysis](#data-analysis) section, an automatic categorization of the recurrence type corresponding to the **visual categorization** is performed for each patient. The below confusion matrix illustrates how the predictions (automatic categorization) compare to the true target values (clinical categorization). 
 
 We should expect to see at least some consistency between the predictions and the target values, even though slightly different definitions are used for the target and prediction values. 
 
@@ -163,7 +163,7 @@ Firstly, the model has only predicted “non-local” three times even though 27
 
 Secondly, the model has categorized 31 “local-only” recurrences as being “combined”. This can be explained by the GTV segmentation often segmenting small objects around the tumor as being part of the real tumor. As a result, if a tumor in fact is “local-only”, these small object may contribute to the recurrence type being classified as “combined”. 
 
-A summary of the classical recurrence type categorization can be seen below:
+A summary of the **classical recurrence type categorization** can be seen below:
 
 |          | n    | Proportion |
 | -------- | ---- | ---------- |
@@ -172,7 +172,7 @@ A summary of the classical recurrence type categorization can be seen below:
 | Marginal | 18   | 11.4%      |
 | Distant  | 5    | 3.2%       |
 
-Although we have no "true" values to compare against, we can expect the classical recurrence type predictions to be leaning too heavily towards "Central". This is due the problem with separating the surgical cavity from the GTV.  
+Although we have no "true" values to compare against, we can expect the classical recurrence type predictions to be leaning too heavily towards "Central". This is due to the problem with separating the surgical cavity from the GTV.  
 
 ## ??? Small conclusion : How do we think the pipeline performs, and how can it potentially be improved
 
@@ -236,7 +236,9 @@ In order to run the pipeline on a dataset, the data of the different patients mu
 
 The pipeline is run by running the script `pipeline.py`. To specify settings such as the path of the input data folder and the output folder, a `settings.json` file must be created. This file further needs to specify a task id which specifies the *nnU-net* model to use for the specific tasks in the steps of the pipeline. Furthermore, the size in voxels of the dilation filters used in registration and skull-stripping can be specified. In the below example, both the MR and CT scans are dilated by 5 mm in each direction in registration, but the parameters are different. This is because the MR scans have a spacing of of 0.5mm $\times$ 0.5mm $\times$ 1.0mm, while CT scans have a spacing of 1.0mm $\times$ 1.0mm $\times$ 1.0mm. Lastly, one can also specify the minimum size in voxels required for a lesion to be considered a tumor (this is only used when calculating individual volumes of tumors).
 
- If nothing is specified, the default paths and settings defined in `utils.py` will be used. An example of a `settings.json` file can be seen below:
+If the setting `only_run_selected_patients` is set to `true`, the pipeline will only run for the patients in `selected_patients`. Otherwise it will run for all patients in the input folder
+
+If nothing is specified, the default paths and settings defined in `utils.py` will be used. An example of a `settings.json` file can be seen below:
 
 ```json
 {   
@@ -261,4 +263,4 @@ The pipeline is run by running the script `pipeline.py`. To specify settings suc
     "selected_patients": ["0114", "0540"]
 }
 ```
-When the above-mentioned process has been done, the pipeline can be executed by running the 'pipeline.py' file. 
+When the above-mentioned process has been done, the pipeline can be executed by running the `pipeline.py` file. 
