@@ -225,7 +225,7 @@ def register_MR_to_CT(patient_folder : str):
         # Second round of registration #
         #------------------------------#
         
-        # define specific parametermap for first second of registration
+        # define specific parametermap for second of registration
         parameterMapRigid['AutomaticTransformInitialization']= ['false']
         parameterMapRigid['Metric']= ['AdvancedMattesMutualInformation']
         parameterMapRigid['NumberOfResolutions']= ['2']

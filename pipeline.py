@@ -7,7 +7,7 @@ import brain_segmentation.predict_brain_masks
 import brain_segmentation.cleanup_brain_masks
 import skull_stripping.strip_skull_from_mask
 import gtv_segmentation.predict_gtvs
-import registration.registration_MR_mask_to_CT_mask
+import registration.registration_MR_to_CT
 import registration.mask_registration_evaluation
 import analysis.patient_metrics
 import analysis.patient_metrics_to_csv
@@ -82,7 +82,7 @@ def run_pipeline(patient_folder : str):
     if utils.get_setting("run_registration"):
         log.info(f"Starting registration for patient {patient_id}")
         try:
-            registration.registration_MR_mask_to_CT_mask.register_MR_to_CT(patient_folder)
+            registration.registration_MR_to_CT.register_MR_to_CT(patient_folder)
         except Exception as e:
             log.error(f"Registration failed for {patient_id}. Error message: {str(e)}")
             return
