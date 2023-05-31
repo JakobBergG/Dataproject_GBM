@@ -31,7 +31,7 @@ Besides the scans, the pipeline also takes a patient journal for each patient as
 
 
 ## Brain segmentation (MR and CT)
-The first step of the pipeline is brain segmentation. Brain segmentation is executed by running the function `run_brainmask_predictions` located in the script `brain_segmentation/predict_brain_masks.py`. This function performs the brain segmentation on the CT scan and each of the MR scans for the patient. The result of the brain segmentation is a separate 3D image called a brain mask, where voxels that are part of the brain have value 1 and 0 otherwise. For each CT and MR scan the brain is segmented by using prediction from a pre-trained *nnU-Net* model. An illustration of an MR scan and the corresponding brain segmentation is illustrated below:
+The first step of the pipeline is brain segmentation. Brain segmentation is executed by running the function `run_brainmask_predictions` located in the script `brain_segmentation/predict_brain_masks.py`. This function performs the brain segmentation on the CT scan and each of the MR scans for the patient. The result of the brain segmentation is a separate 3D image called a brain mask, where voxels that are part of the brain have value 1 and 0 otherwise. For each CT and MR scan the brain is segmented by using predictions from a pre-trained *nnU-Net* model. An illustration of an MR scan and the corresponding brain segmentation is illustrated below:
 
 ![](readme_images/brainsegmentation.png)
 
@@ -73,7 +73,7 @@ After all MR scans for the patient have been registered, the quality of the regi
 ## Data analysis
 Now that the GTV's have been moved onto the CT grid in the previous step, it is possible in this final step to analyze the tumors of the patient. This is done in the function `run_patient_metrics` from `analysis/patient_metrics.py`. For each patient, different metrics and recurrence type categorizations are calculated. One of these metrics is not sufficient to describe the recurring tumor, but together, they can aid in describing the recurrence. For each time point 'time0', 'time1', 'time2' and 'time3' the following metrics are calculated:
 
-- The **number of days since 'time2'** ('time2' is the time point of treatment planning and considered the "baseline". This means the number of days since 'time2' will be negative for 'time0' and 'time1', and will always be 0 for 'time2').
+- The **number of days since 'time2'** ('time2' is the time point of treatment planning and considered the "baseline". This means the number of days since 'time2' will be negative for 'time0' and 'time1', and will always be 0 for 'time2')
 - **Number of lesions** (the GTV may consist of one or multiple lesions)
 - The **volume of each lesion** in cm³.
 - The **total volume** of all lesions
@@ -125,13 +125,13 @@ The below histogram is the result of running the registration on the data from A
 
 ![](readme_images/msd_histogram_final.png)
 
-If the MSD is large, it is typically one of these two cases:
+If the MSD is large, it is typically one of the following two cases:
 
 **A.** A small number of the MR scans have incomplete brain masks, which causes the MSD between the brain masks to be large. For most examples with incomplete brain masks, the registration is fine, so a large MSD does not necessarily mean that the registration performs badly. A large MSD can therefore be an indication of an incomplete brain mask, which in turn can cause the data analysis to be flawed. Below is an example of a good registration with an incomplete brain mask, where the brain mask is marked with the lightest color. Here the MSD is 6.57 mm.
 
 ![](readme_images/good_registration_bad_msd.png)
 
-**B.** The MR scan is rotated in comparison to the CT scan, and the registration has not been able to fix the rotation issue. This problem is often combined with an incomplete brain mask, but it can also happen when the brain mask is fine. In this case the MSD reflects the performance of the registration, and the bad registration can cause the data analysis to be flawed. An example of a bad registration with a rotation issue is shown below. Here the MSD is 5.65 mm.
+**B.** The MR scan is rotated in comparison to the CT scan, and the registration has not been able to fix the rotation issue. This problem is often combined with an incomplete brain mask, but it can also happen when the brain mask is fine. In this case the MSD reflects the quality of the registration, and the bad registration can cause the data analysis to be flawed. An example of a bad registration with a rotation issue is shown below. Here the MSD is 5.65 mm.
 
 Out of all the nine registrations with a large MSD, only one of the scans has a complete brain mask, whereas the rest have incomplete brain masks. This means that if the registration performs badly, it is typically because of an incomplete brain mask. In both cases, however, a large MSD can indicate that something may also go wrong in the data analysis.
 
@@ -149,7 +149,7 @@ Each of the nine cells in the top-left represents a combination between a predic
 
 ![](readme_images/confusion_highlight.png){width=20%}
 
-If, for example, we look at the above cell (Combined, Non-local), 17 out of 158 or 10.8 % of all prediction-target pairs were ”combined”-“non-local”, that is, the prediction was “combined” and the target was “non-local”. Out of all the “non-local” targets, 63% were predicted to be “combined”, and out of all the recurrence types predicted as “combined”, 26.6% were in fact “non-local”.
+If, for example, we look at the above cell (Combined, Non-local), 17 out of 158 or 10.8% of all prediction-target pairs were ”combined”-“non-local”, that is, the prediction was “combined” and the target was “non-local”. Out of all the “non-local” targets, 63% were predicted to be “combined”, and out of all the recurrence types predicted as “combined”, 26.6% were in fact “non-local”.
 
 The green column and row represent the sum of each row or column, respectively.
 
@@ -157,7 +157,7 @@ In total, 56.9% of the predictions were correct. It is apparent immediately that
 
 Firstly, the model has only predicted “non-local” three times even though 27 out of 158 patients had “non-local” recurrences. This is because it is not possible to separate the surgical cavity from the tumor in GTV segmentation, and as explained in [Data analysis](#data-analysis), this means that the tumors are not categorized in complete correspondence with the clinical definition used for determining the target values found in the patient journal.
 
-Secondly, the model has categorized 31 “local-only” recurrences as being “combined”. This can be explained by the GTV segmentation often segmenting small objects around the tumor as being part of the real tumor. These small objects cannot be removed, since it is not possible to determine whether the small objects are lesions or segmentation errors. As a result, if a tumor in fact is “local-only”, these small object may contribute to the recurrence type being classified as “combined”. 
+Secondly, the model has categorized 31 “local-only” recurrences as being “combined”. This can be explained by the GTV segmentation often segmenting small objects around the tumor as being part of the real tumor. These small objects cannot be removed, since it is not possible to determine whether the small objects are lesions or segmentation errors. As a result, if a tumor in fact is “local-only”, these small objects may contribute to the recurrence type being classified as “combined”. 
 
 A summary of the **classical recurrence type categorization** can be seen below:
 
@@ -232,7 +232,7 @@ In order to run the pipeline on a dataset, the data of the different patients mu
 
 ## How to run
 
-The pipeline is run by running the script `pipeline.py`. To specify settings such as the path of the input data folder and the output folder, a `settings.json` file must be created. This file further needs to specify a task id which specifies the *nnU-net* model to use for the specific tasks in the steps of the pipeline. Furthermore, the size in voxels of the dilation filters used in registration and skull-stripping can be specified. In the below example, both the MR and CT scans are dilated by 5 mm in each direction in registration, but the parameters are different. This is because the MR scans have a spacing of of 0.5mm $\times$ 0.5mm $\times$ 1.0mm, while CT scans have a spacing of 1.0mm $\times$ 1.0mm $\times$ 1.0mm. Lastly, one can also specify the minimum size in voxels required for a lesion to be considered a tumor (this is only used when calculating individual volumes of tumors).
+The pipeline is run by running the script `pipeline.py`. To specify settings such as the path of the input data folder and the output folder, a `settings.json` file must be created. This file further needs to specify a task id which specifies the *nnU-net* model to use for the specific tasks in the steps of the pipeline. Furthermore, the size in voxels of the dilation filters used in registration and skull-stripping can be specified. In the below example, both the MR and CT scans are dilated by 5 mm in each direction in registration, but the parameters are different. This is because the MR scans have a spacing of of 0.5mm $\times$ 0.5mm $\times$ 1.0mm, while CT scans have a spacing of 1.0mm $\times$ 1.0mm $\times$ 1.0mm. It is also possible to specify the minimum size in voxels required for a lesion to be considered a tumor (this is only used when calculating individual volumes of tumors).
 
 If the setting `only_run_selected_patients` is set to `true`, the pipeline will only run for the patients in `selected_patients`. Otherwise it will run for all patients in the input folder.
 
