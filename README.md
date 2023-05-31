@@ -159,7 +159,7 @@ In total, 56.9% of the predictions were correct. It is apparent immediately that
 
 Firstly, the model has only predicted “non-local” three times even though 27 out of 158 patients had “non-local” recurrences. This is because it is not possible to separate the surgical cavity from the tumor in GTV segmentation, and as explained in [Data analysis](#data-analysis), this means that the tumors are not categorized in complete correspondence with the clinical definition used for determining the target values found in the patient journal.
 
-Secondly, the model has categorized 31 “local-only” recurrences as being “combined”. This can be explained by the GTV segmentation often segmenting small objects around the tumor as being part of the real tumor. As a result, if a tumor in fact is “local-only”, these small object may contribute to the recurrence type being classified as “combined”. 
+Secondly, the model has categorized 31 “local-only” recurrences as being “combined”. This can be explained by the GTV segmentation often segmenting small objects around the tumor as being part of the real tumor. These small objects cannot be removed, since it is not possible to determine whether the small objects are lesions or segmentation errors. As a result, if a tumor in fact is “local-only”, these small object may contribute to the recurrence type being classified as “combined”. 
 
 A summary of the **classical recurrence type categorization** can be seen below:
 
@@ -172,9 +172,12 @@ A summary of the **classical recurrence type categorization** can be seen below:
 
 Although we have no "true" values to compare against, we can expect the classical recurrence type predictions to be leaning too heavily towards "Central". This is due to the problem with separating the surgical cavity from the GTV.  
 
-## ??? Small conclusion : How do we think the pipeline performs, and how can it potentially be improved
+## Summary and discussion of results
 
-???
+To summarize, the registration generally performs well, and when it does not, it is usually caused by problems with the segmentation of the brain (i.e. the brain mask). This could possibly be fixed by training the *nnU-Net* brain segmentation models on more data. As mentioned in the section [Small objects outside brain masks](#small-objects-outside-brain-masks), the quality of the current training data is also not perfect and could be improved by some preprocessing. The registration has minor problems when the scans are rotated in relation to each other. This could possibly be fixed through tuning the registration parameters.
+
+The segmentation of the GTV is also a source of problems: Firstly, as explained in the [evaluation of the results](#accuracy-of-automatic-recurrence-type-categorization), small objects, that cannot be removed, are segmented as part of the tumor. This could possibly also be fixed by training the *nnU-Net* GTV segmentation model on more data. Furthermore, the surgical cavity is often included in the GTV. This is especially a problem when categorizing the type of recurrence, but it also affects the rest of the analysis. This could potentially be improved by training a model on data where both the tumor and the surgical cavity are segmented and labeled separately. 
+
 
 # Technical details
 
