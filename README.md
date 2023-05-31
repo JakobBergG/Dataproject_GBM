@@ -73,10 +73,10 @@ An MR scan and a CT scan in the grid of the CT before and after registration are
 After all MR scans for the patient have been registered, the quality of the registrations is evaluated using the function `add_msd_to_json` from the script `registration/mask_registration_evaluation.py`. The mean surface distance in mm between the brain mask of each MR scan and the CT scan is calculated and saved in a JSON file.
 
 ## Data analysis
-Now that the GTV's have been moved onto the CT grid in the previous step, it is possible in this final step to analyze the tumors of the patient using the function `run_patient_metrics` from `analysis/patient_metrics.py`. For each patient, different metrics and recurrence type categorizations are performed. One of these metrics is not sufficient to describe the type of recurrence, but together, they can aid in describing the recurrence. For each time point 'time0', 'time1', 'time2' and 'time3' the following metrics are calculated:
+Now that the GTV's have been moved onto the CT grid in the previous step, it is possible in this final step to analyze the tumors of the patient. This is done in the function `run_patient_metrics` from `analysis/patient_metrics.py`. For each patient, different metrics and recurrence type categorizations are calculated. One of these metrics is not sufficient to describe the recurring tumor, but together, they can aid in describing the recurrence. For each time point 'time0', 'time1', 'time2' and 'time3' the following metrics are calculated:
 
 - The **number of days since 'time2'** ('time2' is the time point of treatment planning and considered the "baseline". This means the number of days since 'time2' will be negative for 'time0' and 'time1', and will always be 0 for 'time2').
-- **Number of lesions** (patients may have one big tumor or multiple smaller lesions)
+- **Number of lesions** (the GTV may consist of one or multiple lesions)
 - The **volume of each lesion**
 - The **total volume** of all lesions
 - The **percentage growth in volume since the first available scan**
@@ -84,33 +84,34 @@ Now that the GTV's have been moved onto the CT grid in the previous step, it is 
 
 At the point of recurrence, 'time3', the following is also calculated:
 
-- **The target dose** (54 Gy or 60 Gy) is determined using the maximum intensity of the radiation therapy planning image. This is cross-checked with the available clinical treatment data for the patient.
+- **The target dose** (54 Gy or 60 Gy) is determined using the maximum intensity of the radiation therapy planning image, i.e the RTDOSE file. This is cross-checked with the available clinical treatment data in the patient journal.
 - **The percentage overlap of the GTV with the 95% isodose area** - if the target dose is 60 Gy, the 95% isodose area is any part of the brain that receives more than 95% of 60 Gy.
 - **The Hausdorff distance** between the recurring GTV at 'time3' and the baseline GTV at 'time2'. (see p. 18 [here](https://www.researchgate.net/publication/359797561_Common_Limitations_of_Image_Processing_Metrics_A_Picture_Story)) The 95% percentile Hausdorff distance is also calculated, as well as the Hausdorff distance and the 95% percentile Hausdorff distance between the recurring GTV and the 95% isodose area.
 
 Finally, the type of recurrence is also categorized in two different ways:
 
-**A "classical" categorization of the recurrence type** determined by the overlap between the recurring GTV and 95% isodose area. Specifically, the recurrence is calculated according to the following rules:
+**A "classical" categorization of the recurrence type** determined by the overlap between the recurring GTV and 95% isodose area. Specifically, the recurrence type is categorized according to the following rules:
 
-- central: 95% of recurrence volume within the 95% isodose line
-- in-field: 80-95% of recurrence volume within the 95% isodose line
-- marginal: 20-80% of recurrence volume within the 95% isodose line
-- distant: Less than 20% of recurrence volume within the 95% isodose line
+- Central: 95% of recurrence volume is within the 95% isodose line
+- In-field: 80-95% of recurrence volume is within the 95% isodose line
+- Marginal: 20-80% of recurrence volume is within the 95% isodose line
+- Distant: Less than 20% of recurrence volume is within the 95% isodose line
 
-**A visual scoring categorization of the recurrence type**, where the overlap between the recurring GTV at 'time3' is compared to the baseline GTV at 'time2'. The recurrence type falls into one of three categories:
-
-1. Local-only: The recurring GTV has any overlap with the baseline GTV 
-2. Combined: Both local and non-local recurrence lesions are present
-3. Non-local: The recurring GTV has no overlap with the baseline GTV
-
-Each patient in our data has been visually scored by a clinical professional. The definition of the different categories when scored based on visual analysis from a clinical professional is slightly different from the above mentioned definitions. They are as follows:
+For each patient, a **visual scoring categorization of the recurrence type** is calculated. The patient journal contains a visual categorization performed by a clinical professional, where the recurrence type is categorized according to the following definition:
 
 1. Local-only: The recurring GTV is connected to the surgical cavity, i.e. the empty space from where the tumor was removed in surgery
 2. Combined: Both local and non-local recurrence lesions are present
 3. Non-local: The recurring GTV is not connected to the area of the surgical cavity
 
-The reason that the clinical definition is not used in the automatic categorization is due to the fact that it is not possible to separate the surgical cavity from the GTV’s in the automatic segmentation. We therefore cannot expect perfect consistency between the two above definitions. Nonetheless, the pipeline automatically categorizes the tumor according to the first definition, and the automatic categorization is checked against the clinical definition as a quality check. 
+Instead of using this definition, the following slightly different definition is used in the pipeline:
 
+1. Local-only: The recurring GTV has any overlap with the baseline GTV
+2. Combined: Both local and non-local recurrence lesions are present
+3. Non-local: The recurring GTV has no overlap with the baseline GTV
+
+The first, clinical definition is not used in the automatic categorization because it is not possible to separate the surgical cavity from the GTV’s in the automatic segmentation. 
+
+We cannot expect perfect consistency between the two above definitions. Nonetheless, the pipeline automatically categorizes the tumor according to the second definition, and the automatic categorization is checked against the clinical definition as a quality check.
 
 # Results from running on data
 
