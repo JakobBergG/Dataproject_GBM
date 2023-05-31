@@ -75,7 +75,7 @@ Now that the GTV's have been moved onto the CT grid in the previous step, it is 
 
 - The **number of days since 'time2'** ('time2' is the time point of treatment planning and considered the "baseline". This means the number of days since 'time2' will be negative for 'time0' and 'time1', and will always be 0 for 'time2').
 - **Number of lesions** (the GTV may consist of one or multiple lesions)
-- The **volume of each lesion**
+- The **volume of each lesion** in cm³.
 - The **total volume** of all lesions
 - The **percentage growth in volume since the first available scan**
 - The **percentage growth in volume since the baseline** ('time2')
