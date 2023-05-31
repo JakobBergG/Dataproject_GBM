@@ -5,9 +5,9 @@ import logging
 
 log = logging.getLogger(__name__)
 
-#---------------------------------------------------------#
-# Elastix parameter map for rigid registration is defined #
-#---------------------------------------------------------#
+#----------------------------------------------#
+# Elastix parameter map for rigid registration #
+#----------------------------------------------#
 
 def rigidParameterMap():
     parameterMapRigid = sitk.GetDefaultParameterMap('rigid')
@@ -47,9 +47,9 @@ def rigidParameterMap():
     parameterMapRigid['ErodeFixedMask'] = ['false']
     return parameterMapRigid
 
-#------------------------------#
-# Dilation filters are defined #
-#------------------------------#
+#------------------#
+# Dilation filters #
+#------------------#
 
 # create 3D binary image filter used to expand the mr masks 5 mm in 3D
 dilate_filter_mr = sitk.BinaryDilateImageFilter()
@@ -63,8 +63,17 @@ dilate_filter_ct.SetKernelType(sitk.sitkBall)
 dilate_filter_ct.SetKernelRadius(utils.get_setting("registration_dilation_radius_ct"))
 dilate_filter_ct.SetForegroundValue(1)
 
+#-----------------------#
+# Registration function #
+#-----------------------#
 
 def register_MR_to_CT(patient_folder : str):
+    '''Registers MR scans in input folder to CT scan in input folder using the
+    corresponding brain masks and saving the transformed MR scan in the output folder. 
+    After registrating the MR scan, the correpsonding brain mask and GTV segmentation
+    are transformed using the same transformation parameters and saved
+    in the designated output folder. 
+    '''
     patient_id = os.path.basename(patient_folder)
     output_patient_folder = utils.get_output_patient_path(patient_id)
     outfolder = os.path.join(output_patient_folder, utils.get_path('local_path_moved_mr')) 
