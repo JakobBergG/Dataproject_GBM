@@ -163,7 +163,7 @@ Firstly, the model has only predicted “non-local” three times even though 27
 
 Secondly, the model has categorized 31 “local-only” recurrences as being “combined”. This can be explained by the GTV segmentation often segmenting small objects around the tumor as being part of the real tumor. As a result, if a tumor in fact is “local-only”, these small object may contribute to the recurrence type being classified as “combined”. 
 
-Although we have no "true" values to compare against, we can expect the classical recurrence type predictions to be leaning too heavly towards "Central", because of the problem with separating the surgical cavity from the GTV.  A summary of the classical recurrence type categorization can be seen below:
+A summary of the classical recurrence type categorization can be seen below:
 
 |          | n    | Proportion |
 | -------- | ---- | ---------- |
@@ -171,6 +171,8 @@ Although we have no "true" values to compare against, we can expect the classica
 | In-field | 14   | 8.9%       |
 | Marginal | 18   | 11.4%      |
 | Distant  | 5    | 3.2%       |
+
+Although we have no "true" values to compare against, we can expect the classical recurrence type predictions to be leaning too heavily towards "Central". This is due the problem with separating the surgical cavity from the GTV.  
 
 ## ??? Small conclusion : How do we think the pipeline performs, and how can it potentially be improved
 
