@@ -1,6 +1,6 @@
 # Readme
 
-The following is a description of the different steps of our data analysis pipeline as well as a guide on how to execute it. The pipeline takes in radiology scans (MR and CT) from patients suffering from glioblastoma and returns an analysis of relevant metrics based on the scans.
+The following is a description of the different steps of our data analysis pipeline as well as a guide on how to execute it. The pipeline takes in radiology scans (MR and CT) from patients suffering from glioblastoma and returns an analysis of relevant metrics based on the scans. To get an intial understanding of the pipeline, we recommend reading the [project description](project_description.pdf) before continuing.
 
 [[_TOC_]]
 
@@ -33,11 +33,11 @@ Besides the scans, the pipeline also takes a patient journal for each patient as
 
 
 ## Brain segmentation (MR and CT)
-The first step of the pipeline is brain segmentation. The pipeline activates the brain segmentation by running the function `run_brainmask_predictions`located in the script `brain_segmentation/predict_brain_masks.py`. This function performs the brain segmentation on the CT scan and each of the MR scans for the patient. The result of the brain segmentation is a separate 3D file called a brain mask, where voxels that are part of the brain have value 1 and 0 otherwise. For each CT and MR scan the brain is segmented by using prediction from a pre-trained nnUNet model. An illustration of a MR scan and the corresponding brain segmentation is illustrated below:
+The first step of the pipeline is brain segmentation. The pipeline activates the brain segmentation by running the function `run_brainmask_predictions`located in the script `brain_segmentation/predict_brain_masks.py`. This function performs the brain segmentation on the CT scan and each of the MR scans for the patient. The result of the brain segmentation is a separate 3D file called a brain mask, where voxels that are part of the brain have value 1 and 0 otherwise. For each CT and MR scan the brain is segmented by using prediction from a pre-trained *nnU-Net* model. An illustration of a MR scan and the corresponding brain segmentation is illustrated below:
 
 ![](readme_images/brainsegmentation.png)
 
-The brain segmentations may include small separate objects, that are not actually part of the brain, in the brain mask. For this reason, any small objects not part of the brain are removed using the function `cleanup_brain_mask` which is located in the script `brain_segmentation/cleanup_brain_masks.py`. If two neighboring voxels are 1, i.e. segmented as brain, they are considered to be in the same component. Using SimpleITK's ConnectedComponentImageFilter all components in the brain segmentation are found and labeled. If more than one component is present, the largest component is kept, since this will be the actual brain. Any other components are removed. A brain mask before and after cleanup is illustrated below. Note this is one of the more severe examples and not representative of most scans.
+The brain segmentations may include small separate objects, that are not actually part of the brain, in the brain mask. For this reason, any small objects not part of the brain are removed using the function `cleanup_brain_mask` which is located in the script `brain_segmentation/cleanup_brain_masks.py`. If two neighboring voxels are 1, i.e. segmented as brain, they are considered to be in the same component. Using *SimpleElastix*'s ConnectedComponentImageFilter all components in the brain segmentation are found and labeled. If more than one component is present, the largest component is kept, since this will be the actual brain. Any other components are removed. A brain mask before and after cleanup is illustrated below. Note this is one of the more severe examples and not representative of most scans.
 
 
 ![](readme_images/cleanmask.png)
@@ -50,7 +50,7 @@ Since a brain mask for each MR and CT scan has been generated in the previous br
 
 ## GTV segmentation
 
-In this step the GTV for each MR scan is segmented. The pipeline activates the GTV segmentation by running the function `run_prediction` from the script `gtv_segmentation/predict_gtvs.py`. This function takes the skull-stripped MR scans from the previous step and returns a mask of the GTV. This mask is structured like the brain mask but here voxels that are part of the tumor have the value 1 and 0 otherwise. The segmentation is again created by using predictions from a pre-trained nnUNet model. A skull-stripped MR scan and the same scan with the segmented GTV marked in red is illustrated below: 
+In this step the GTV for each MR scan is segmented. The pipeline activates the GTV segmentation by running the function `run_prediction` from the script `gtv_segmentation/predict_gtvs.py`. This function takes the skull-stripped MR scans from the previous step and returns a mask of the GTV. This mask is structured like the brain mask but here voxels that are part of the tumor have the value 1 and 0 otherwise. The segmentation is again created by using predictions from a pre-trained *nnU-Net* model. A skull-stripped MR scan and the same scan with the segmented GTV marked in red is illustrated below: 
 
 
 ![](readme_images/gtvsegmentation.png)
@@ -60,7 +60,7 @@ The segmented GTV illustrated in 3D:
 ![](readme_images/3dgtv.png){width=50%}
 
 ## Registration: MR to CT grid
-Each MR scan is registered to the grid of the CT scan using the function `register_MR_to_CT` from `registration/registration_MR_mask_to_CT_mask.py`. To perform the registration using SimpleElastix, we need the brain masks from the brain segmentation step. The final registration is a result of two separate rounds of registration: 
+Each MR scan is registered to the grid of the CT scan using the function `register_MR_to_CT` from `registration/registration_MR_mask_to_CT_mask.py`. To perform the registration using *SimpleElastix*, we need the brain masks from the brain segmentation step. The final registration is a result of two separate rounds of registration: 
 
 In the first round the brain masks are used to skull-strip the MR and CT images, which allows us to align the scans at the center of gravity of the brains to get a decent starting point for the first round of registration. The first round can be considered a rough registration. In the second round we replace the skull-stripped scans by the original scans - now at the position where we left off at the first round - and the parameters in this round of registration are used to fine-tune the registration. When the MR scan has been registered to the CT grid, the corresponding brain mask and GTV are moved along with the registered MR scan.
 
@@ -118,7 +118,7 @@ The three following subsections describe three different ways of measuring how t
 
 ## Small objects outside brain masks
 
-During the process of [brain segmentation](#brain-segmentation-mr-and-ct) on the AUH data, a total of 84 brain mask predictions had small connected components not connected to the main brain. The total number of MR and CT scans in our dataset was 811, so 10.4% of the scans needed to be cleaned up. This is possibly caused by a small subset (3 CT scans and 24 MR scans) of the training material also having small objects outside the brain. The prediction error did not, however, prove to be an issue after the brain mask cleaning.
+During the process of [brain segmentation](#brain-segmentation-mr-and-ct) on the AUH data, a total of 84 brain mask predictions had small connected components not connected to the main brain. The total number of MR and CT scans in our dataset was 811, so 10.4% of the scans needed to be cleaned up. This is possibly caused by a small subset (3/80 CT scans and 24/80 MR scans) of the training material also having small objects outside the brain. The prediction error did not, however, prove to be an issue after the brain mask cleaning.
 
 ## Registration performance
 
@@ -145,7 +145,7 @@ We should expect to see at least some consistency between the predictions and th
 
 
 
-Each of the nine cells in the top-left represents a combination of a combination between a prediction and a target. 
+Each of the nine cells in the top-left represents a combination between a prediction and a target. 
 
 ![](readme_images/confusion_highlight.png)
 
@@ -180,9 +180,9 @@ The rest of this document describes how to actually set up and run the pipeline.
 The file 'requirements.txt' can be used to create a conda environment with the required python packages.
 
 ## nnU-Net
-The pipeline uses the deep learning software nnU-Net to perform brain and GTV segmentation. A guide on how to set up and train a nnU-Net model, as needed in the pipeline, can be found at the [GitHub repository for nnU-Net](https://github.com/MIC-DKFZ/nnUNet). 
+The pipeline uses the deep learning software *nnU-Net* to perform brain and GTV segmentation. A guide on how to set up and train a *nnU-Net* model, as needed in the pipeline, can be found at the [GitHub repository for *nnU-Net*](https://github.com/MIC-DKFZ/nnUNet). 
 
-The pipeline assumes that there are 3 available nnU-Net models present on the machine on which it is run: One for CT brain segmentation, one for MR brain segmentation and one for GTV segmentation. The models used for running on the AUH data were trained on a subset of the 638 MR scans and 173 CT scans from Aarhus University Hospital (AUH). For example, 80 scans were used for training the MR brain segmentation model.  The models can be found [here](https://drive.google.com/file/d/1xhi2TyTpy1scalAjjHibUAsZSG8bOiii/view?usp=sharing).
+The pipeline assumes that there are 3 available *nnU-Net* models present on the machine on which it is run: One for CT brain segmentation, one for MR brain segmentation and one for GTV segmentation. The models used for running on the AUH data were trained on a subset of the 638 MR scans and 173 CT scans from Aarhus University Hospital (AUH). For example, 80 scans were used for training the MR brain segmentation model.  The models can be found [here](https://drive.google.com/file/d/1xhi2TyTpy1scalAjjHibUAsZSG8bOiii/view?usp=sharing).
 
 ## Required data and format
 Both the MR and CT scans from the patients must be in compressed [NIfTI format](https://en.wikipedia.org/wiki/Neuroimaging_Informatics_Technology_Initiative). Files in this format have the  filename extension `.nii.gz`. The files further need to have the correct naming in order for the pipeline to be able to calculate the relevant metrics. The naming needs to correspond to the following structure: 
@@ -203,8 +203,6 @@ Finally the pipeline needs a patient journal containing clinical data for each p
 - Radiotherapy Date: date of the radiotherapy planning scan.
 - Recurrence Date: date of the recurrence scan.
 - Radiotherapy dose: the dose of radiation given in gray (Gy). 
-- Patient age: age of the patient at diagnosis.
-- Sex: the gender of the patient.
 - Progression type: the type of progression lesions.
 
 ## Folder structure
@@ -230,7 +228,7 @@ In order to run the pipeline on a dataset the data of the different patients mus
 
 ## How to run
 
-The pipeline is run by running the script `pipeline.py`. To specify settings such as the path of the input data folder and the output folder, a `settings.json` file must be created. This file further needs to specify a task id which specifies the nn-Unet model to use for the specific tasks in the steps of the pipeline. Furthermore, the size in voxels of the dilation filters used in registration and skull-stripping can be specified. In the below example, both the MR and CT scans are dilated by 5 mm in each direction in registration, but the parameters are different. This is because the MR scans have a spacing of of 0.5mm $\times$ 0.5mm $\times$ 1.0mm, while CT scans have a spacing of 1.0mm $\times$ 1.0mm $\times$ 1.0mm. Lastly, one can also specify the minimum size in voxels required for a lesion to be considered a tumor (this is only used when calculating individual volumes of tumors).
+The pipeline is run by running the script `pipeline.py`. To specify settings such as the path of the input data folder and the output folder, a `settings.json` file must be created. This file further needs to specify a task id which specifies the *nnU-net* model to use for the specific tasks in the steps of the pipeline. Furthermore, the size in voxels of the dilation filters used in registration and skull-stripping can be specified. In the below example, both the MR and CT scans are dilated by 5 mm in each direction in registration, but the parameters are different. This is because the MR scans have a spacing of of 0.5mm $\times$ 0.5mm $\times$ 1.0mm, while CT scans have a spacing of 1.0mm $\times$ 1.0mm $\times$ 1.0mm. Lastly, one can also specify the minimum size in voxels required for a lesion to be considered a tumor (this is only used when calculating individual volumes of tumors).
 
  If nothing is specified, the default paths and settings defined in `utils.py` will be used. An example of a `settings.json` file can be seen below:
 
