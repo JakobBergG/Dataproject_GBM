@@ -97,7 +97,7 @@ Finally, the type of recurrence is also categorized in two different ways:
 - Marginal: 20-80% of recurrence volume is within the 95% isodose line
 - Distant: Less than 20% of recurrence volume is within the 95% isodose line
 
-For each patient, a **visual scoring categorization of the recurrence type** is calculated. The patient journal contains a visual categorization performed by a clinical professional, where the recurrence type is categorized according to the following definition:
+**A "visual" categorization of the recurrence type** is calculated. The patient journal contains a visual categorization performed by a clinical professional, where the recurrence type is categorized according to the following definition:
 
 1. Local-only: The recurring GTV is connected to the surgical cavity, i.e. the empty space from where the tumor was removed in surgery
 2. Combined: Both local and non-local recurrence lesions are present
@@ -121,26 +121,27 @@ The three following subsections describe three different ways of measuring how t
 
 ## Small objects outside brain masks
 
-During the process of [brain segmentation](#brain-segmentation-mr-and-ct) on the AUH data, a total of 84 brain mask predictions had small connected components not connected to the main brain. The total number of MR and CT scans in our dataset was 811, so 10.4% of the scans needed to be cleaned up. This is possibly caused by a small subset (3/80 CT scans and 24/80 MR scans) of the training material also having small objects outside the brain. The prediction error did not, however, prove to be an issue after the brain mask cleaning.
+During the process of [brain segmentation](#brain-segmentation-mr-and-ct) on the AUH data, a total of 84 brain mask predictions had small connected components not connected to the main brain. The total number of MR and CT scans in our dataset was 811, so 10.4% of the scans needed to be cleaned up. This is possibly caused by a small subset (3/80 CT scans and 24/80 MR scans) of the training material also having small objects outside the brain. The prediction error did not, however, turn out to be an issue after the brain masks were cleaned.
 
 ## Registration performance
 
-As seen in the histogram, most [registrations](#registration-mr-to-ct-grid) have mean surface distance (MSD) scores below 2 mm. These are good registrations. If the MSD score is large, it is typically one of these two cases:
+The below histogram is the result of running the registration on the data from AUH and evaluating it as described in [Registration: MR to CT grid](#registration-mr-to-ct-grid). As seen in the histogram, most registrations have a mean surface distance (MSD) below 2 mm. In general, these are regarded as good registrations. 
 
 ![](readme_images/msd_histogram_final.png)
 
-**A.** A small number of the MR scans have incomplete brain masks, which causes the MSD between the brain masks to be large. For most examples in this case the registration is fine, so the large MSD is not an issue. However, something might have caused the brain mask to be incomplete, so the analysis might be flawed, but the registration will still do fine. Below is an example of a good registration with an incomplete brain mask. Here the MSD is 6.57 mm.
+If the MSD is large, it is typically one of these two cases:
+
+**A.** A small number of the MR scans have incomplete brain masks, which causes the MSD between the brain masks to be large. For most examples with incomplete brain masks, the registration is fine, so a large MSD does not necessarily mean that the registration performs badly. A large MSD can therefore be an indication of an incomplete brain mask, which in turn can cause the data analysis to be flawed. Below is an example of a good registration with an incomplete brain mask, where the brain mask is marked with the lightest color. Here the MSD is 6.57 mm.
 
 ![](readme_images/good_registration_bad_msd.png)
 
-**B.** The MR scan is rotated in comparison to the CT scan, and the registration has not been able to fix the rotation issue. This problem is often combined with an incomplete mask, but can also happen when the brain mask is fine. In this case the MSD reflects the performance of the registration, and the bad registration can cause the data analysis to be flawed. With our data, only one scan with a perfectly fine brain mask has a large MSD. This example of a bad registration with a rotation issue is shown below. Here the MSD is 5.65 mm.
+**B.** The MR scan is rotated in comparison to the CT scan, and the registration has not been able to fix the rotation issue. This problem is often combined with an incomplete brain mask, but it can also happen when the brain mask is fine. In this case the MSD reflects the performance of the registration, and the bad registration can cause the data analysis to be flawed. An example of a bad registration with a rotation issue is shown below. Here the MSD is 5.65 mm.
 
-![](readme_images/registration_rotation.png)
-
+Out of all the nine registrations with a large MSD, only one of the scans has a complete brain mask, whereas the rest have incomplete brain masks. This means that if the registration performs badly, it is typically because of an incomplete brain mask. In both cases, however, a large MSD can indicate that something may also go wrong in the data analysis.
 
 ## Accuracy of automatic recurrence type categorization
 
-As mentioned in the [data analysis](#data-analysis) section, an automatic categorization of the recurrence corresponding to the visual scoring is performed for each patient. The below confusion matrix illustrates how the predictions compare to the true target values. 
+As mentioned in the [data analysis](#data-analysis) section, an automatic categorization of the recurrence type corresponding to the visual categorization is performed for each patient. The below confusion matrix illustrates how the predictions compare to the true target values. 
 
 We should expect to see at least some consistency between the predictions and the target values, even though slightly different definitions are used for the target and prediction values. 
 
