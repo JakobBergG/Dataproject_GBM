@@ -13,7 +13,7 @@ The figure below illustrates the input and resulting output of each step in the 
 
 ## Input data
 
-For each patient, the pipeline takes as input up to four MR scans from different timepoints as well as a single CT scan and a RTDOSE file, which holds info on the radiation therapy planning. The scans are 3D images. Whereas 2D images are made up of pixels, 3D images are made up of voxels. Each voxel represents the brightness in the scan of a small cuboid volume. The number and size of the voxels vary with each scan, but a typical MR scan is 520 $\times$ 520 $\times$ 176 voxels with each voxel having a size of 0.5mm  $\times$ 0.5mm  $\times$ 1.0mm. An example of a MR scan and a CT scan can be seen in the below illustration.
+For each patient, the pipeline takes as input up to four MR scans from different timepoints as well as a single CT scan. It also takes as input an RTDOSE file holding information on the intensity and location of the radiation therapy planning. The scans are 3D images. Whereas 2D images are made up of pixels, 3D images are made up of voxels. Each voxel represents the brightness in the scan of a small cuboid volume. The number and size of the voxels vary with each scan, but a typical MR scan is 520 $\times$ 520 $\times$ 176 voxels with each voxel having a size of 0.5mm  $\times$ 0.5mm  $\times$ 1.0mm. An example of an MR scan and a CT scan can be seen in the below illustration.
 
 ![](readme_images/MRandCTExa.png)
 
@@ -26,18 +26,18 @@ The table below gives an overview of the possible different scans for each patie
 | time0        | Diagnosis    | Scan used to diagnose the patient with GBM.         | MR           |
 | time1        | Post surgery | Scan done right after  surgery to the check result. | MR           |
 | time2        | Planning     | Scans used to plan the  radiation therapy area.     | MR and CT    |
-| time3        | Recurrence   | Scan from when the tumor  is starting to recure.    | MR           |
+| time3        | Recurrence   | Scan at the timepoint where the tumor has recurred. | MR           |
 
 
 Besides the scans, the pipeline also takes a patient journal for each patient as input. This journal includes information about the dates of the different scans as well as the treatment intensity. The section [Technical details](#technical-details) below describes this journal and the required format of the input data in further detail.
 
 
 ## Brain segmentation (MR and CT)
-The first step of the pipeline is brain segmentation. The pipeline activates the brain segmentation by running the function `run_brainmask_predictions`located in the script `brain_segmentation/predict_brain_masks.py`. This function performs the brain segmentation on the CT scan and each of the MR scans for the patient. The result of the brain segmentation is a separate 3D file called a brain mask, where voxels that are part of the brain have value 1 and 0 otherwise. For each CT and MR scan the brain is segmented by using prediction from a pre-trained *nnU-Net* model. An illustration of a MR scan and the corresponding brain segmentation is illustrated below:
+The first step of the pipeline is brain segmentation. Brain segmentation is executed by running the function `run_brainmask_predictions` located in the script `brain_segmentation/predict_brain_masks.py`. This function performs the brain segmentation on the CT scan and each of the MR scans for the patient. The result of the brain segmentation is a separate 3D image called a brain mask, where voxels that are part of the brain have value 1 and 0 otherwise. For each CT and MR scan the brain is segmented by using prediction from a pre-trained *nnU-Net* model. An illustration of an MR scan and the corresponding brain segmentation is illustrated below:
 
 ![](readme_images/brainsegmentation.png)
 
-The brain segmentations may include small separate objects, that are not actually part of the brain, in the brain mask. For this reason, any small objects not part of the brain are removed using the function `cleanup_brain_mask` which is located in the script `brain_segmentation/cleanup_brain_masks.py`. If two neighboring voxels are 1, i.e. segmented as brain, they are considered to be in the same component. Using *SimpleElastix*'s ConnectedComponentImageFilter all components in the brain segmentation are found and labeled. If more than one component is present, the largest component is kept, since this will be the actual brain. Any other components are removed. A brain mask before and after cleanup is illustrated below. Note this is one of the more severe examples and not representative of most scans.
+The brain segmentations may include small separate objects, that are not actually part of the brain, in the brain mask. For this reason, any small objects not part of the brain are removed using the function `cleanup_brain_mask` which is located in the script `brain_segmentation/cleanup_brain_masks.py`. If two neighboring voxels are 1, i.e. segmented as brain, they are considered to be in the same component. Using *SimpleElastix*'s `ConnectedComponentImageFilter` all components in the brain segmentation are found and labeled. If more than one component is present, the largest component is kept, since this will be the actual brain. Any other components are removed. A brain mask before and after cleanup is illustrated below. Note that this is one of the more severe examples and not representative of most scans.
 
 
 ![](readme_images/cleanmask.png)
@@ -60,15 +60,17 @@ The segmented GTV illustrated in 3D:
 ![](readme_images/3dgtv.png){width=50%}
 
 ## Registration: MR to CT grid
-Each MR scan is registered to the grid of the CT scan using the function `register_MR_to_CT` from `registration/registration_MR_mask_to_CT_mask.py`. To perform the registration using *SimpleElastix*, we need the brain masks from the brain segmentation step. The final registration is a result of two separate rounds of registration: 
+Each MR scan is registered to the grid of the CT scan using the function `register_MR_to_CT` from `registration/registration_MR_mask_to_CT_mask.py`. To perform the registration using *SimpleElastix*, we need the brain masks from the brain segmentation step. The final registration is the result of two separate rounds of registration: 
 
-In the first round the brain masks are used to skull-strip the MR and CT images, which allows us to align the scans at the center of gravity of the brains to get a decent starting point for the first round of registration. The first round can be considered a rough registration. In the second round we replace the skull-stripped scans by the original scans - now at the position where we left off at the first round - and the parameters in this round of registration are used to fine-tune the registration. When the MR scan has been registered to the CT grid, the corresponding brain mask and GTV are moved along with the registered MR scan.
+The first round of registration is performed on skull-stripped MR and CT images, which allows us to align the scans at the center of gravity of the brains to get a decent starting point. The first round can be considered a rough registration. Here, the intensity of each image is divided up into coarse bins, and the registration tries to match up these bins as well as possible.
+
+In the second round, we replace the skull-stripped scans by the original scans - now at the position where we left off at the first round - and the intensities are now divided into smaller, finer bins in order to fine-tune the registration. When the MR scan has been registered to the CT grid, the corresponding brain mask and GTV are moved along with the registered MR scan.
 
 An MR scan and a CT scan in the grid of the CT before and after registration are illustrated below: 
 
 ![](readme_images/registrationexa.png)
 
-After all MR scans for the patient have been registered, the performance of the registrations are evaluated using the function `add_msd_to_json` from the script `registration/mask_registration_evaluation.py`. The mean surface distance in mm between the brain mask of each MR scan and the CT scan is calculated and saved in a JSON file.
+After all MR scans for the patient have been registered, the quality of the registrations is evaluated using the function `add_msd_to_json` from the script `registration/mask_registration_evaluation.py`. The mean surface distance in mm between the brain mask of each MR scan and the CT scan is calculated and saved in a JSON file.
 
 ## Data analysis
 Now that the GTV's have been moved onto the CT grid in the previous step, it is possible in this final step to analyze the tumors of the patient using the function `run_patient_metrics` from `analysis/patient_metrics.py`. For each patient, different metrics and recurrence type categorizations are performed. One of these metrics is not sufficient to describe the type of recurrence, but together, they can aid in describing the recurrence. For each time point 'time0', 'time1', 'time2' and 'time3' the following metrics are calculated:
