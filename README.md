@@ -1,7 +1,6 @@
 # Readme
 
 The following is a description of the different steps of our data analysis pipeline as well as a guide on how to execute it. The pipeline takes in radiology scans (MR and CT) from patients suffering from glioblastoma and returns an analysis of relevant metrics based on the scans.
-TEST
 
 [[_TOC_]]
 
