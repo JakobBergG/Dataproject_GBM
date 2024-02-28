@@ -5,6 +5,7 @@ The following is a description of the different steps of our data analysis pipel
 [[_TOC_]]
 
 # Description of the pipeline
+hej
 The figure below illustrates the input and resulting output of each step in the pipeline. These steps are described in further detail in the sections below.
 
 
