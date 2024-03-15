@@ -1,0 +1,29 @@
+import os
+from radiomics import featureextractor
+
+"""
+A new conda environment has been made to accommodate radiomics' need for python 3.7.12. Remember to use this interpreter in VS CODE
+For testing we're currently using:
+D:\GBM\summary\AUH\0114\
+time0_0114_20140723_MR.nii.gz
+time0_0114_20140723_gtv.nii.gz
+
+"""
+dir = "D:\\GBM\\summary\\AUH\\0114\\"
+imagepath = dir + "time0_0114_20140723_MR.nii.gz"
+labelpath = dir + "time0_0114_20140723_gtv.nii.gz"
+
+extractor = featureextractor.RadiomicsFeatureExtractor("radiomics\Params.yaml")
+
+print("Calculating features:")
+result = extractor.execute(imagepath, labelpath)
+print("Done!")
+
+features = {}
+
+for key, value in result.items():
+    if key.split("_", 1)[0] != "diagnostics":
+        features[key] = value
+
+for key,value in features.items():
+    print((key + " ").ljust(40, "-"), ":", value)
