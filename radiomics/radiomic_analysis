@@ -5,24 +5,25 @@ from radiomics import featureextractor
 A new conda environment has been made to accommodate radiomics' need for python 3.7.12. Remember to use this interpreter in VS CODE
 """
 
+selected_patients = ["0114", "0134", "0361"] # If this is empty, the whole datapath directory is scanned for patients.
 datapath = "D:\\GBM\\summary\\AUH"
 extractor = featureextractor.RadiomicsFeatureExtractor("radiomics\Params.yaml")
 
-def extract_features(patient_number):
+def extract_features(patient_path):
     # Find relevant files
-    for file_name in os.listdir(os.join(datapath, patient_number)):
-        if file_name.statswith("time0") and file_name.endswith("gtv.nii"):
-            label_path = file_name
-        elif file_name.startswith("time0") and file_name.endswith("MR.nii"):
-            image_path = file_name
+    for file_name in os.listdir(patient_path):
+        if file_name.startswith("time0") and file_name.endswith("gtv.nii.gz"):
+            label_path = os.path.join(patient_path, file_name)
+        elif file_name.startswith("time0") and file_name.endswith("MR.nii.gz"):
+            image_path = os.path.join(patient_path, file_name)
 
     # Feature extraction
-    print("Calculating features for:", patient_number)
+    print("Calculating features for:", os.path.split(patient_path)[1])
     result = extractor.execute(image_path, label_path)
     print("Done!")
 
-    features = {}
     # Grab useful metrics
+    features = {}
     for key, value in result.items():
         if not key.startswith("diagnostics"): # Do not include diagnostic info
             features[key] = value
@@ -30,10 +31,15 @@ def extract_features(patient_number):
     return features
 
 patient_features = {}
-for patient_number in os.listdir(datapath): 
-    patient_features[patient_number] = extract_features(patient_number)
+patient_numbers = os.listdir(datapath) if not selected_patients else selected_patients
 
-do_print = False
+for patient_number in patient_numbers:  
+    patient_features[patient_number] = extract_features(os.path.join(datapath, patient_number))
 
-#for key,value in features.items():
-#    print((key + " ").ljust(40, "-"), ":", value)
+do_print = True
+if do_print:
+    for patient_no, features in patient_features.items():
+        print("-" * 10, "PATIENT:", patient_no, "-" * 10)
+        for key,value in features.items():
+            print((key + " ").ljust(40, "-"), ":", value)
+        print("")
