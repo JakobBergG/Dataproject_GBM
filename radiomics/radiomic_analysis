@@ -3,26 +3,37 @@ from radiomics import featureextractor
 
 """
 A new conda environment has been made to accommodate radiomics' need for python 3.7.12. Remember to use this interpreter in VS CODE
-For testing we're currently using:
-
 """
-# How do we make specifying the path more flexible?
-# Also, we can probably automatically scan the directory and only include time0 in the analysis.
-dir = "D:\\GBM\\summary\\AUH\\0114\\" 
-imagepath = dir + "time0_0114_20140723_MR.nii.gz"
-labelpath = dir + "time0_0114_20140723_gtv.nii.gz"
 
+datapath = "D:\\GBM\\summary\\AUH"
 extractor = featureextractor.RadiomicsFeatureExtractor("radiomics\Params.yaml")
 
-print("Calculating features:")
-result = extractor.execute(imagepath, labelpath)
-print("Done!")
+def extract_features(patient_number):
+    # Find relevant files
+    for file_name in os.listdir(os.join(datapath, patient_number)):
+        if file_name.statswith("time0") and file_name.endswith("gtv.nii"):
+            label_path = file_name
+        elif file_name.startswith("time0") and file_name.endswith("MR.nii"):
+            image_path = file_name
 
-features = {}
+    # Feature extraction
+    print("Calculating features for:", patient_number)
+    result = extractor.execute(image_path, label_path)
+    print("Done!")
 
-for key, value in result.items():
-    if key.split("_", 1)[0] != "diagnostics": # Do not include diagnostic info
-        features[key] = value
+    features = {}
+    # Grab useful metrics
+    for key, value in result.items():
+        if not key.startswith("diagnostics"): # Do not include diagnostic info
+            features[key] = value
+    
+    return features
 
-for key,value in features.items():
-    print((key + " ").ljust(40, "-"), ":", value)
+patient_features = {}
+for patient_number in os.listdir(datapath): 
+    patient_features[patient_number] = extract_features(patient_number)
+
+do_print = False
+
+#for key,value in features.items():
+#    print((key + " ").ljust(40, "-"), ":", value)
