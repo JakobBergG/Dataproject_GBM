@@ -31,7 +31,7 @@ def extract_features(patient_path):
     return features
 
 patient_features = {}
-patient_numbers = os.listdir(datapath) if not selected_patients else selected_patients
+patient_numbers = selected_patients if selected_patients else os.listdir(datapath)
 
 for patient_number in patient_numbers:  
     patient_features[patient_number] = extract_features(os.path.join(datapath, patient_number))
