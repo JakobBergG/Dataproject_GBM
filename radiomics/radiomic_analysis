@@ -10,7 +10,7 @@ datapath = "D:\\GBM\\summary\\AUH"
 extractor = featureextractor.RadiomicsFeatureExtractor("radiomics\Params.yaml")
 
 def extract_features(patient_path):
-    # Find relevant files
+    # Find relevant files - Some scans might be missing. This is NOT accounted for yet.
     for file_name in os.listdir(patient_path):
         if file_name.startswith("time0") and file_name.endswith("gtv.nii.gz"):
             label_path = os.path.join(patient_path, file_name)
