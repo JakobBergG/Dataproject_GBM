@@ -1,10 +1,10 @@
 import os
 from radiomics import featureextractor
 
-"""
-A new conda environment has been made to accommodate radiomics' need for python 3.7.12. Remember to use this interpreter in VS CODE
-GBM_RadiomicAnalysis
-"""
+########## NOTICE ############
+#   A new conda environment has been made to accommodate radiomics' need for python 3.7.12. Remember to use this interpreter in VS CODE
+#   GBM_RadiomicAnalysis
+##############################
 
 selected_patients = ["0114", "0134", "0361"] # If this is empty, the whole datapath directory is scanned for patients.
 datapath = "D:\\GBM\\summary\\AUH"
