@@ -3,10 +3,13 @@ from radiomics import featureextractor
 
 """
 A new conda environment has been made to accommodate radiomics' need for python 3.7.12. Remember to use this interpreter in VS CODE
+GBM_RadiomicAnalysis
 """
 
 selected_patients = ["0114", "0134", "0361"] # If this is empty, the whole datapath directory is scanned for patients.
 datapath = "D:\\GBM\\summary\\AUH"
+patient_numbers = selected_patients if selected_patients else os.listdir(datapath)
+
 extractor = featureextractor.RadiomicsFeatureExtractor("radiomics\Params.yaml")
 
 def extract_features(patient_path):
@@ -18,24 +21,25 @@ def extract_features(patient_path):
             image_path = os.path.join(patient_path, file_name)
 
     # Feature extraction
-    print("Calculating features for:", os.path.split(patient_path)[1])
+    print("Calculating features for:", os.path.basename(patient_path))
     result = extractor.execute(image_path, label_path)
     print("Done!")
 
     # Grab useful metrics
     features = {}
     for key, value in result.items():
-        if not key.startswith("diagnostics"): # Do not include diagnostic info
+        if not key.startswith("diagnostics"): # Do not include diagnostic info - See also radiomics/Params.yaml
             features[key] = value
     
     return features
 
+# RUN EXTRACTION FOR PATIENTS #
 patient_features = {}
-patient_numbers = selected_patients if selected_patients else os.listdir(datapath)
-
 for patient_number in patient_numbers:  
-    patient_features[patient_number] = extract_features(os.path.join(datapath, patient_number))
+    current_patient_path = os.path.join(datapath, patient_number)
+    patient_features[patient_number] = extract_features(current_patient_path)
 
+# PRINTING #
 do_print = True
 if do_print:
     for patient_no, features in patient_features.items():
