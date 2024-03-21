@@ -34,7 +34,7 @@ def run_brainmask_predictions(patient_folder : str, nnUNet_ct_task_id : int, nnU
 
     # now ready to run prediction
     log.info(f"Running CT brain mask prediction for {patient_id}")
-    scans_ending = "_CT_res.nii.gz"
+    scans_ending = "_CT.nii.gz"
     nnUNet_ending = "_CT_res_mask_0000.nii.gz"
 
     run_prediction(patient_folder, scans_ending, nnUNet_input_folder,
@@ -58,7 +58,7 @@ def run_brainmask_predictions(patient_folder : str, nnUNet_ct_task_id : int, nnU
 
     # now ready to run prediction
     log.info(f"Running MR brain mask prediction for {patient_id}")
-    scans_ending = "_MR_res.nii.gz"
+    scans_ending = "_MR.nii.gz"
     nnUNet_ending = "_MR_res_mask_0000.nii.gz"
 
     run_prediction(patient_folder, scans_ending, nnUNet_input_folder,
