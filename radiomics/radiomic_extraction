@@ -1,0 +1,64 @@
+import os
+from radiomics import featureextractor
+from sklearn.linear_model import LogisticRegression
+import json
+
+########## NOTICE ############
+#   A new conda environment has been made to accommodate radiomics' need for python 3.7.12. Remember to use this interpreter in VS CODE
+#   GBM_RadiomicAnalysis
+##############################
+
+datapath = "D:\\GBM\\summary\\AUH"
+feature_output_path = "D:\\GBM\output_test\\radiomic_results"
+
+
+selected_patients = ["0114","0315","0361","0540","0945","1124","1656","1702","1838","2080","3030","3117","3136","3140","3154","3194","3240","3253","3257","3264","3285","3286","3287","3292","3322","3325","3334","3397","3402","3424","3442","3445","3459","3462","3525","3657","3663","3685","3686","3692","3719","3728","3731","3735","3743","3755","3758","3762","3770","3771","3775","3789","3791","3823","3831","3856","3862","3871","3879","3886","3918","3931","3967","3989","4008","4040","4057","4070","4079","4081","4099","4106","4108","4114","4120","4147","4150","4168","4191","4193","4215","4221","4223","4225","4233","4234","4242","4264","4267","4341","4361","4375","4385","4404","4409","4424","4435","4437","4462","4464","4498","4502","4542","4548","4559","4625","4630","4653","4665","4713","4722","4733","4734","4748","4761","4775","4786","4787","4788","4809","4850","4854","4861","4877","4904","4912","4939","4974","4975","4988","4990","4999","5009","5016","5038","5061","5068","5071","5075","5161","5166","5214","5236","5260","5265","5274","5333","5351","5373","5497"] # If this is empty, the whole datapath directory is scanned for patients.
+patient_numbers = selected_patients if selected_patients else os.listdir(datapath)
+
+extractor = featureextractor.RadiomicsFeatureExtractor("radiomics\Params.yaml")
+
+def extract_features(patient_path):
+    # Find relevant files - Some scans might be missing. This is NOT accounted for yet.
+    image_path, label_path = None, None
+    for file_name in os.listdir(patient_path):
+        if file_name.startswith("time0") and file_name.endswith("gtv.nii.gz"):
+            label_path = os.path.join(patient_path, file_name)
+        elif file_name.startswith("time0") and file_name.endswith("MR.nii.gz"):
+            image_path = os.path.join(patient_path, file_name)
+    
+    if image_path == None or label_path == None:
+        print("Could not find relevant files!")
+        return None
+
+    # Feature extraction
+    print("Calculating features for:", os.path.basename(patient_path))
+    result = extractor.execute(image_path, label_path)
+    print("Done!")
+
+    # Grab useful metrics
+    features = {}
+    for key, value in result.items():
+        if not key.startswith("diagnostics"): # Do not include diagnostic info - See also radiomics/Params.yaml for extracted features
+            features[key] = float(value) # Value is originally ndarray - can't be serialized to json
+    
+    return features
+
+# RUN EXTRACTION FOR PATIENTS #
+all_patient_features = {}
+for patient_number in patient_numbers:  
+    current_patient_path = os.path.join(datapath, patient_number)
+    current_patient_features = extract_features(current_patient_path)
+    if current_patient_features is not None:
+        all_patient_features[patient_number] = current_patient_features
+
+# PRINTING - OPTIONAL #
+do_print = True
+if do_print:
+    for patient_no, features in all_patient_features.items():
+        print("-" * 10, "PATIENT:", patient_no, "-" * 10)
+        for key,value in features.items():
+            print((key + " ").ljust(40, "-"), ":", value)
+        print("")
+
+with open("D:\\GBM\output_test\\radiomic_results\\patient_features.json", "w") as f:
+    json.dump(all_patient_features, f)
