@@ -37,17 +37,17 @@ def run_skull_stripping(patient_folder):
     mr_list = []
     ct_list = []
     for file in patient_filelist:
-        if os.path.basename(file).endswith("_MR_res.nii.gz"):
+        if os.path.basename(file).endswith("_MR.nii.gz"): # Used to be "_MR_res.nii.gz"
             mr_list.append(file)
-        if os.path.basename(file).endswith("_CT_res.nii.gz"):
+        if os.path.basename(file).endswith("_CT.nii.gz"): # Used to be "_MR_res.nii.gz"
             ct_list.append(file)
 
     # now strip mr skulls
     mr_dilation_radius = utils.get_setting("skull_stripping_dilation_radius_mr")
     for mr in mr_list:
         mr_name = os.path.basename(mr)
-        mask_name = re.sub("_MR_res", "_MR_res_mask_cleaned", mr_name)
-        output_name = re.sub("_MR_res", "_MR_res_stripped", mr_name)
+        mask_name = re.sub("_MR", "_MR_res_mask_cleaned", mr_name) # "_MR" used to be "_MR_res"
+        output_name = re.sub("_MR", "_MR_res_stripped", mr_name) # "_MR" used to be "_MR_res"
         mask_path = os.path.join(output_patient_folder, local_path_brainmasks_mr, mask_name)
         output_path = os.path.join(output_patient_folder, local_path_brainmasks_mr, output_name)
         strip_skull_and_save(mr, mask_path, mr_dilation_radius, output_path)
