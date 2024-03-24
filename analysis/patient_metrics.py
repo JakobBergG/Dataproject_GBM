@@ -90,9 +90,9 @@ def get_patient_metrics(patientfolder : str, journal_info : dict) -> dict:
 
     base_filelist = [ f.path for f in os.scandir(patientfolder) if f.is_file() ]
     for pathstr in base_filelist:
-        if os.path.basename(pathstr).endswith('_RTDOSE_res.nii.gz'):
+        if os.path.basename(pathstr).endswith('_RTDOSE.nii.gz'): #'_RTDOSE.nii.gz' used to be '_RTDOSE_res.nii.gz'
             rtdose_filename = pathstr
-        if os.path.basename(pathstr).endswith('CT_res.nii.gz'):
+        if os.path.basename(pathstr).endswith('CT.nii.gz'): # 'CT.nii.gz' used to be 'CT_res.nii.gz'
             has_CT = True
 
     if not has_CT:
