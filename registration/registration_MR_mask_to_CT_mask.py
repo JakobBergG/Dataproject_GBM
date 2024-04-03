@@ -128,9 +128,9 @@ def register_MR_to_CT(patient_folder : str):
     
     # define the path for the original scans
     for pathstr in image_filelist:
-        if os.path.basename(pathstr).endswith('CT_res.nii.gz'):
+        if os.path.basename(pathstr).endswith('CT.nii.gz'): # "CT.nii.gz" used to be "CS_res.nii.gz"
             ct_file = pathstr
-        if os.path.basename(pathstr).endswith('MR_res.nii.gz'):
+        if os.path.basename(pathstr).endswith('MR.nii.gz'): # "MR.nii.gz" used to be "MR_res.nii.gz"
             mr_list.append(pathstr)
 
     
