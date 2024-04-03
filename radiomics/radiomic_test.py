@@ -1,12 +1,3 @@
+import SimpleITK as sitk
 
-myint = 200
-
-def x():
-    global myint
-    myint = 100
-    y()
-
-def y():
-    print(myint)
-
-x()
+imagepath = "D:\\GBM\\summary\\AUH"

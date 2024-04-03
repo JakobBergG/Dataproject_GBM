@@ -32,6 +32,7 @@ for patient, features in all_radiomic_features.items():
     patient_info[patient] = {"TumorClass": journal_info_patients[patient],
                              "features": features} # features is a Dict
 
+
 # PRINT FEATURE DIFFERENCES - OPTIONAL #
 do_print = False
 if do_print:
@@ -67,18 +68,25 @@ if do_print:
 
 X = []
 y = []
-myCounter = 0
+# myCounter = 0
+# for patient, info in patient_info.items():
+#     if info["TumorClass"] != 3:
+#         if myCounter == 23 and info["TumorClass"] == 1:
+#             continue
+#         X.append([value for _, value in info["features"].items()])
+#         y.append(info["TumorClass"])
+#         if info["TumorClass"] == 1:
+#             myCounter += 1
+        
 for patient, info in patient_info.items():
     if info["TumorClass"] != 3:
-        if myCounter == 23 and info["TumorClass"] == 1:
-            continue
         X.append([value for _, value in info["features"].items()])
         y.append(info["TumorClass"])
-        if info["TumorClass"] == 1:
-            myCounter += 1
-        
-        
 
 clf = LogisticRegression().fit(X,y)
 
 print(sum(clf.predict(X) == y) / len(y))
+print(clf.predict(X))
+
+print(len([num for num in y if num == 2]))
+print(len([num for num in y if num == 1]))
