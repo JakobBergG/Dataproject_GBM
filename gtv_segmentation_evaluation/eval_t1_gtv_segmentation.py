@@ -41,11 +41,76 @@ def get_hd(baseline : sitk.Image,rec : sitk.Image) -> tuple:
     
     return hd, hd95
     
+
+def evaluate(hospital):
+        
+    # Evaluation of the segmentation of gtvs for a hospital (AUH, CUH, OUH)
+    # Only patients with the file "gtv.nii.gz" in RTSTRUCTS_0
+    # is used in the evaluation.
+
+    metrics = {}
+
+    prediction_folder_path = f"D:\\GBM\\output\\{hospital}"
+    gt_folder_path = f"D:\\GBM\\nii\\{hospital}"
+
+    prediction_folders = [f.path for f in os.scandir(prediction_folder_path) if f.is_dir()]
+
+    for prediction_folder in prediction_folders:
+        print(f"running on patient_folder {os.path.basename(prediction_folder)}")
+        patient_number = os.path.basename(prediction_folder)
+
+        # get prediction file
+        prediction_path = os.path.join(prediction_folder, "MR_to_CT_gtv")
+        
+        try:
+            prediction_filelist = [f.path for f in os.scandir(prediction_path)]
+        except:
+            print(f"could not find {prediction_folder}")
+            continue
+        prediction_file = min(prediction_filelist)
+        
+
+        # get gt file
+        gt_path = os.path.join(gt_folder_path, patient_number)
+        gt_path = [f.path for f in os.scandir(gt_path) if f.is_dir() and f.path.endswith("_CT")][0]
+        gt_path = os.path.join(gt_path, "RTSTRUCTS_0")
+        try:
+            gt_files = [f.path for f in os.scandir(gt_path)]
+            gt_file = [f for f in gt_files if os.path.basename(f) == "gtv.nii.gz"][0]
+        except:
+            print(f"could not get gt_files or gt_file in {gt_path}")
+            continue
+
+
+        # read files
+        prediction = sitk.ReadImage(prediction_file)
+        gt = sitk.ReadImage(gt_file)
+
+        try:
+            msd_result = msd(prediction, gt)
+            hd_result, hd95_result = get_hd(prediction, gt)
+        except Exception as e:
+            print(f"could not compute metrics: {e}")
+            continue
+
+        metrics[patient_number] = {"msd": msd_result, "hd": hd_result, "hd95": hd95_result}
+
+
+        with open(f"{hospital}_metrics.json", "w") as outfile:
+            json.dump(metrics, outfile)
+
+
+evaluate("OUH")
     
 
+ 
 
+"""
 
 # Evaluation of AUH
+# Only patients with the file "gtv.nii.gz" in RTSTRUCTS_0
+# is used in the evaluation.
+
 AUH_metrics = {}
 
 prediction_folder_path = "D:\\GBM\\output\\AUH"
@@ -96,6 +161,13 @@ for prediction_folder in prediction_folders:
 
 with open("AUH_metrics.json", "w") as outfile:
     json.dump(AUH_metrics, outfile)
+
+
+"""
+    
+
+
+
 
 
 
