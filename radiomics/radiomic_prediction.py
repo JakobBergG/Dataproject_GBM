@@ -25,8 +25,8 @@ with open(all_radiomic_features_path) as f:
     all_radiomic_features = json.load(f)
 
 # COMBINE #
-# Some of the patients from the csv raised error when calculating features. (e.g. missing images, non-existent mask)
-# Valid patients only if they are present in csv and have valid radiomic features.
+# Some of the patients from the csv raised error when calculating radiomic features. (e.g. missing images, non-existent mask)
+# Valid patients only if they are PRESENT IN CSV and HAVE VALID RADIOMIC FEATURES.
 patient_info = {}
 for patient, features in all_radiomic_features.items():
     patient_info[patient] = {"TumorClass": journal_info_patients[patient],
@@ -62,31 +62,28 @@ if do_print:
 # I tried to get a balanced amount of local and distant recurrence. However something is majorly wrong:
 # Include all local recurrences = classifier predicts only local recurrence
 # Make it 50/50 local/distant = classifier guesses 50% correct.
-# Consider checking:
-# - Are masks correct?
-# - Actually following the article correctly. (It uses the ring around the tumor instead of the GTV itself, but I don't know how to do that)
 
 X = []
 y = []
-# myCounter = 0
-# for patient, info in patient_info.items():
-#     if info["TumorClass"] != 3:
-#         if myCounter == 23 and info["TumorClass"] == 1:
-#             continue
-#         X.append([value for _, value in info["features"].items()])
-#         y.append(info["TumorClass"])
-#         if info["TumorClass"] == 1:
-#             myCounter += 1
-        
+myCounter = 0
 for patient, info in patient_info.items():
     if info["TumorClass"] != 3:
+        if myCounter == 23 and info["TumorClass"] == 1:
+            continue
         X.append([value for _, value in info["features"].items()])
-        y.append(info["TumorClass"])
+        y.append(info["TumorClass"] - 1)
+        if info["TumorClass"] == 1:
+            myCounter += 1
+        
+# for patient, info in patient_info.items():
+#     if info["TumorClass"] != 3:
+#         X.append([value for _, value in info["features"].items()])
+#         y.append(info["TumorClass"])
 
 clf = LogisticRegression().fit(X,y)
 
 print(sum(clf.predict(X) == y) / len(y))
 print(clf.predict(X))
 
-print(len([num for num in y if num == 2]))
+print(len([num for num in y if num == 0]))
 print(len([num for num in y if num == 1]))
