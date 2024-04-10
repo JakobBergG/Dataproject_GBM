@@ -100,7 +100,7 @@ def evaluate(hospital):
             json.dump(metrics, outfile)
 
 
-evaluate("OUH")
+#evaluate("OUH")
     
 
  
