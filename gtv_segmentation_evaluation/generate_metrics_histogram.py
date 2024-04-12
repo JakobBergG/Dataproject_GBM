@@ -29,11 +29,12 @@ def generate_hist(hospitals):
             msd = []
             hd = []
             hd95 = []
+            
             for patient, metrics in data.items():
                 msd.append(metrics.get("msd"))
                 hd.append(metrics.get("hd"))
                 hd95.append(metrics.get("hd95"))
-
+        print(f"no patients: {len(msd)}, in hospital: {hospital}")
         # Plot histograms with shared bin size
         axs[i, 0].hist(msd, bins=msd_bins, color='skyblue', edgecolor='black', density=True)
         axs[i, 0].set_title(f'{hospital} - MSD Histogram')
