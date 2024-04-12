@@ -1,6 +1,6 @@
 import csv
 import json
-from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import AdaBoostClassifier
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -71,7 +71,7 @@ for patient, info in patient_info.items():
         if myCounter == 23 and info["TumorClass"] == 1:
             continue
         X.append([value for _, value in info["features"].items()])
-        y.append(info["TumorClass"] - 1)
+        y.append(info["TumorClass"])
         if info["TumorClass"] == 1:
             myCounter += 1
         
@@ -80,10 +80,12 @@ for patient, info in patient_info.items():
 #         X.append([value for _, value in info["features"].items()])
 #         y.append(info["TumorClass"])
 
-clf = LogisticRegression().fit(X,y)
+clf = AdaBoostClassifier().fit(X,y)
 
 print(sum(clf.predict(X) == y) / len(y))
 print(clf.predict(X))
-
-print(len([num for num in y if num == 0]))
+print(clf.predict(X) == y)
+print(y)
 print(len([num for num in y if num == 1]))
+print(len([num for num in y if num == 2]))
+

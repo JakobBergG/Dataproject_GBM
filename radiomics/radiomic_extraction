@@ -37,8 +37,13 @@ def extract_features(image_path, mask_path):
 # RUN EXTRACTION FOR PATIENTS #
 all_patient_features = {}
 for patient_number in patient_numbers: 
-    mask_path = f"D:\\GBM\output_test\\radiomic_results\\new_masks\\{patient_number}"
-    mask_filename = os.listdir(mask_path)[0]
+    mask_path = f"D:\\GBM\output_test\\radiomic_results\\masks\\masks_largest_lesion\\{patient_number}"
+    try:
+        mask_filename = os.listdir(mask_path)[0]
+    except FileNotFoundError:
+        print("No such folder. Skipping patient.")
+        continue
+
     date = mask_filename.split("_")[1]
     mask_path = os.path.join(mask_path, mask_filename)
     
@@ -48,7 +53,7 @@ for patient_number in patient_numbers:
     try:
         all_patient_features[patient_number] = extract_features(image_path, mask_path)
     except Exception as e:
-        print("Error happened, skipping patient!\n", e)
+        print("Error happened while extracting features, skipping patient!\n", e)
 
 # PRINTING - OPTIONAL #
 do_print = True
@@ -60,5 +65,5 @@ if do_print:
         print("")
 
 # SAVE #
-with open("D:\\GBM\output_test\\radiomic_results\\feature_output\\patient_features.json", "w") as f:
+with open("D:\\GBM\output_test\\radiomic_results\\feature_output\\patient_all_features.json", "w") as f:
     json.dump(all_patient_features, f)
