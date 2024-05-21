@@ -1,6 +1,5 @@
 import SimpleITK as sitk
 import os
-import csv
 import json
 
 ONLY_USE_LARGEST_LESION = True
@@ -43,31 +42,42 @@ def get_largest_lesion(mask):
     stats = sitk.LabelShapeStatisticsImageFilter()
     stats.Execute(largest_component_binary_image)
     print("Found largest lesion with size:", stats.GetNumberOfPixels(1))
+
     return largest_component_binary_image
 
-with open("D:\\GBM\\output_test\\radiomic_results\\available_patients.json", "r") as f:
+
+with open("D:\\GBM\\radiomic_results\\available_patients.json", "r") as f:
     available_patients = json.load(f)
 
-for patient_id in available_patients:
-    output_path = f"D:\\GBM\\output_test\\radiomic_results\\masks\\masks_test\\{patient_id}"
+hospitals = ["AUH", "OUH", "CUH"]
+for hospital in hospitals:
+    patients = os.listdir(f"D:\\GBM\\nii_prepared\\{hospital}")
 
-    print("Now running for:", patient_id)
-    try:
-        os.mkdir(output_path)
-    except OSError:
-        print("Folder already existed", patient_id)
+    for patient_id in patients:
+        if patient_id not in available_patients:
+            continue
+        output_path = f"D:\\GBM\\radiomic_results\\masks\\time2\\{patient_id}"
 
-    mask_folderpath = f"D:\\GBM\\summary\\AUH\\{patient_id}"
-    for filename in os.listdir(mask_folderpath):
-        if filename.startswith("time2") and filename.endswith("gtv.nii.gz"):
-            time2 = filename.split("_")[2]
+        # Create directory for patient
+        print(output_path)
+        print("Now running for:", patient_id)
+        try:
+            os.mkdir(output_path)
+        except OSError:
+            print("Folder already existed", patient_id)
+
         
-    
-    mask_filepath = f"D:\\GBM\\summary\\AUH\\{patient_id}\\time2_{patient_id}_{time2}_gtv.nii.gz"
-    brain_mask_path = f"D:\\GBM\\output\\AUH\\{patient_id}\\brain_mr\\output_brains\\{patient_id}_{time2}_MR_mask_cleaned.nii"
-    output_filepath = output_path + f"\\{patient_id}_{time2}_feature_mask.nii.gz"
-    try:
-        filter_mask(mask_filepath, brain_mask_path, output_filepath)
-    except Exception as e:
-        print("Error happened:\n", e, "\nRemoving created directory.")
-        os.rmdir(output_path)
+        # Find date of scans
+        for filename in os.listdir(f"D:\\GBM\\nii_prepared\\{hospital}\\{patient_id}"):
+            
+
+        # Define paths to masks
+        mask_filepath = MASK_GTV.format(hospital = hospital, patient_id = patient_id)
+        brain_mask_path = MASK_BRAIN.format(hospital = hospital, patient_id = patient_id)
+        output_filepath = output_path + f"\\{patient_id}_MASK_RING.nii.gz"
+
+        try:
+            filter_mask(mask_filepath, brain_mask_path, output_filepath)
+        except Exception as e:
+            print("Error happened:\n", e, "\nRemoving created directory.")
+            os.rmdir(output_path)

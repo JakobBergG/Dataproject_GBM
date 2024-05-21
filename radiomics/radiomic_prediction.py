@@ -3,10 +3,14 @@ import json
 from sklearn.ensemble import AdaBoostClassifier
 import matplotlib.pyplot as plt
 import numpy as np
+from sklearn.model_selection import train_test_split
+import xgboost
+from sklearn.model_selection import cross_val_score
+import itertools
 
 # Study_ID: 0, TumorLabel: 1, TumorClass: 2 
 journal_path = "D:\\GBM\output_test\\radiomic_results\\tumorlabels.csv"
-all_radiomic_features_path = "D:\\GBM\output_test\\radiomic_results\\patient_features.json"
+all_radiomic_features_path = "D:\\GBM\output_test\\radiomic_results\\feature_output\\patient_all_features.json"
 
 # LOAD TUMOR CLASS #
 journal_info_patients = {}
@@ -29,7 +33,7 @@ with open(all_radiomic_features_path) as f:
 # Valid patients only if they are PRESENT IN CSV and HAVE VALID RADIOMIC FEATURES.
 patient_info = {}
 for patient, features in all_radiomic_features.items():
-    patient_info[patient] = {"TumorClass": journal_info_patients[patient],
+    patient_info[patient] = {"TumorClass": journal_info_patients[patient]-1,
                              "features": features} # features is a Dict
 
 
@@ -59,33 +63,72 @@ if do_print:
 
 # SET UP DATAFRAME FOR REGRESSION #
 # FIT LOGISTIC REGRESSION #
-# I tried to get a balanced amount of local and distant recurrence. However something is majorly wrong:
-# Include all local recurrences = classifier predicts only local recurrence
-# Make it 50/50 local/distant = classifier guesses 50% correct.
 
 X = []
 y = []
-myCounter = 0
-for patient, info in patient_info.items():
-    if info["TumorClass"] != 3:
-        if myCounter == 23 and info["TumorClass"] == 1:
-            continue
-        X.append([value for _, value in info["features"].items()])
-        y.append(info["TumorClass"])
-        if info["TumorClass"] == 1:
-            myCounter += 1
-        
+# myCounter = 100
 # for patient, info in patient_info.items():
 #     if info["TumorClass"] != 3:
+#         if myCounter == 23 and info["TumorClass"] == 1:
+#             continue
 #         X.append([value for _, value in info["features"].items()])
 #         y.append(info["TumorClass"])
+#         if info["TumorClass"] == 1:
+#             myCounter += 1
+        
+for patient, info in patient_info.items():
+    if info["TumorClass"] != 2:
+        X.append([value for _, value in info["features"].items()])
+        y.append(info["TumorClass"])
 
-clf = AdaBoostClassifier().fit(X,y)
+def train_and_predict(X, y, total_amount_features = 3, use_combinations = False):
 
-print(sum(clf.predict(X) == y) / len(y))
-print(clf.predict(X))
-print(clf.predict(X) == y)
-print(y)
-print(len([num for num in y if num == 1]))
-print(len([num for num in y if num == 2]))
+    if use_combinations == True:
+        X = np.array(X)
+        for features in range(1, min(3, total_amount_features)):
+            #wack solution X[0], please re-write
+            for subset in itertools.combinations(list(range(1, len(X[0]))), features):
+                X_data = X[:, subset]
+
+                clf = AdaBoostClassifier()
+
+                X_train_test, X_val, y_train_test, y_val = train_test_split(X_data, y)
+                scores = cross_val_score(clf, X_train_test, y_train_test)
+                print(scores)
+
+    else:
+
+        clf = AdaBoostClassifier()
+        clf.fit(X, y)
+
+        feature_importance = clf.feature_importances_
+
+        for amount_features in range(1, total_amount_features):
+            print("-------------")
+            print(f"Currently using {amount_features} of features")
+
+            clf = AdaBoostClassifier()
+
+            top_indicies = np.argsort(feature_importance)[::-1][:amount_features]
+            X_data = np.array(X)
+
+            X_data= X_data[:, top_indicies]
+
+            X_train_test, X_val, y_train_test, y_val = train_test_split(X_data, y)
+
+            scores = cross_val_score(clf, X_train_test, y_train_test)
+            print(scores.mean())
+
+            print("Printing prediction scores")
+
+            clf = AdaBoostClassifier()
+            clf.fit(X_train_test, y_train_test)
+            print(sum(clf.predict(X_val) == y_val) / len(y_val))
+            print("-------------")
+
+
+
+
+train_and_predict(X, y, total_amount_features=20, use_combinations=True)
+
 

@@ -13,7 +13,7 @@ import json
 # If selected_patients is empty, the whole datapath directory is scanned for patients.
 # selected_patients = ["0114"]
 # patient_numbers = selected_patients if selected_patients else os.listdir(datapath)
-with open("D:\\GBM\output_test\\radiomic_results\\available_patients.json", "r") as f:
+with open("D:\\GBM\\radiomic_results\\available_patients.json", "r") as f:
     patient_numbers = json.load(f)
 
 extractor = featureextractor.RadiomicsFeatureExtractor("radiomics\Params.yaml")
