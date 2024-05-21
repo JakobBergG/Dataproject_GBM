@@ -20,6 +20,7 @@ import numpy as np
 import torch
 from nnunet.training.data_augmentation.data_augmentation_moreDA import get_moreDA_augmentation
 from nnunet.training.loss_functions.deep_supervision import MultipleOutputLoss2
+from nnunet.training.loss_functions.crossentropy import RobustCrossEntropyLoss
 from nnunet.utilities.to_torch import maybe_to_torch, to_cuda
 from nnunet.network_architecture.generic_UNet import Generic_UNet
 from nnunet.network_architecture.initialization import InitWeights_He
@@ -45,13 +46,11 @@ class nnUNetTrainerV2(nnUNetTrainer):
                  unpack_data=True, deterministic=True, fp16=False):
         super().__init__(plans_file, fold, output_folder, dataset_directory, batch_dice, stage, unpack_data,
                          deterministic, fp16)
-        #self.max_num_epochs = 1000
-        self.max_num_epochs = 50
-        #self.initial_lr = 1e-2
-        self.initial_lr = 1e-6
+        self.max_num_epochs = 1000
+        self.initial_lr = 1e-2
         self.deep_supervision_scales = None
         self.ds_loss_weights = None
-
+        self.loss = RobustCrossEntropyLoss()
         self.pin_memory = True
 
     def initialize(self, training=True, force_load_plans=False):
@@ -88,7 +87,7 @@ class nnUNetTrainerV2(nnUNetTrainer):
             weights = weights / weights.sum()
             self.ds_loss_weights = weights
             # now wrap the loss
-            self.loss = MultipleOutputLoss2(self.loss, self.ds_loss_weights)
+            #self.loss = MultipleOutputLoss2(self.loss, self.ds_loss_weights)
             ################# END ###################
 
             self.folder_with_preprocessed_data = join(self.dataset_directory, self.plans['data_identifier'] +

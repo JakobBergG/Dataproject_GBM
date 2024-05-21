@@ -74,7 +74,7 @@ class ExperimentPlanner2D_v21(ExperimentPlanner2D):
                                                                 conv_per_stage=self.conv_per_stage)
             # print(new_shp)
 
-        batch_size = int(np.floor(ref / here) * 2)
+        batch_size = int(np.floor(ref / here) * 2)*8
         input_patch_size = new_shp
 
         if batch_size < self.unet_min_batch_size:

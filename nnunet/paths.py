@@ -27,8 +27,13 @@ PLEASE READ paths.md FOR INFORMATION TO HOW TO SET THIS UP
 """
 
 base = os.environ['nnUNet_raw_data_base'] if "nnUNet_raw_data_base" in os.environ.keys() else None
+# print("base= ", base)
 preprocessing_output_dir = os.environ['nnUNet_preprocessed'] if "nnUNet_preprocessed" in os.environ.keys() else None
 network_training_output_dir_base = os.path.join(os.environ['RESULTS_FOLDER']) if "RESULTS_FOLDER" in os.environ.keys() else None
+
+base = os.path.join('e:\\', 'jasper','nnUNet')
+preprocessing_output_dir = os.path.join('e:\\', 'jasper','nnUNet','nnUNet_preprocessed')
+network_training_output_dir_base = os.path.join('e:\\', 'jasper','nnUNet','nnUNet_trained_models')
 
 if base is not None:
     nnUNet_raw_data = os.path.join(base, "nnUNet_raw_data")
