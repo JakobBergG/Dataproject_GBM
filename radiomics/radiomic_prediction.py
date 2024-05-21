@@ -4,13 +4,13 @@ from sklearn.ensemble import AdaBoostClassifier
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.model_selection import train_test_split
-import xgboost
-from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import cross_val_score, cross_validate
 import itertools
+from imblearn.under_sampling import RandomUnderSampler
 
 # Study_ID: 0, TumorLabel: 1, TumorClass: 2 
-journal_path = "D:\\GBM\output_test\\radiomic_results\\tumorlabels.csv"
-all_radiomic_features_path = "D:\\GBM\output_test\\radiomic_results\\feature_output\\patient_all_features.json"
+journal_path = "D:\\GBM\\radiomic_results\\time0 resources\\tumorlabels_AUH.csv"
+all_radiomic_features_path = "D:\\GBM\\radiomic_results\\time0 resources\\patient_all_features.json"
 
 # LOAD TUMOR CLASS #
 journal_info_patients = {}
@@ -83,6 +83,9 @@ for patient, info in patient_info.items():
 
 def train_and_predict(X, y, total_amount_features = 3, use_combinations = False):
 
+    rus = RandomUnderSampler(random_state=42)
+    X, y = rus.fit_resample(X, y)
+
     if use_combinations == True:
         X = np.array(X)
         for features in range(1, min(3, total_amount_features)):
@@ -90,7 +93,7 @@ def train_and_predict(X, y, total_amount_features = 3, use_combinations = False)
             for subset in itertools.combinations(list(range(1, len(X[0]))), features):
                 X_data = X[:, subset]
 
-                clf = AdaBoostClassifier()
+                clf = AdaBoostClassifier(algorithm="SAMME")
 
                 X_train_test, X_val, y_train_test, y_val = train_test_split(X_data, y)
                 scores = cross_val_score(clf, X_train_test, y_train_test)
@@ -98,7 +101,13 @@ def train_and_predict(X, y, total_amount_features = 3, use_combinations = False)
 
     else:
 
-        clf = AdaBoostClassifier()
+        clf = AdaBoostClassifier(algorithm="SAMME")
+
+        X_train_test, X_val, y_train_test, y_val = train_test_split(X, y)
+
+        #Change the code from here. Get the top features with the kfold 
+
+
         clf.fit(X, y)
 
         feature_importance = clf.feature_importances_
@@ -107,7 +116,7 @@ def train_and_predict(X, y, total_amount_features = 3, use_combinations = False)
             print("-------------")
             print(f"Currently using {amount_features} of features")
 
-            clf = AdaBoostClassifier()
+            clf = AdaBoostClassifier(algorithm="SAMME")
 
             top_indicies = np.argsort(feature_importance)[::-1][:amount_features]
             X_data = np.array(X)
@@ -121,7 +130,7 @@ def train_and_predict(X, y, total_amount_features = 3, use_combinations = False)
 
             print("Printing prediction scores")
 
-            clf = AdaBoostClassifier()
+            clf = AdaBoostClassifier(algorithm="SAMME")
             clf.fit(X_train_test, y_train_test)
             print(sum(clf.predict(X_val) == y_val) / len(y_val))
             print("-------------")
@@ -129,6 +138,6 @@ def train_and_predict(X, y, total_amount_features = 3, use_combinations = False)
 
 
 
-train_and_predict(X, y, total_amount_features=20, use_combinations=True)
+train_and_predict(X, y, total_amount_features=20, use_combinations=False)
 
 
