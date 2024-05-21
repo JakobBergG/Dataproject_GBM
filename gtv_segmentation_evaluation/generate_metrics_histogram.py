@@ -11,7 +11,7 @@ def generate_hist(hospitals):
     all_hd95 = []
 
     for hospital in hospitals:
-        with open(f"{hospital}_metrics.json") as metrics_file:
+        with open(f"{hospital}_metrics_t2.json") as metrics_file:
             data = json.load(metrics_file)
             for patient, metrics in data.items():
                 all_msd.append(metrics.get("msd"))
@@ -24,7 +24,7 @@ def generate_hist(hospitals):
     hd95_bins = np.linspace(min(all_hd95), max(all_hd95), 50)
 
     for i, hospital in enumerate(hospitals):
-        with open(f"{hospital}_metrics.json") as metrics_file:
+        with open(f"{hospital}_metrics_t2.json") as metrics_file:
             data = json.load(metrics_file)
             msd = []
             hd = []
