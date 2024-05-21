@@ -39,6 +39,8 @@ def run_skull_stripping(patient_folder):
             output_path = os.path.join(patient_folder, output_name)
             scan = sitk.ReadImage(mr)
             mask = sitk.ReadImage(mask_path)
+            # COMBINE RECURRENCE AND BRAIN DELINATION
+            # ADD MARGIN (2mm)
             stripped_skull = sitk.Mask(scan, mask) 
             sitk.WriteImage(stripped_skull, output_path)
     except Exception as e:
