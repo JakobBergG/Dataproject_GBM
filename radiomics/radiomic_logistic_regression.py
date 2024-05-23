@@ -1,6 +1,7 @@
 import csv
 import json
 from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import AdaBoostClassifier
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -65,37 +66,77 @@ if do_print:
 
 X = []
 y = []
-myCounter = 0
-max_number_of_local = 115
-for patient, info in patient_info.items():
-    cls = info["tumor_class"]
-    if cls != 2:
-        if myCounter == max_number_of_local and cls == 0:
-            continue
-        X.append([value for _, value in info["features"].items()])
-        y.append(cls)
-        if cls == 0:
-            myCounter += 1
+EQUAL_GROUPS = True
+if EQUAL_GROUPS:
+    myCounter = 0
+    max_number_of_local = 115
+    for patient, info in patient_info.items():
+        cls = info["tumor_class"]
+        if cls != 2:
+            if myCounter == max_number_of_local and cls == 0:
+                continue
+            X.append([value for _, value in info["features"].items()])
+            y.append(cls)
+            if cls == 0:
+                myCounter += 1
+else:
+    for patient, info in patient_info.items():
+        if info["tumor_class"] != 2:
+            X.append([value for _, value in info["features"].items()])
+            y.append(info["tumor_class"])
 
-# for patient, info in patient_info.items():
-#     if info["tumor_class"] != 2:
-#         X.append([value for _, value in info["features"].items()])
-#         y.append(info["tumor_class"])
+data = zip(X, y)
+test_set_size = 20
+train = []
+test = []
 
+cls_counter = {
+    0: 0,
+    1: 0
+}
+for features, label in data:
+    if cls_counter[label] < test_set_size:
+        test.append((features, label))
+        cls_counter[label] += 1
+    else:
+        train.append((features, label))
+
+X, y = zip(*train)
 clf = LogisticRegression()
 clf.fit(X,y)
 
 ## Printing results
+format_offset = 25
+class header_col:
+    TITLE = "\033[95m"
+    SUBTITLE = "\033[92m"
+    END = "\033[0m"
+
+
 number_of_patients = len(y)
 number_of_local = number_of_patients - sum(y)
 
-format_offset = 25
-print("*** NUMBER OF SCANS ***")
+print(header_col.TITLE + "*" * 6 + " TRAIN DATA MODEL " + "*" * 6 + header_col.END)
+print(header_col.SUBTITLE + "*** MODEL INPUT ***" + header_col.END)
 print("Local: ".ljust(format_offset, "-"), number_of_local)
 print("Distant & Combined: ".ljust(format_offset, "-"), (number_of_patients - number_of_local))
 print("Total scans: ".ljust(format_offset, "-"), number_of_patients)
-print("% of total being local: ".ljust(format_offset, "-"), f"{number_of_local / number_of_patients * 100:.3f}%")
+print("% of total being local: ".ljust(format_offset, "-"), f"{number_of_local / number_of_patients * 100:.1f}%")
 
-print("\n*** MODEL PERFORMANCE ***")
+print(header_col.SUBTITLE + "\n*** MODEL PERFORMANCE ***" + header_col.END)
 print("# of local guesses: ".ljust(format_offset, "-"), number_of_patients - sum(clf.predict(X)))
-print("Accuracy: ".ljust(format_offset, "-"), f"{clf.score(X,y) * 100:.3f}%")
+print("Accuracy: ".ljust(format_offset, "-"), f"{clf.score(X,y) * 100:.1f}%")
+
+X, y = zip(*test)
+number_of_patients = len(y)
+number_of_local = number_of_patients - sum(y)
+print(header_col.TITLE + "\n" + "*" * 6 + " TEST DATA MODEL " + "*" * 6 + header_col.END)
+print(header_col.SUBTITLE + "*** MODEL INPUT ***" + header_col.END)
+print("Local: ".ljust(format_offset, "-"), number_of_local)
+print("Distant & Combined: ".ljust(format_offset, "-"), (number_of_patients - number_of_local))
+print("Total scans: ".ljust(format_offset, "-"), number_of_patients)
+print("% of total being local: ".ljust(format_offset, "-"), f"{number_of_local / number_of_patients * 100:.1f}%")
+
+print(header_col.SUBTITLE + "\n*** MODEL PERFORMANCE ***" + header_col.END)
+print("# of local guesses: ".ljust(format_offset, "-"), number_of_patients - sum(clf.predict(X)))
+print("Accuracy: ".ljust(format_offset, "-"), f"{clf.score(X,y) * 100:.1f}%")
