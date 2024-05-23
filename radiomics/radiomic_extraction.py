@@ -2,6 +2,7 @@ import os
 from radiomics import featureextractor
 from sklearn.linear_model import LogisticRegression
 import json
+import csv
 
 ########## NOTICE ############
 #   A new conda environment has been made to accommodate pyradiomics' need for python 3.7.12. Remember to use this interpreter in VS CODE
@@ -13,8 +14,19 @@ import json
 # If selected_patients is empty, the whole datapath directory is scanned for patients.
 # selected_patients = ["0114"]
 # patient_numbers = selected_patients if selected_patients else os.listdir(datapath)
-with open("D:\\GBM\\radiomic_results\\available_patients.json", "r") as f:
-    patient_numbers = json.load(f)
+with open("D:\\GBM\\radiomic_results\\available_patients_time2_combined.json", "r") as f:
+    available_patients = json.load(f)
+
+patient_location = {}
+with open("D:\\GBM\\radiomic_results\\overview_with_combined.csv", "r", encoding="utf-8-sig") as f:
+    rows = csv.reader(f, delimiter=",")
+    names = next(rows) # The first row gives the names of the columns
+    
+    # Now read info for all patients
+    for row in rows:
+        location = row[0]
+        study_id = f"{row[1]:>04}" # Pad with 4 zeros
+        patient_location[study_id] = location
 
 extractor = featureextractor.RadiomicsFeatureExtractor("radiomics\Params.yaml")
 
@@ -29,41 +41,34 @@ def extract_features(image_path, mask_path):
     
     return features
 
-
-# PATHS 
-# datapath:  "D:\\GBM\\nii_prepared\\AUH"
-# new_masks: "D:\\GBM\output_test\\radiomic_results\\new_masks"
-
 # RUN EXTRACTION FOR PATIENTS #
+number_of_patients = len(available_patients)
+progress_counter = 0
+
 all_patient_features = {}
-for patient_number in patient_numbers: 
-    mask_path = f"D:\\GBM\output_test\\radiomic_results\\masks\\masks_largest_lesion\\{patient_number}"
-    try:
-        mask_filename = os.listdir(mask_path)[0]
-    except FileNotFoundError:
-        print("No such folder. Skipping patient.")
-        continue
+for patient_id in available_patients: 
+    mask_path = f"D:\\GBM\\radiomic_results\\masks\\time2\\GTV_rings_combined\\{patient_id}\\{patient_id}_mask_ring.nii.gz"
 
-    date = mask_filename.split("_")[1]
-    mask_path = os.path.join(mask_path, mask_filename)
-    
-    image_path = f"D:\\GBM\\nii_prepared\\AUH\\{patient_number}\\{patient_number}_{date}_MR.nii.gz"
+    image_path = f"D:\\GBM\\uni_gtv_tr_data\\{patient_location[patient_id]}\\{patient_id}\\{patient_id}_stripped.nii.gz"
 
-    print("Calculating features for:", patient_number)
+    progress_counter += 1
+    print("Calculating features for id:", patient_id, f"| {progress_counter} / {number_of_patients} ({progress_counter / number_of_patients * 100:.0f}%)")
     try:
-        all_patient_features[patient_number] = extract_features(image_path, mask_path)
+        all_patient_features[patient_id] = extract_features(image_path, mask_path)
     except Exception as e:
         print("Error happened while extracting features, skipping patient!\n", e)
+        with open("D:\\GBM\\radiomic_results\\error_logging.txt", 'a') as f:
+            f.write("*" * 10 + f"\nError happened with patient: 2\n" + str(e) + "\n" + "*" * 10 + "\n")
 
 # PRINTING - OPTIONAL #
-do_print = True
+do_print = False
 if do_print:
     for patient_no, features in all_patient_features.items():
         print("-" * 10, "PATIENT:", patient_no, "-" * 10)
         for key,value in features.items():
-            print((key + " ").ljust(40, "-"), ":", value)
+            print((key + " ").ljust(50, "-"), ":", value)
         print("")
 
 # SAVE #
-with open("D:\\GBM\output_test\\radiomic_results\\feature_output\\patient_all_features.json", "w") as f:
+with open("D:\\GBM\\radiomic_results\\feature_output\\time2\\patients_all_features_combined.json", "w") as f:
     json.dump(all_patient_features, f)

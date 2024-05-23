@@ -1,20 +1,28 @@
 import csv
+import json
+from sklearn.linear_model import LogisticRegression
+import matplotlib.pyplot as plt
+import numpy as np
 
-JOURNAL_PATH = "D:/GBM/radiomic_results/overview.csv"
+# Study_ID: 0, TumorLabel: 1, TumorClass: 2 
+journal_path = "D:\\GBM\\radiomic_results\\overview.csv"
+all_local_distant = "D:\\GBM\\radiomic_results\\feature_output\\time2\\patients_all_features.json"
+all_combined = "D:\\GBM\\radiomic_results\\feature_output\\time2\\patients_all_features_combined.json"
+output_path = "D:\\GBM\\radiomic_results\\feature_output\\time2\\patients_all_features_all_classes.json"
 
-# LOAD TUMOR CLASS #
-journal_info_patients = set()
-with open(JOURNAL_PATH, newline='', mode="r", encoding="utf-8-sig") as f:
-        rows = csv.reader(f, delimiter=",")
-        names = next(rows) # The first row gives the names of the columns
-        
-        # Now read info for all patients
-        for row in rows:
-            study_id = f"{row[1]:>04}" # Pad with 4 zeros
-            journal_info_patients.add(study_id)
+# Structure is {id, {features}}
+# LOAD RADIOMIC FEATURES #
+with open(all_local_distant, "r") as f:
+    features_local_distant = json.load(f)
+print("Local / distant:", len(features_local_distant.items()))
 
-print(len(journal_info_patients))
+with open(all_combined, "r") as f:
+    features_combined = json.load(f)
+print("Combined:", len(features_combined.items()))
 
-available_patients_data = set()
-hospitals = 
-"D:\\GBM\\uni_gtv_tr_data"
+for id, features in features_combined.items():
+    features_local_distant[id] = features
+print("Total:", len(features_local_distant.items()))
+
+# with open(output_path, "w") as f:
+#     json.dump(features_local_distant, f)
