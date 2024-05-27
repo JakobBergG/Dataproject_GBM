@@ -1,9 +1,21 @@
 import SimpleITK as sitk
 import numpy as np
 import os
+"""
+The clinical delineation of the GTV has different dimensions and voxel spacings than the MR scan and brain mask.
+This is because the MR and brain mask has been throuhgh the pipeline that automatically resamples the images to a common spacing, 
+while the clinical delineations have different spacings depending on the location from where it was delineated.
+"""
 
 def resample_image(itk_image, out_spacing=[1, 1, 1.0], is_label=False, refer_img = None):
-
+    """Return an image with resampled voxel spacing
+    
+    Keyword arguments:
+    out_spacing -- the desired spacing of the output image
+    is_label -- whether or not the image is a label (i.e. image has only 0 or 1 as voxel intensities)
+    refer_img -- option to have output image have same origin as a reference image.
+    """
+    
     original_spacing = itk_image.GetSpacing()
     original_size = itk_image.GetSize()
 

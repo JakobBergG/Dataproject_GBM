@@ -1,11 +1,8 @@
-features = [[1,2,3],
-            [4,5,6],
-            [7,8,9]]
+import json
 
-labels = [0,0,1]
+all_radiomic_features_path = "D:\\GBM\\radiomic_results\\feature_output\\time2\\patients_all_features_all_classes.json"
 
-collection = list(zip(features, labels))
+with open(all_radiomic_features_path) as f:
+    all_radiomic_features = json.load(f)
 
-
-print(collection)
-print(*zip(*collection))
+print(len(all_radiomic_features.items()))

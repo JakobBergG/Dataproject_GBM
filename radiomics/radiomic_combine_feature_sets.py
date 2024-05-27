@@ -3,9 +3,14 @@ import json
 from sklearn.linear_model import LogisticRegression
 import matplotlib.pyplot as plt
 import numpy as np
+"""
+The script simply combines the datasets of features for patients having:
+- Distant recurrence
+- Combined recurrence (Both a local and a distant recurrence)
 
-# Study_ID: 0, TumorLabel: 1, TumorClass: 2 
-journal_path = "D:\\GBM\\radiomic_results\\overview.csv"
+Finally writes the features of the combined groups to a json file. 
+"""
+
 all_local_distant = "D:\\GBM\\radiomic_results\\feature_output\\time2\\patients_all_features.json"
 all_combined = "D:\\GBM\\radiomic_results\\feature_output\\time2\\patients_all_features_combined.json"
 output_path = "D:\\GBM\\radiomic_results\\feature_output\\time2\\patients_all_features_all_classes.json"

@@ -1,8 +1,26 @@
 import SimpleITK as sitk
 import os
 import json
+"""
+Script to create the CTV ring
+To create CTV ring it needs:
+- GTV
+- MR scan
+- Brainmask
+"""
+
 
 def filter_mask(mask_path, brain_mask_path, output_path, use_largest_lesion=False):
+    """Create and write CTV ring to disk.
+
+    
+    Keyword arguments:
+    mask_path -- the filepath to the GTV mask
+    brain_mask_path -- the filepath to the brain mask
+    output_path -- filepath of the output image
+    use_largest_lesion -- filter so only the largest lesion is included in the CTV ring
+    """
+
     gtv_mask = sitk.ReadImage(mask_path)
     if use_largest_lesion:
         gtv_mask = get_largest_lesion(gtv_mask)
@@ -11,7 +29,7 @@ def filter_mask(mask_path, brain_mask_path, output_path, use_largest_lesion=Fals
     dilate_filter = sitk.BinaryDilateImageFilter()
     dilate_filter.SetKernelType(sitk.sitkBall)
     radius = 20 # in mm. DICOM standard
-    dilate_filter.SetKernelRadius((radius, radius, radius // 2)) # Due to OUR sampling of images 1, 1, .5
+    dilate_filter.SetKernelRadius((radius, radius, radius // 2)) # For an input image voxel spacing of 1, 1, 0.5.
     dilate_filter.SetForegroundValue(1)
 
     new_mask = dilate_filter.Execute(gtv_mask)
@@ -31,7 +49,9 @@ def filter_mask(mask_path, brain_mask_path, output_path, use_largest_lesion=Fals
     sitk.WriteImage(new_mask, output_path)
 
 def get_largest_lesion(mask, verbose = False):
-    '''Returns the largest lesion
+    '''Return the largest lesion (tumor).
+
+    Verbose also prints the size of the largest lesion
     '''
     component_image = sitk.ConnectedComponent(mask)
     sorted_component_image = sitk.RelabelComponent(component_image, sortByObjectSize=True)

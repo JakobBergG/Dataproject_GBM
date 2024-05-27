@@ -66,7 +66,7 @@ if do_print:
 
 X = []
 y = []
-EQUAL_GROUPS = True
+EQUAL_GROUPS = False
 if EQUAL_GROUPS:
     myCounter = 0
     max_number_of_local = 115

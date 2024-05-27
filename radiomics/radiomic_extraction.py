@@ -3,20 +3,22 @@ from radiomics import featureextractor
 from sklearn.linear_model import LogisticRegression
 import json
 import csv
+"""
+Script to extract radiomic features from MR scans using the CTV ring.
+Uses:
+- List of avaiable patients to extract features from.
+- List of what hospital the patients belong to, to know which hospital folder to retrieve images from.
+- Filepath to folder containing MR image
+- Filepath to folder containing the CTV ring. (Region of interest)
+- Output filepath
+"""
 
-########## NOTICE ############
-#   A new conda environment has been made to accommodate pyradiomics' need for python 3.7.12. Remember to use this interpreter in VS CODE
-#   GBM_RadiomicAnalysis
-#
-#   LR has installed pyradiomics in main environment GBM_newgroup. Is it stable?
-##############################
-
-# If selected_patients is empty, the whole datapath directory is scanned for patients.
-# selected_patients = ["0114"]
-# patient_numbers = selected_patients if selected_patients else os.listdir(datapath)
+# READ AVAILABLE PATIENTS #
 with open("D:\\GBM\\radiomic_results\\available_patients_time2_combined.json", "r") as f:
     available_patients = json.load(f)
 
+# FIND HOSPITAL OF PATIENTS #
+# To know where to look for the patient's images
 patient_location = {}
 with open("D:\\GBM\\radiomic_results\\overview_with_combined.csv", "r", encoding="utf-8-sig") as f:
     rows = csv.reader(f, delimiter=",")
@@ -28,9 +30,12 @@ with open("D:\\GBM\\radiomic_results\\overview_with_combined.csv", "r", encoding
         study_id = f"{row[1]:>04}" # Pad with 4 zeros
         patient_location[study_id] = location
 
+# INITIALIZE THE FEATURE EXTRACTOR #
 extractor = featureextractor.RadiomicsFeatureExtractor("radiomics\Params.yaml")
 
 def extract_features(image_path, mask_path):
+    """Extract and return radiomic features
+    """
     result = extractor.execute(image_path, mask_path)
 
     # Grab useful metrics
@@ -70,5 +75,5 @@ if do_print:
         print("")
 
 # SAVE #
-with open("D:\\GBM\\radiomic_results\\feature_output\\time2\\patients_all_features_combined.json", "w") as f:
+with open("D:\\GBM\\radiomic_results\\feature_output\\time2\\patients_test.json", "w") as f:
     json.dump(all_patient_features, f)

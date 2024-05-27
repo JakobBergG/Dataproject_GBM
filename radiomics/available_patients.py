@@ -1,7 +1,11 @@
 import csv
 import os
 import json
-
+"""
+Script to find scans that are both classified by Anouk (local vs not local recurrence) 
+and have viable MR scans and brain mask after going through the pipeline.
+ 
+"""
 JOURNAL_PATH = "D:/GBM/radiomic_results/overview_with_combined.csv"
 
 # LOAD TUMOR CLASS #
@@ -18,7 +22,7 @@ with open(JOURNAL_PATH, newline='', mode="r", encoding="utf-8-sig") as f:
 
 print("Number of scans Anouk has classified", len(journal_info_patients))
 
-
+# PATIENTS WITH VIABLE SCANS # 
 hospitals = ["AUH", "OUH", "CUH"]
 datapath = "D:\\GBM\\uni_gtv_tr_data\\"
 
@@ -28,6 +32,7 @@ for hospital in hospitals:
 
 print("Number of available MR scans are:", len(available_patients_data))
 
+# FIND VIABLE PATIENTS BY INTERSECTION #
 intersection = journal_info_patients.intersection(available_patients_data)
 
 print("Patients in common:", len(intersection))
