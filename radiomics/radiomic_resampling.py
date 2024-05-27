@@ -1,12 +1,12 @@
-
 import SimpleITK as sitk
 import numpy as np
+import os
 
 def resample_image(itk_image, out_spacing=[1, 1, 1.0], is_label=False, refer_img = None):
 
     original_spacing = itk_image.GetSpacing()
-
     original_size = itk_image.GetSize()
+
     out_size = [
         int(np.round(original_size[0] * (original_spacing[0] / out_spacing[0]))),
         int(np.round(original_size[1] * (original_spacing[1] / out_spacing[1]))),
@@ -23,11 +23,10 @@ def resample_image(itk_image, out_spacing=[1, 1, 1.0], is_label=False, refer_img
         resample.SetOutputOrigin(refer_img.GetOrigin())
     else:
         resample.SetOutputOrigin(itk_image.GetOrigin())
-        
+
     resample.SetTransform(sitk.Transform())
     default_value = np.float64(sitk.GetArrayViewFromImage(itk_image).min())
     resample.SetDefaultPixelValue(default_value)# itk_image.GetPixelIDValue())
-
 
     if is_label:
         resample.SetInterpolator(sitk.sitkNearestNeighbor)
@@ -35,3 +34,16 @@ def resample_image(itk_image, out_spacing=[1, 1, 1.0], is_label=False, refer_img
         resample.SetInterpolator(sitk.sitkBSpline) # sitkLinear)#
 
     return resample.Execute(itk_image)
+
+### Resample GTV scans from uni_gtv_tr_data
+
+for hospital in ["AUH", "CUH", "OUH"]:
+    for patient_id in os.listdir(f"D:\\GBM\\uni_gtv_tr_data\\{hospital}"):
+        print("Patient", patient_id, "-", hospital)
+        gtv_path = f"D:\\GBM\\uni_gtv_tr_data\\{hospital}\\{patient_id}\\{patient_id}_gtv.nii.gz"
+        gtv_mask = sitk.ReadImage(gtv_path)
+
+        new_mask = resample_image(gtv_mask, is_label=True)
+
+        output_path = f"D:\\GBM\\radiomic_results\\resampled_GTVs\\time2\\{patient_id}_mask.nii.gz"
+        sitk.WriteImage(new_mask, output_path)

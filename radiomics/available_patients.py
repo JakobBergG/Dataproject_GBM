@@ -2,7 +2,7 @@ import csv
 import os
 import json
 
-JOURNAL_PATH = "D:/GBM/radiomic_results/overview.csv"
+JOURNAL_PATH = "D:/GBM/radiomic_results/overview_with_combined.csv"
 
 # LOAD TUMOR CLASS #
 journal_info_patients = set()
@@ -12,8 +12,9 @@ with open(JOURNAL_PATH, newline='', mode="r", encoding="utf-8-sig") as f:
         
         # Now read info for all patients
         for row in rows:
-            study_id = f"{row[1]:>04}" # Pad with 4 zeros
-            journal_info_patients.add(study_id)
+            if row[2] == "local_distant":
+                study_id = f"{row[1]:>04}" # Pad with 4 zeros
+                journal_info_patients.add(study_id)
 
 print("Number of scans Anouk has classified", len(journal_info_patients))
 
@@ -31,5 +32,5 @@ intersection = journal_info_patients.intersection(available_patients_data)
 
 print("Patients in common:", len(intersection))
 
-with open("D:\\GBM\\radiomic_results\\available_patients.json", "w") as f:
+with open("D:\\GBM\\radiomic_results\\available_patients_time2_combined.json", "w") as f:
     json.dump(list(intersection), f)

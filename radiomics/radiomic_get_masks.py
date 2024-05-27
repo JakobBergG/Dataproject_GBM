@@ -2,11 +2,9 @@ import SimpleITK as sitk
 import os
 import json
 
-ONLY_USE_LARGEST_LESION = True
-
-def filter_mask(mask_path, brain_mask_path, output_path):
+def filter_mask(mask_path, brain_mask_path, output_path, use_largest_lesion=False):
     gtv_mask = sitk.ReadImage(mask_path)
-    if ONLY_USE_LARGEST_LESION:
+    if use_largest_lesion:
         gtv_mask = get_largest_lesion(gtv_mask)
 
     # DILATION - In paper: 2 cm
@@ -32,52 +30,50 @@ def filter_mask(mask_path, brain_mask_path, output_path):
     # SAVE NEW MASK
     sitk.WriteImage(new_mask, output_path)
 
-def get_largest_lesion(mask):
+def get_largest_lesion(mask, verbose = False):
     '''Returns the largest lesion
     '''
     component_image = sitk.ConnectedComponent(mask)
     sorted_component_image = sitk.RelabelComponent(component_image, sortByObjectSize=True)
     largest_component_binary_image = sorted_component_image == 1
 
-    stats = sitk.LabelShapeStatisticsImageFilter()
-    stats.Execute(largest_component_binary_image)
-    print("Found largest lesion with size:", stats.GetNumberOfPixels(1))
+    if verbose:
+        stats = sitk.LabelShapeStatisticsImageFilter()
+        stats.Execute(largest_component_binary_image)
+        print("Found largest lesion with size:", stats.GetNumberOfPixels(1))
 
     return largest_component_binary_image
 
 
-with open("D:\\GBM\\radiomic_results\\available_patients.json", "r") as f:
+with open("D:\\GBM\\radiomic_results\\available_patients_time2_combined.json", "r") as f:
     available_patients = json.load(f)
 
-hospitals = ["AUH", "OUH", "CUH"]
-for hospital in hospitals:
-    patients = os.listdir(f"D:\\GBM\\nii_prepared\\{hospital}")
+number_of_patients = len(available_patients)
+progress_counter = 0
+ 
+for hospital in ["AUH", "OUH", "CUH"]:
+    patients = os.listdir(f"D:\\GBM\\uni_gtv_tr_data\\{hospital}")
 
     for patient_id in patients:
         if patient_id not in available_patients:
             continue
-        output_path = f"D:\\GBM\\radiomic_results\\masks\\time2\\{patient_id}"
+        output_path = f"D:\\GBM\\radiomic_results\\masks\\time2\\GTV_rings_combined\\{patient_id}"
 
         # Create directory for patient
-        print(output_path)
-        print("Now running for:", patient_id)
+        progress_counter += 1
+        print("Now running for id:", patient_id, f"| {progress_counter} / {number_of_patients} ({progress_counter / number_of_patients * 100:.0f}%)")
         try:
             os.mkdir(output_path)
         except OSError:
             print("Folder already existed", patient_id)
 
-        
-        # Find date of scans
-        for filename in os.listdir(f"D:\\GBM\\nii_prepared\\{hospital}\\{patient_id}"):
-            
-
         # Define paths to masks
-        mask_filepath = MASK_GTV.format(hospital = hospital, patient_id = patient_id)
-        brain_mask_path = MASK_BRAIN.format(hospital = hospital, patient_id = patient_id)
-        output_filepath = output_path + f"\\{patient_id}_MASK_RING.nii.gz"
+        mask_path = f"D:\\GBM\\radiomic_results\\masks\\time2\\GTV_resampled\\{patient_id}_mask.nii.gz"
+        brain_mask_path = f"D:\\GBM\\uni_gtv_tr_data\\{hospital}\\{patient_id}\\{patient_id}_mask.nii.gz"
+        output_filepath = output_path + f"\\{patient_id}_mask_ring.nii.gz"
 
         try:
-            filter_mask(mask_filepath, brain_mask_path, output_filepath)
+            filter_mask(mask_path, brain_mask_path, output_filepath)
         except Exception as e:
             print("Error happened:\n", e, "\nRemoving created directory.")
             os.rmdir(output_path)
