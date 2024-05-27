@@ -12,8 +12,13 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 os.chdir(main_dir)
 REF = "E:/Jasper/nnUNet/nnUNet_raw_data/Task812_RECURRENCE_DIALETED_CAVITY_EXCLUDED_GBM/labelsTs"
-PRED = "D:/GBM/COMBINED_GBM_predictions/Task812_RECURRENCE_DIALATED_CAVITY_EXCLUDED_GBM_fold_1"
+#PRED = "D:/GBM/COMBINED_GBM_predictions/Task812_RECURRENCE_DIALATED_CAVITY_EXCLUDED_GBM_fold_1"
+PRED = "C:/Users/Student1/Desktop/ensemble_test"
 L = (1,)
+
+# The evaluator class has been modified so all metrics are calculated. (also msd, hd, hd95)
+# Use the nnUNet_evaluate_folder command to evaluate models.
+
 #test = nnunet.evaluation.evaluator.Evaluator(test = PRED, reference=REF, labels=L, metrics)
 
 #nnunet.evaluation.evaluator.evaluate_folder(folder_with_gts=REF, folder_with_predictions=PRED, labels = L, metric_kwargs=metrics)
