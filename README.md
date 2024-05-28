@@ -1,4 +1,23 @@
 # Introduction
+In this project, the goal is to analyze and predict recurrence patterns in patients with glioblastoma (GBM) - the most aggressive form of brain cancer, with a median survival time of only 15 months. The treatment consists of maximal tumor resection (removal) followed by chemotherapy and radiotherapy. For the majority of patients, the tumor will eventually recur. The recurrence can be local, distant, or combined (both local and distant) and varies between patients. The primary objective of this project is to expand an existing pipeline to predict these recurrence patterns based on data from 650 patients. This is particularly relevant because in the case of local recurrence, intensifying radiation given at the original tumor site can be considered to achieve better clinical outcomes, as opposed to a larger general treatment area in the case of distant recurrence.
+
+* Local: The recurrent tumor overlaps with the earlier removed tumor.
+* Distant: The recurrent tumor does **not** overlap with the earlier removed tumor.
+* Combined: There are both local **and** distant tumors.
+
+  <p align="center">
+  <img src="readme_images/rad_near_far_tumor.png" width=50% />
+  </p>
+_Example of recurrence types. Red area is original tumor while green area is the recurrence. The left image shows local recurrence while right image shows a distant recurrence._
+
+**GTV segmentation with nnUNet**
+
+To assist in improving the prediction process, automatic segmentation of the gross tumor volume  (GTV, i.e. the tumor)  at the planning phase and time of recurrence is conducted. This means less need for manual clinical delineations (manually segmenting the GTV) of both planning and recurrence, and means automatic classification of ground truth needed for training the prediction models. It also allows automatic information retrieval of how much radiation the tumor residue recieved during radiotherapy and also how much the area of the recurrent tumor recieved, which can be included in the prediction model to provide better results.
+An already established pipeline segments GTVs from the planning phase images, however this project has improved such segmentation network while also implementing a network capable of segmenting the recurrent tumors.
+
+**Radiomics**
+
+Prediction will be made by extracting textural and shape-based quantitative metrics (radiomic features) from the ring around the GTV in the MR taken in connection with planning of radiotherapy. The features will be used to train a logistic regression model and also an ADABoost classifier.
 
 # GTV segmentation | nnUNet
 1: kort introduktion
@@ -63,15 +82,6 @@ The performance of the network is:
 
 
 # Radiomics
-Glioblastoma (GBM) is generally expected to reoccurs after removal of the tumor. The recurrent tumor(s) can be:
-* Local: The recurrent tumor overlaps with the earlier removed tumor.
-* Distant: The recurrent tumor does **not** overlap with the earlier removed tumor.
-* Combined: There are both local **and** distant tumors.
-
-  <p align="center">
-  <img src="readme_images/rad_near_far_tumor.png" width=50% />
-  </p>
-
 **Goal:** Be able to predict whether or not a recurrence will have a distant tumor.
 
 This is important as being able to predict if a recurrent tumor is distant or not, may allow treatment during radiotherapy to focus on a concentrated area around the removed tumor in the case of only local recurrence, 
