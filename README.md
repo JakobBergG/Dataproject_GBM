@@ -33,11 +33,19 @@ compare models
   </p>
 
 ## segmenting recurrence MR scans
-The goal for Task812_RECURRENCE... is to segment the recurrence tumors.
+The goal for Task812_RECURRENCE... is to segment the recurrence tumors. When segmenting a recurrence tumor there are som different clinical definitions of when to include the cavity and when not to which is hard for a network to learn. Therefore we have finetuned the network on MR scans where the cavity is allways excluded, which is different from the segmentations of t2 scans. In the figure below an example of a segmentation of a recurrence tumor can be seen.
+
+  <p align="center">
+  <img src="readme_images/recurrence_segmentation.png" width=50% />
+  </p>
+  
 To segment the recurrence MR scans the newtork generated from Task806_ANOUK_GBM was finetuned on a training set consisting of XXX MR scans (XXX training cases and XXX test cases).
 5 fold cross validation was used in the training to optimize the models performance. When segmenting a recurrence tumor an ensemble is created from the 5 folds (maybe this sentence can be written better).
 through experimenting a learning rate of 1e-6 was determined best suitable for finetuning the network. in the figure below a progression curve from one of the folds can be seen.
 
+  <p align="center">
+  <img src="readme_images/progress_t812_f_3.png" width=50% />
+  </p>
 4.1: finetuning anouk to recurrence definition
 4.1.1:
 compare models.
