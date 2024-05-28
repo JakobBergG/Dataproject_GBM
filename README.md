@@ -70,6 +70,10 @@ Glioblastoma (GBM) is generally expected to reoccurs after removal of the tumor.
   <img src="readme_images/rad_near_far_tumor.png" width=50% />
   </p>
 
+The performance of the network is:
+  <p align="center">
+  <img src="readme_images/RECURRENCE_on_RECURRENCE_edit.jpg" width=50% />
+  </p>
 
 **Goal:** Be able to predict whether or not a recurrence will have a distant tumor.
 
