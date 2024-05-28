@@ -9,7 +9,10 @@ from sklearn.model_selection import cross_val_score, cross_validate
 from sklearn.model_selection import KFold
 import itertools
 from imblearn.under_sampling import RandomUnderSampler
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+from sklearn.model_selection import train_test_split, GridSearchCV
 from scipy.stats import mannwhitneyu, pearsonr
+import pandas as pd
 
 # Study_ID: 0, TumorLabel: 1, TumorClass: 2 
 journal_path = "D:\\GBM\\radiomic_results\\overview_with_combined.csv"
@@ -167,9 +170,44 @@ def train_and_predict(X, y, total_amount_features = 3, use_combinations = False)
 
             print("Printing prediction scores")
 
-            clf = AdaBoostClassifier(algorithm="SAMME")
+            clf = AdaBoostClassifier(algorithm="SAMME", n_estimators=50, learning_rate=0.1)
             clf.fit(X_train_test, y_train_test)
-            print(sum(clf.predict(X_val) == y_val) / len(y_val))
+            y_pred = clf.predict(X_val)
+            print(sum(y_pred == y_val) / len(y_val))
+
+            if i == 4:
+                cm = confusion_matrix(y_val, y_pred, labels=clf.classes_)
+
+                # Display the confusion matrix using ConfusionMatrixDisplay
+                disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=clf.classes_)
+
+                # Plot the confusion matrix
+                disp.plot(cmap=plt.cm.Blues)
+                plt.show()
+
+                print(top_indicies)
+
+                feature_importances = clf.feature_importances_
+
+                # Get the feature names
+                feature_names = ['original_shape_Sphericity', 'original_glszm_GrayLevelNonUniformity', 'original_shape_SurfaceVolumeRatio', 'original_glcm_JointEntropy']
+
+                # Create a DataFrame for better visualization
+                feature_importance_df = pd.DataFrame({
+                    'Feature': feature_names,
+                    'Importance': feature_importances
+                }).sort_values(by='Importance', ascending=False)
+
+                # Plot the feature importances
+                plt.figure(figsize=(10, 6))
+                plt.barh(feature_importance_df['Feature'], feature_importance_df['Importance'], color='skyblue')
+                plt.xlabel('Feature Importance')
+                plt.ylabel('Feature')
+                plt.title('Feature Importance in AdaBoost Classifier')
+                plt.gca().invert_yaxis()  # Invert y-axis to display the highest importance at the top
+                plt.yticks(fontsize=5.5, rotation=45) 
+                plt.show()
+
             print("-------------")
 
 
@@ -186,7 +224,7 @@ def statistical_test(X, y):
         class_1 = [variable for variable, target in zip(X[:, i], y) if target == 1]
         _, pnorm = mannwhitneyu(class_0, class_1)
 
-        if pnorm <= 0.05:
+        if pnorm <= 0.20:
             print(_, pnorm)
             print(i)
             passed_idx.append(i)
@@ -212,18 +250,31 @@ def statistical_test(X, y):
     for indexes in list(itertools.chain(*[itertools.combinations(passed_idx, i) for i in range(1, len(passed_idx)+1)])):
         clf = LogisticRegression(max_iter=1000)
 
-        print(indexes)
 
         try:
             clf.fit(X_train_test[:, indexes], y_train_test)
-            print(sum(clf.predict(X_val[:, indexes]) == y_val) / len(y_val))
+            y_pred = clf.predict(X_val[:, indexes])
+            print(sum(y_pred == y_val) / len(y_val))
+
+            if len(indexes) == 3:
+                cm = confusion_matrix(y_val, y_pred, labels=clf.classes_)
+
+                disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=clf.classes_)
+
+                # Plot the confusion matrix
+                disp.plot(cmap=plt.cm.Blues)
+
+                plt.title(f"Confusion Matrix for the logistic regression with {len(indexes)} features")
+                plt.show()
+
+                print(indexes)
 
         except:
             print(f"Fitting the model with following indexes failed {indexes}, moving on...")
     
 
 
-# train_and_predict(X, y, total_amount_features=20, use_combinations=False)
+train_and_predict(X, y, total_amount_features=20, use_combinations=False)
 
 statistical_test(X, y)
 
