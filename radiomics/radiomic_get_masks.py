@@ -13,7 +13,6 @@ To create CTV ring it needs:
 def filter_mask(mask_path, brain_mask_path, output_path, use_largest_lesion=False):
     """Create and write CTV ring to disk.
 
-    
     Keyword arguments:
     mask_path -- the filepath to the GTV mask
     brain_mask_path -- the filepath to the brain mask
@@ -51,7 +50,7 @@ def filter_mask(mask_path, brain_mask_path, output_path, use_largest_lesion=Fals
 def get_largest_lesion(mask, verbose = False):
     '''Return the largest lesion (tumor).
 
-    Verbose also prints the size of the largest lesion
+    Verbose also prints the size of the largest lesion.
     '''
     component_image = sitk.ConnectedComponent(mask)
     sorted_component_image = sitk.RelabelComponent(component_image, sortByObjectSize=True)

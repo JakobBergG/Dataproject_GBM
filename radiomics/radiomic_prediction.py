@@ -107,6 +107,10 @@ def train_and_predict(X, y, total_amount_features = 3, use_combinations = False)
                 scores = cross_val_score(clf, X_train_test, y_train_test)
                 print(scores)
 
+                clf = AdaBoostClassifier(algorithm="SAMME")
+                clf.fit(X_train_test, y_train_test)
+                print(sum(clf.predict(X_val) == y_val) / len(y_val))
+
     else:
 
         clf = AdaBoostClassifier(algorithm="SAMME")
