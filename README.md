@@ -91,10 +91,10 @@ The features are then used to fit a logistic regression model and also used to t
 Number of available and suitable images are:
 <div align="center">
   
-| Type     | Amount |
-|----------|--------|
-| Local    | 274    |
-| Distant  | 115    |
+| Type         | Amount |
+|--------------|--------|
+| Local        | 274    |
+| Distant      | 115    |
 | **Total**    | 389    | 
 
 </div>
@@ -135,8 +135,7 @@ e.g. Max and mean of voxel intensities_
 
 **Totalling 107 features.**
   
-_The matrices are essentially textural features describing properties of the local distribu-
-tion of the gray levels within the ROI based on co-occurrence of gray levels, consecutive
+_The matrices are essentially textural features describing properties of the local distribution of the gray levels within the ROI based on co-occurrence of gray levels, consecutive
 sequence of pixels or zones with the same gray level. The intensity of a pixel or voxel is
 also called a grey level or grey tone_
 
