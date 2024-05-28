@@ -21,7 +21,7 @@ image of segmentation?
 compare models
 
   <p align="center">
-  <img src="readme_images/ANOUK_on_ANOUK_OUH_CUH_edit.png" width=50% />
+  <img src="readme_images/ANOUK_on_ANOUK_OUH_CUH_edit.jpg" width=50% />
   </p>
 
 4: segmenting recurrence MR scans
