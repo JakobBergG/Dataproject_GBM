@@ -1,5 +1,9 @@
 # Introduction
 
+# Table of Contents
+1. [Example](#gtv-segmentation--nnunet)
+2. [Example2](#radiomics)
+   1.[ADABoost](#predict-using-adaboost)
 # GTV segmentation | nnUNet
 
 # Radiomics
@@ -88,6 +92,7 @@ A relative high significance level should be set, otherwise no features will be 
 <p align="center">
 <img src="readme_images/features_after_mannwhitney_test.png" width=100% />
 </p>
+
 ## Predict using logistic regression
 We use logistic regression to classify whether or not a patient will have a local or distant recurrence, based on the features we have selected from the previous section. We run logistic regression on different combinations of the index, to see which ones match the best. This can be somewhat time-consuming for a lot of indices. We split the data into a train and test set. We do not achieve a prediction accuracy that is higher than what we can classify as random. Furthermore, it does not seem from the box plots that the data is separable by a logistic regression curve.
 48% accuracy.
@@ -101,6 +106,7 @@ We use logistic regression to classify whether or not a patient will have a loca
 The ADABoost classifier can be seen as a more all-in-one solution to the classification problem. The solution we have implemented is as follows.
 
 First, we try to make ADABoost select the most important features, based on cross-validation. We train a new model on each of the folds we have, and get the features that is most important for ADABoost in making its prediction. We then average the importance over all of the folds and then use the top most important features. We then run ADABoost for the selected features, fit the data on a train test and then we predict on a test set. We do not observe values of anything worth writing home about, as the accuracy usually hovers around 55\%.
+
 <p align="center">
 <img src="readme_images/Feature_importance.png" width=50% />
 </p>
