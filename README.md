@@ -19,7 +19,10 @@ image of segmentation?
 3.5.2: finetuning
 3.6:
 compare models
-figures
+
+  <p align="center">
+  <img src="readme_images/ANOUK_on_ANOUK_OUH_CUH_edit.png" width=50% />
+  </p>
 
 4: segmenting recurrence MR scans
 4.1: finetuning anouk to recurrence definition
