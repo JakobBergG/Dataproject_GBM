@@ -1,6 +1,16 @@
 # Introduction
 
 # GTV segmentation | nnUNet
+1: kort introduktion
+snak med Jasper om dette afsnit
+vi vil opnå en mere præcis segmentering af tumorer. This will be used as a step to train recurrence pattern prediction?
+We want to train models that are able to segment t2 MR scans and recurrence MR scans.
+
+2: data (samme som radiomics afsnit)
+
+
+
+
 
 # Radiomics
 Glioblastoma (GBM) is generally expected to reoccurs after removal of the tumor. The recurrent tumor(s) can be:
