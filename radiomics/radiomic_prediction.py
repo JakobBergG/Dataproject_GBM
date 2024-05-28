@@ -104,6 +104,10 @@ def train_and_predict(X, y, total_amount_features = 3, use_combinations = False)
                 scores = cross_val_score(clf, X_train_test, y_train_test)
                 print(scores)
 
+                clf = AdaBoostClassifier(algorithm="SAMME")
+                clf.fit(X_train_test, y_train_test)
+                print(sum(clf.predict(X_val) == y_val) / len(y_val))
+
     else:
 
         clf = AdaBoostClassifier(algorithm="SAMME")
@@ -186,7 +190,7 @@ def statistical_test(X, y):
         class_1 = [variable for variable, target in zip(X[:, i], y) if target == 1]
         _, pnorm = mannwhitneyu(class_0, class_1)
 
-        if pnorm <= 0.05:
+        if pnorm <= 0.20:
             print(_, pnorm)
             print(i)
             passed_idx.append(i)
