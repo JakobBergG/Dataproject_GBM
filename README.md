@@ -4,7 +4,7 @@
 1: kort introduktion
 snak med Jasper om dette afsnit
 vi vil opnå en mere præcis segmentering af tumorer. This will be used as a step to train recurrence pattern prediction?
-We want to train models that are able to segment t2 MR scans and recurrence MR scans.
+We want to train models that are able to segment t2 MR scans (Which is the scans taken after the Tumor has been removed, so we can segement the cavity for radio therapy) and recurrence MR scans.
 
 2: data (samme som radiomics afsnit)
 what is T2 mr scan
