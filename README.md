@@ -49,7 +49,10 @@ through experimenting a learning rate of 1e-6 was determined best suitable for f
 
 # Results
 After finetuning the network it can be seen that the cavity is now excluded from the segmentations. (see figure below)
-
+<p align="center">
+  <img src="readme_images/RECURRENCE_recurrence_prediction.png" />
+    <img src="readme_images/ANOUK_recurrence_prediction.png" />
+</p>
 4.1: finetuning anouk to recurrence definition
 4.1.1:
 compare models.
