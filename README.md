@@ -32,7 +32,7 @@ compare models
   <img src="readme_images/Task806_ANOUK_GBM_vs_Task811_CUH_GBM_on_CUH_edit.jpg" width=50% />
   </p>
 
-## segmenting recurrence MR scans
+## Segmenting recurrence MR scans
 The goal for Task812_RECURRENCE... is to segment the recurrence tumors. When segmenting a recurrence tumor there are som different clinical definitions of when to include the cavity and when not to which is hard for a network to learn. Therefore we have finetuned the network on MR scans where the cavity is allways excluded, which is different from the segmentations of t2 scans. In the figure below an example of a segmentation of a recurrence tumor can be seen.
 
   <p align="center">
@@ -46,6 +46,10 @@ through experimenting a learning rate of 1e-6 was determined best suitable for f
   <p align="center">
   <img src="readme_images/progress_t812_f_3.png" width=50% />
   </p>
+
+# Results
+After finetuning the network it can be seen that the cavity is now excluded from the segmentations. (see figure below)
+
 4.1: finetuning anouk to recurrence definition
 4.1.1:
 compare models.
