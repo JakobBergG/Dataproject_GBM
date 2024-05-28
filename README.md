@@ -27,3 +27,21 @@ Distant & Combined: 115
 Total: 389
 
 Recurrences for all images are classified by a single doctor. The tumor is segmented by various doctors in their respective hospital. 
+
+## Creating the CTV ring
+Creating the CTV ring needs the following resources:
+* Clinical delineation of gross tumor volume.
+* MR from planning phase of radiotherapy
+* Segmentation of brain (Retrieved through pipeline)
+
+The CTV is the GTV with some margin, here: 2 cm.
+
+\textbf{Process of creating the ring:}
+\begin{enumerate}
+    \item The largest lesion (i.e. tumor) is kept. The image can contain small parts of tumor, which will mess with the extraction of meaningful radiomic features, thus all lesser tumor are removed.
+    \item The area of the GTV is dilated (enlarged) by 2x2x1 cm. (Can be interpreted as dragging a sphere around the circumfrence of the GTV)
+    \item Keep the intersection of the dilated GTV and the brain mask; this ensures that the dilated GTV does not cross the anatomical boundary (i.e. the skull). Now we have CTV seen in image B.
+    \item The non-dilated GTV is removed from the CTV, resulting in a ring (hollow sphere) around the GTV. Final CTV ring can be seen in image C.
+\end{enumerate}
+
+\textbf{INSERT PICTURE OF CTV RING HERE}
