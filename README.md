@@ -31,7 +31,12 @@ compare models
   <p align="center">
   <img src="readme_images/Task806_ANOUK_GBM_vs_Task811_CUH_GBM_on_CUH_edit.jpg" width=50% />
   </p>
-4: segmenting recurrence MR scans
+
+## segmenting recurrence MR scans
+To segment the recurrence MR scans the newtork generated from Task806_ANOUK_GBM was finetuned on a training set consisting of XXX MR scans (XXX training cases and XXX test cases).
+5 fold cross validation was used in the training to optimize the models performance. When segmenting a recurrence tumor an ensemble is created from the 5 folds (maybe this sentence can be written better).
+through experimenting a learning rate of 1e-6 was determined best suitable for finetuning the network. in the figure below a progression curve from one of the folds can be seen.
+
 4.1: finetuning anouk to recurrence definition
 4.1.1:
 compare models.
