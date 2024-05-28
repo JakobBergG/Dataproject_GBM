@@ -184,3 +184,5 @@ First, we try to make ADABoost select the most important features, based on cros
 <p align="center">
 <img src="readme_images/confusion_matrix_adaboost.png" width=50% />
 </p>
+
+# Conclusion
