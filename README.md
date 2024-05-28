@@ -78,7 +78,7 @@ This is important as being able to predict if a recurrent tumor is distant or no
 or a broader radiation area in the case of a distant recurrence.
 
 Prediction will be made by extracting textural, shape-based and statistical features about the ring (sphere) around the gross tumor volume (GTV, i.e. the tumor) in the MR scan made during planning of radiotherapy.
-The features are then used to fit a logistic regression model and used to train an ADABoost classifer.
+The features are then used to fit a logistic regression model and also used to train an ADABoost classifer.
 
 **Process:**
 * Create CTV ring
