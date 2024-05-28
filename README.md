@@ -36,7 +36,7 @@ compare models
 The goal for Task812_RECURRENCE... is to segment the recurrence tumors. When segmenting a recurrence tumor there are som different clinical definitions of when to include the cavity and when not to which is hard for a network to learn. Therefore we have finetuned the network on MR scans where the cavity is allways excluded, which is different from the segmentations of t2 scans. In the figure below an example of a segmentation of a recurrence tumor can be seen.
 
   <p align="center">
-  <img src="readme_images/progress_t812_f_3.png" width=50% />
+  <img src="readme_images/recurrence_segmentation.png" width=50% />
   </p>
   
 To segment the recurrence MR scans the newtork generated from Task806_ANOUK_GBM was finetuned on a training set consisting of XXX MR scans (XXX training cases and XXX test cases).
