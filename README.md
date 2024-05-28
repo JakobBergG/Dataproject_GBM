@@ -1,9 +1,5 @@
 # Introduction
 
-# Table of Contents
-1. [Example](#gtv-segmentation--nnunet)
-2. [Example2](#radiomics)
-   1.[ADABoost](#predict-using-adaboost)
 # GTV segmentation | nnUNet
 
 # Radiomics
