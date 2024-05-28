@@ -42,7 +42,10 @@ The CTV is the GTV with some margin, here: 2 cm.
 3. Keep the intersection of the dilated GTV and the brain mask; this ensures that the dilated GTV does not cross the anatomical boundary (i.e. the skull). Now we have CTV seen in image B.
 4. The non-dilated GTV is removed from the CTV, resulting in a ring (hollow sphere) around the GTV. Final CTV ring can be seen in image C.
 
-**\textbf{INSERT PICTURE OF CTV RING HERE}**
+<p align="center">
+  <img src="readme_images/rad_GTV.png" />
+    <img src="readme_images/rad_Ring.png" />
+</p>
 
 ## Feature extraction
 Extract features from MR using CTV as region of interest. This is done with python
