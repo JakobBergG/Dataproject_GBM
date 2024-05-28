@@ -7,7 +7,24 @@ vi vil opnå en mere præcis segmentering af tumorer. This will be used as a ste
 We want to train models that are able to segment t2 MR scans and recurrence MR scans.
 
 2: data (samme som radiomics afsnit)
+what is T2 mr scan
+what is ...
+definition of gtv
+definition of recurrence gtv
+image of segmentation?
 
+3: segmenting T2 MR scans
+3.5: models:
+3.5.1: anouk
+3.5.2: finetuning
+3.6:
+compare models
+figures
+
+4: segmenting recurrence MR scans
+4.1: finetuning anouk to recurrence definition
+4.1.1:
+compare models.
 
 
 
