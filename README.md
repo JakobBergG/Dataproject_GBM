@@ -23,6 +23,10 @@ compare models
   <p align="center">
   <img src="readme_images/ANOUK_on_ANOUK_OUH_CUH_edit.jpg" width=50% />
   </p>
+  
+  <p align="center">
+  <img src="readme_images/Task806_ANOUK_GBM_vs_Task809_OUH_GBM_on_OUH_edit.jpg" width=50% />
+  </p>
 
 4: segmenting recurrence MR scans
 4.1: finetuning anouk to recurrence definition
