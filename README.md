@@ -100,7 +100,7 @@ So the increased variance on the dice boxplot may be caused by tumor volumes dif
   </p>
   
 To segment the recurrence MR scans the newtork generated from Task806_ANOUK_GBM was finetuned on a training set consisting of XXX MR scans (XXX training cases and XXX test cases).
-5 fold cross validation was used in the training to optimize the models performance. When segmenting a recurrence tumor an ensemble is created from the 5 folds (maybe this sentence can be written better). The ensemble prediction is created by averagin the 5 probability maps (one for each model).
+5 fold cross validation was used in the training to optimize the models performance. When segmenting a recurrence tumor an ensemble is created from the 5 folds (maybe this sentence can be written better). The ensemble prediction is created by averagin the 5 probability maps (one for each model). MAYBE PUT IN A FIGUE OF 5 probability maps.
 through experimenting a learning rate of 1e-6 was determined best suitable for finetuning the network. in the figure below a progression curve from one of the folds can be seen.
 
   <p align="center">
