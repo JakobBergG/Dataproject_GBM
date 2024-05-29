@@ -61,6 +61,7 @@ Since finetuning was our end goal we only used one fold from the ANOUK network (
   <p align="center">
   <img src="readme_images/progression_ANOUK_f0.png" width=50% />
   </p>
+To interpret the progression curve, see under the chapter Model Training at the page:
 https://github.com/MIC-DKFZ/nnUNet/tree/nnunetv1
   <p align="center">
   <img src="readme_images/ANOUK_on_ANOUK_OUH_CUH_edit.jpg" width=50% />
