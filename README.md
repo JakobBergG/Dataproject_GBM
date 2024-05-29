@@ -40,7 +40,7 @@ Number of available and suitable images are:
 
 The specific scans used for the segmentation training is the t2 MR scans which is the scans taken after the tumor was removed, so we can segement the cavity for radio therapy
 
-The recurrence data is a scans of a recurring tumor where special deliniations made by Anouk where the cavity is excluded, so the model doesn't include that in the segmentation. below can be seen a deliniation of a t2 mr scans and a recurrence mr scan.
+The recurrence data is a scans of a recurring tumor where special deliniations made by Anouk where the cavity is excluded, so the model doesn't include that in the segmentation. below can be seen a deliniation of a recurrence scan (left) and a t2 mr scan (right).
 
   <p align="center">
     <img src="readme_images/recurrence_segmentation.png" width=25% />
@@ -71,6 +71,7 @@ In the following 3 boxplots it can be seen how the different networks (ANOUK, OU
   </p>
   In the above boxplot you can see how the single model, ANOUK-network performs on different testsets: ANOUK data's own test set, OUH's testset and CUH's test set.
 we wanted to see if finetuning this model to a specific hospital would result in greater results. It can be seen that the ANOUK model performs significantly worse on the OUH and CUH test set, which is expected because of the noisy clinical deliniations of the OUH and CUH MR scans.
+In the two boxplots below the performance of the two finetuned networks can be seen. The two networks was the original ANOUK network finetuned with a learning rate of 1e-6 for 350 epoch on a single fold in the 5 fold cross validation.
 
   (POSSIBLE REFERENCE TO JASPER PAPER!!!)
   <p align="center">
@@ -84,6 +85,16 @@ In the above boxplot where we compare the base ANOUK network to OUH finetuned ne
   <img src="readme_images/Task806_ANOUK_GBM_vs_Task811_CUH_GBM_on_CUH_edit.jpg" width=50% />
   </p>
 When finetuning to CUH it looks as if the performance has increased after finetuning, since we get slightly lower values across all metrics.
+
+SKRIV NOGET I RETNING AF:
+teori bag de 3 metrics. Skriv at dice er afhængig af volumen men nem at forstå men ikke super brugbar. I stedet er HD95 og MSD tilsammen rimelig brugbar til at beskrive performance af netværkne.
+Increased variance on the dice boxplot may be caused by tumor volumes differing?
+
+HD95: a distance metric that measures the maximum of the minimum distances between the predicted segmentation and the ground truth at the 95th percentile.
+
+MSD: This tell us how much, on average, the surface varies between the segmentation and the GT.
+
+DICE: The Dice coefficient is a measure of the similarity between two sets, A and B. The coefficient ranges from 0 to 1, where 1 indicates that the two sets are identical, and 0 indicates that the two sets have no overlap
 
 ## Segmenting recurrence MR scans
 The goal for Task812_RECURRENCE... is to segment the recurrence tumors. When segmenting a recurrence tumor there are som different clinical definitions of when to include the cavity and when not to which is hard for a network to learn. Therefore we have finetuned the network on MR scans where the cavity is allways excluded, which is different from the segmentations of t2 scans. In the figure below an example of a segmentation of a recurrence tumor can be seen.
