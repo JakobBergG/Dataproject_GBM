@@ -46,7 +46,7 @@ definition of gtv
 definition of recurrence gtv
 image of segmentation?
 
-3: segmenting T2 MR scans
+## Segmenting T2 MR scans (planning MR scan)
 3.5: models:
 3.5.1: anouk
 3.5.2: finetuning
