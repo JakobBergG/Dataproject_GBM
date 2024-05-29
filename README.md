@@ -202,7 +202,7 @@ A relative high significance level should be set, otherwise no features will be 
 ## Predict using logistic regression
 We use logistic regression to classify whether or not a patient will have a local or distant recurrence, based on the features we have selected from the previous section. We run logistic regression on different models with combinations of the selected features, to see which model performs the best. This can be somewhat time-consuming for a lot of features. We split the data into a train and test set. We do not achieve a prediction accuracy that is higher than what we can classify as random. Furthermore, it does not seem from the box plots that the data is separable by a logistic regression curve.
 
-The best performing model uses all 3 features retrieved in the feature selection section accuracy of 48% on the test set.
+The best performing model uses all 3 features retrieved in the feature selection section with an accuracy of 48% on the test set.
 
 <p align="center">
 <img src="readme_images/confusion_matrix_logistic_regression.png" width=50% />
@@ -228,3 +228,4 @@ _The Gini importance for each of the included features in the final model_
 _Confusion matrix showing results from the final model on the test set_
 
 # Conclusion
+???
