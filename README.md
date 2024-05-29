@@ -1,5 +1,5 @@
 # Introduction
-In this project, the goal is to analyze and predict recurrence patterns in patients with glioblastoma (GBM) - the most aggressive form of brain cancer, with a median survival time of only 15 months. The treatment consists of maximal tumor resection (removal) followed by chemotherapy and radiotherapy. For the majority of patients, the tumor will eventually recur. The recurrence can be local, distant, or combined (both local and distant) and varies between patients. The primary objective of this project is to expand an existing pipeline to predict these recurrence patterns based on data from 650 patients. This is particularly relevant because in the case of local recurrence, intensifying radiation given at the original tumor site can be considered to achieve better clinical outcomes, as opposed to a larger general treatment area in the case of distant recurrence.
+In this project, the goal is to analyze and predict recurrence patterns in patients with glioblastoma (GBM) - the most aggressive form of brain cancer, with a median survival time of only 15 months. The treatment consists of maximal tumor resection (removal) followed by chemotherapy and radiotherapy. For the majority of patients, the tumor will eventually recur. The recurrence can be local, distant, or combined (both local and distant) and varies between patients. The primary objective of this project is to expand an existing pipeline to predict these recurrence patterns based on data from 389 patients. This is particularly relevant because in the case of local recurrence, intensifying radiation given at the original tumor site can be considered to achieve better clinical outcomes, as opposed to a larger general treatment area in the case of distant recurrence.
 
 * Local: The recurrent tumor overlaps with the earlier removed tumor.
 * Distant: The recurrent tumor does **not** overlap with the earlier removed tumor.
@@ -17,39 +17,73 @@ An already established pipeline segments GTVs from the planning phase images, ho
 
 **Radiomics**
 
-Prediction will be made by extracting textural and shape-based quantitative metrics (radiomic features) from the ring around the GTV in the MR taken in connection with planning of radiotherapy. The features will be used to train a logistic regression model and also an ADABoost classifier.
+The goal is to be able to predict whether or not a recurrence will have a distant tumor. Prediction will be made by extracting textural and shape-based quantitative metrics (radiomic features) from the ring around the GTV in the MR taken in connection with planning of radiotherapy. The features will be used to train a logistic regression model and also an ADABoost classifier.
+
 
 # GTV segmentation | nnUNet
-1: kort introduktion
-snak med Jasper om dette afsnit
-vi vil opnå en mere præcis segmentering af tumorer. This will be used as a step to train recurrence pattern prediction?
-We want to train models that are able to segment t2 MR scans (Which is the scans taken after the Tumor has been removed, so we can segement the cavity for radio therapy) and recurrence MR scans.
+The goal is to train models that are able to segment tumors on planning MR scans (T2 scans) and MR scans with recurrence tumors.
 
-2: data (samme som radiomics afsnit)
-what is T2 mr scan
+## Data
+Number of available and suitable images are:
+<div align="center">
+  
+| Type         | Training | Test |
+|--------------|----------|------|
+| ANOUK        | 207      | 52   |
+| AUH          | xxx      | xx   |
+| OUH          | 130      | 32   |
+| CUH          | 156      | 39   |
+| RECURRENCE*  | 31       | 8    |
+
+</div>
+*: RECURRENCE_DIALATED_CAVITY_EXCLUDED_GBM is the data for RECURRENCE 
+
+The specific scans used for the segmentation training is the t2 MR scans which is the scans taken after the tumor was removed, so we can segement the cavity for radio therapy
+
+The recurrence data is a scans of a recurring tumor where special deliniations made by Anouk where the cavity is excluded, so the model doesn't include that in the segmentation. below can be seen a deliniation of a t2 mr scans and a recurrence mr scan.
+
+  <p align="center">
+    <img src="readme_images/recurrence_segmentation.png" width=25% />
+      <img src="readme_images/t2_segmentation.png" width=25% />
+  </p>
+  
+
 what is ...
 definition of gtv
 definition of recurrence gtv
 image of segmentation?
 
-3: segmenting T2 MR scans
-3.5: models:
-3.5.1: anouk
-3.5.2: finetuning
-3.6:
-compare models
+## Segmenting T2 MR scans (planning MR scan)
 
+
+Our goal was to segment tumors on MR scans. We've had different data sets available, since the tumors on the MR scans in the Anouk dataset was delineated with focus on training models for tumor segmentation in contrast to the data sets from AUH, OUH and CUH where there were clinical deliniation from different doctors (not as precise). We trained a network only on the data from Anouk as baseline network to do transfer learning from so we could explore the possibility to finetune a network to each different hospital. 
+Since finetuning was our end goal we only used one fold from the ANOUK network (165 training and 42 validation cases), the model was trained for 1500 epochs. In the figure below a progression curve can be seen:
+  <p align="center">
+  <img src="readme_images/progression_ANOUK_f0.png" width=50% />
+  </p>
+To interpret the progression curve, see under the chapter Model Training at the page:
+https://github.com/MIC-DKFZ/nnUNet/tree/nnunetv1
+
+
+In the following 3 boxplots it can be seen how the different networks (ANOUK, OUH-finetuning, CUH-finetuning) perform different test sets. We have chosen not to include AUH since there is an overlap between the test and training data between ANOUK and AUH data patientwise.
   <p align="center">
   <img src="readme_images/ANOUK_on_ANOUK_OUH_CUH_edit.jpg" width=50% />
   </p>
-  
+  In the above boxplot you can see how the single model, ANOUK-network performs on different testsets: ANOUK data's own test set, OUH's testset and CUH's test set.
+we wanted to see if finetuning this model to a specific hospital would result in greater results. It can be seen that the ANOUK model performs significantly worse on the OUH and CUH test set, which is expected because of the noisy clinical deliniations of the OUH and CUH MR scans.
+
+  (POSSIBLE REFERENCE TO JASPER PAPER!!!)
   <p align="center">
   <img src="readme_images/Task806_ANOUK_GBM_vs_Task809_OUH_GBM_on_OUH_edit.jpg" width=50% />
   </p>
+  
+In the above boxplot where we compare the base ANOUK network to OUH finetuned network at appears that it is performing slightly worse. And therefore thsi finetuning wasn't worth it.
+
 
   <p align="center">
   <img src="readme_images/Task806_ANOUK_GBM_vs_Task811_CUH_GBM_on_CUH_edit.jpg" width=50% />
   </p>
+When finetuning to CUH it looks as if the performance has increased after finetuning, since we get slightly lower values across all metrics.
 
 ## Segmenting recurrence MR scans
 The goal for Task812_RECURRENCE... is to segment the recurrence tumors. When segmenting a recurrence tumor there are som different clinical definitions of when to include the cavity and when not to which is hard for a network to learn. Therefore we have finetuned the network on MR scans where the cavity is allways excluded, which is different from the segmentations of t2 scans. In the figure below an example of a segmentation of a recurrence tumor can be seen.
