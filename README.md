@@ -59,7 +59,7 @@ compare models
 Our goal was to segment tumors on MR scans. We've had different data sets available, since the tumors on the MR scans in the Anouk dataset was delineated with focus on training models for tumor segmentation in contrast to the data sets from AUH, OUH and CUH where there were clinical deliniation from different doctors (not as precise). We trained a network only on the data from Anouk as baseline network to do transfer learning from so we could explore the possibility to finetune a network to each different hospital. 
 Since finetuning was our end goal we only used one fold from the ANOUK network (165 training and 42 validation cases), the model was trained for 1500 epochs. In the figure below a progression curve can be seen:
   <p align="center">
-  <img src="readme_images/progression_ANOUK_f0_.png" width=50% />
+  <img src="readme_images/progression_ANOUK_f0.png" width=50% />
   </p>
 https://github.com/MIC-DKFZ/nnUNet/tree/nnunetv1
   <p align="center">
