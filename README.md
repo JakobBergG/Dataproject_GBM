@@ -38,6 +38,8 @@ Number of available and suitable images are:
 | RECURRENCE*  | 31       | 8    |
 
 </div>
+*: RECURRENCE_DIALATED_CAVITY_EXCLUDED_GBM is the data for RECURRENCE 
+
 what is T2 mr scan
 what is ...
 definition of gtv
