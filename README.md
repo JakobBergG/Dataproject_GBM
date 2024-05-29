@@ -69,10 +69,14 @@ In the following 3 boxplots you can see how the different networks (ANOUK, OUH-f
   <p align="center">
   <img src="readme_images/ANOUK_on_ANOUK_OUH_CUH_edit.jpg" width=50% />
   </p>
-  
+  In the above boxplot you can see how the single model, ANOUK-network performs on different testsets: ANOUK data's own test set, OUH's testset and CUH's test set.
+we wanted to see if finetuning this model to a specific hospital would result in greater results.
+  (POSSIBLE REFERENCE TO JASPER PAPER!!!)
   <p align="center">
   <img src="readme_images/Task806_ANOUK_GBM_vs_Task809_OUH_GBM_on_OUH_edit.jpg" width=50% />
   </p>
+
+
 
   <p align="center">
   <img src="readme_images/Task806_ANOUK_GBM_vs_Task811_CUH_GBM_on_CUH_edit.jpg" width=50% />
