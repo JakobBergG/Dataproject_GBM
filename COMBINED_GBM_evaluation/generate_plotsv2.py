@@ -44,7 +44,7 @@ def generate_boxplot(metrics_to_plot, summary_files_to_compare, hospital_identif
         data = generate_data_from_summary(summary_files_to_compare[i], metrics_to_plot, hospital_identifier)
         j = 0
         for metric_name, val_list in data.items():
-            axs[j, i].boxplot(val_list, showfliers = showfliers)
+            axs[j, i].boxplot(val_list, showfliers = showfliers, showmeans = True)
             axs[j, i].yaxis.grid(True)
             axs[j, i].set(axisbelow=True)  # Hide the grid behind plot objects
             print(f"quantiles for plot ({j}, {i}): \n 0.25: {np.quantile(val_list, 0.25):.2f} \n 0.50: {np.quantile(val_list, 0.50):.2f} \n 0.75: {np.quantile(val_list, 0.75):.2f} \n mean: {np.mean(val_list):.2f}")
@@ -80,7 +80,7 @@ def generate_single_model_boxplot(summary_file, metrics_to_plot, hospital_identi
         data = generate_data_from_summary(summary_file, metrics_to_plot, hospital_identifiers[i])
         j = 0
         for metric_name, val_list in data.items():
-            axs[j, i].boxplot(val_list, showfliers = showfliers)
+            axs[j, i].boxplot(val_list, showfliers = showfliers, showmeans = True)
             axs[j, i].yaxis.grid(True)
             axs[j, i].set(axisbelow=True)  # Hide the grid behind plot objects
             print(f"quantiles for plot ({j}, {i}): \n 0.25: {np.quantile(val_list, 0.25):.2f} \n 0.50: {np.quantile(val_list, 0.50):.2f} \n 0.75: {np.quantile(val_list, 0.75):.2f} \n mean: {np.mean(val_list):.2f}")
@@ -103,26 +103,27 @@ def generate_single_model_boxplot(summary_file, metrics_to_plot, hospital_identi
 
 
 # select the metrics to use in the boxplots
-metrics_to_plot = ["Avg. Surface Distance", "Hausdorff Distance 95"]
+metrics_to_plot = ["Avg. Surface Distance", "Hausdorff Distance 95", "Dice"]
 
 summary_file1 = "D:/GBM/GBM_predictions/Task806_ANOUK_GBM/summary.json"
 summary_file2 = "D:/GBM/GBM_predictions/Task811_CUH_GBM/summary.json"
 summary_file4 = "D:/GBM/GBM_predictions/Task809_OUH_GBM/summary.json"
 summary_file3 = "D:/GBM/GBM_predictions/Task812_RECURRENCE_DIALETED_CAVITY_EXCLUDED_GBM_ensemble/summary.json"
 
-summary_files_to_compare = [summary_file1, summary_file2]
+summary_files_to_compare = [summary_file1, summary_file3]
 #[summary_file1, summary_file2]
-hospital_identifier = "CUH"
+hospital_identifier = "RECURRENCE"
 
-#generate_boxplot(metrics_to_plot, summary_files_to_compare, hospital_identifier, showfliers=True)
-generate_single_model_boxplot(summary_file1, metrics_to_plot, ["ANOUK", "OUH", "CUH"], showfliers= True)
+# Do predictions on recurrence using ANOUK
+generate_boxplot(metrics_to_plot, summary_files_to_compare, hospital_identifier, showfliers=True)
+#generate_single_model_boxplot(summary_file1, metrics_to_plot, ["ANOUK", "OUH", "CUH"], showfliers= False)
 
 
-# fig, ax = plt.subplots(2, 1)
+# fig, ax = plt.subplots(3, 1)
 # i = 0
 # data = generate_data_from_summary(summary_file3, metrics_to_plot, "RECURRENCE")
 # for metric_name, val_list in data.items():
-#         ax[i].boxplot(val_list, showfliers = True)
+#         ax[i].boxplot(val_list, showfliers = False, showmeans = True)
 #         ax[i].yaxis.grid(True)
 #         ax[i].set(axisbelow=True)  # Hide the grid behind plot objects
 #         #axs[j,i].yaxis.set_major_locator(MultipleLocator(1))
@@ -132,5 +133,5 @@ generate_single_model_boxplot(summary_file1, metrics_to_plot, ["ANOUK", "OUH", "
 # ax[0].set_title("RECURRENCE", fontsize = 10)
 # for a, row in zip(ax, metrics_to_plot):
 #     a.set_ylabel(row, labelpad = 20, ha = "center", va = "center", fontsize = 10)
-# plt.savefig("RECURRENCE_outliers.jpg")
+# plt.savefig("RECURRENCE.jpg")
 # plt.show()
