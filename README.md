@@ -58,12 +58,13 @@ To interpret the progression curve, see under the chapter Model Training at the 
 https://github.com/MIC-DKFZ/nnUNet/tree/nnunetv1
 
 
-In the following 3 boxplots you can see how the different networks (ANOUK, OUH-finetuning, CUH-finetuning) perform. We have chosen not to include AUH since the ANOUK network is trained solely on Aarhus data, which she deliniated herself.
+In the following 3 boxplots it can be seen how the different networks (ANOUK, OUH-finetuning, CUH-finetuning) perform different test sets. We have chosen not to include AUH since there is an overlap between the test and training data between ANOUK and AUH data patientwise.
   <p align="center">
   <img src="readme_images/ANOUK_on_ANOUK_OUH_CUH_edit.jpg" width=50% />
   </p>
   In the above boxplot you can see how the single model, ANOUK-network performs on different testsets: ANOUK data's own test set, OUH's testset and CUH's test set.
-we wanted to see if finetuning this model to a specific hospital would result in greater results.
+we wanted to see if finetuning this model to a specific hospital would result in greater results. It can be seen that the ANOUK model performs significantly worse on the OUH and CUH test set, which is expected because of the noisy clinical deliniations of the OUH and CUH MR scans.
+
   (POSSIBLE REFERENCE TO JASPER PAPER!!!)
   <p align="center">
   <img src="readme_images/Task806_ANOUK_GBM_vs_Task809_OUH_GBM_on_OUH_edit.jpg" width=50% />
