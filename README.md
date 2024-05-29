@@ -48,12 +48,6 @@ definition of recurrence gtv
 image of segmentation?
 
 ## Segmenting T2 MR scans (planning MR scan)
-3.5: models:
-3.5.1: anouk
-3.5.2: finetuning
-3.6:
-compare models
-
 
 
 Our goal was to segment tumors on MR scans. We've had different data sets available, since the tumors on the MR scans in the Anouk dataset was delineated with focus on training models for tumor segmentation in contrast to the data sets from AUH, OUH and CUH where there were clinical deliniation from different doctors (not as precise). We trained a network only on the data from Anouk as baseline network to do transfer learning from so we could explore the possibility to finetune a network to each different hospital. 
