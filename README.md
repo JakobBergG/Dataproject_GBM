@@ -75,12 +75,14 @@ we wanted to see if finetuning this model to a specific hospital would result in
   <p align="center">
   <img src="readme_images/Task806_ANOUK_GBM_vs_Task809_OUH_GBM_on_OUH_edit.jpg" width=50% />
   </p>
+  
 In the above boxplot where we compare the base ANOUK network to OUH finetuned network at appears that it is performing slightly worse. And therefore thsi finetuning wasn't worth it.
 
 
   <p align="center">
   <img src="readme_images/Task806_ANOUK_GBM_vs_Task811_CUH_GBM_on_CUH_edit.jpg" width=50% />
   </p>
+When finetuning to CUH it looks as if the performance has increased after finetuning, since we get slightly lower values across all metrics.
 
 ## Segmenting recurrence MR scans
 The goal for Task812_RECURRENCE... is to segment the recurrence tumors. When segmenting a recurrence tumor there are som different clinical definitions of when to include the cavity and when not to which is hard for a network to learn. Therefore we have finetuned the network on MR scans where the cavity is allways excluded, which is different from the segmentations of t2 scans. In the figure below an example of a segmentation of a recurrence tumor can be seen.
