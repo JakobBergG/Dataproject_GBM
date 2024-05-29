@@ -63,6 +63,9 @@ Since finetuning was our end goal we only used one fold from the ANOUK network (
   </p>
 To interpret the progression curve, see under the chapter Model Training at the page:
 https://github.com/MIC-DKFZ/nnUNet/tree/nnunetv1
+
+
+In the following 3 boxplots you can see how the different networks (ANOUK, OUH-finetuning, CUH-finetuning) perform. We have chosen not to include AUH since the ANOUK network is trained solely on Aarhus data, which she deliniated herself.
   <p align="center">
   <img src="readme_images/ANOUK_on_ANOUK_OUH_CUH_edit.jpg" width=50% />
   </p>
