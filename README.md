@@ -38,9 +38,11 @@ Number of available and suitable images are:
 </div>
 *: RECURRENCE_DIALATED_CAVITY_EXCLUDED_GBM is the data for RECURRENCE 
 
+The specific scans used for the segmentation training is the t2 MR scans which is the scans taken after the tumor was removed, so we can segement the cavity for radio therapy
 
-t2 MR scans (Which is the scans taken after the Tumor has been removed, so we can segement the cavity for radio therapy) and recurrence MR scans.
-what is T2 mr scan
+The recurrence data is a scans of a recurring tumor where special deliniations made by Anouk where the cavity is excluded, so the model doesn't include that in the segmentation. below can be seen a deliniation of a t2 mr scans and a recurrence mr scan.
+
+
 what is ...
 definition of gtv
 definition of recurrence gtv
