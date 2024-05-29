@@ -10,7 +10,7 @@ In this project, the goal is to analyze and predict recurrence patterns in patie
   </p>
 _Example of recurrence types. Red area is original tumor while green area is the recurrence. The left image shows local recurrence while right image shows a distant recurrence._
 
-**GTV segmentation with nnUNet**
+**General tumor volume (GTV) segmentation with nnUNet**
 
 To assist in improving the prediction process, automatic segmentation of the gross tumor volume  (GTV, i.e. the tumor)  at the planning phase and time of recurrence is conducted. This means less need for manual clinical delineations (manually segmenting the GTV) of both planning and recurrence, and means automatic classification of ground truth needed for training the prediction models. It also allows automatic information retrieval of how much radiation the tumor residue recieved during radiotherapy and also how much the area of the recurrent tumor recieved, which can be included in the prediction model to provide better results.
 An already established pipeline segments GTVs from the planning phase images, however this project has improved such segmentation network while also implementing a network capable of segmenting the recurrent tumors.
@@ -47,11 +47,6 @@ The recurrence data is a scans of a recurring tumor where special deliniations m
       <img src="readme_images/t2_segmentation.png" width=25% />
   </p>
   
-
-what is ...
-definition of gtv
-definition of recurrence gtv
-image of segmentation?
 
 ## Segmenting T2 MR scans (planning MR scan)
 
