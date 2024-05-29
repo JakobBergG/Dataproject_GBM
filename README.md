@@ -42,6 +42,11 @@ The specific scans used for the segmentation training is the t2 MR scans which i
 
 The recurrence data is a scans of a recurring tumor where special deliniations made by Anouk where the cavity is excluded, so the model doesn't include that in the segmentation. below can be seen a deliniation of a t2 mr scans and a recurrence mr scan.
 
+  <p align="center">
+    <img src="readme_images/recurrence_segmentation.png" width=25% />
+      <img src="readme_images/ANOUK_recurrence_prediction.png" width=25% />
+  </p>
+  
 
 what is ...
 definition of gtv
