@@ -86,18 +86,19 @@ In the above boxplot where we compare the base ANOUK network to OUH finetuned ne
   </p>
 When finetuning to CUH it looks as if the performance has increased after finetuning, since we get slightly lower values across all metrics.
 
-SKRIV NOGET I RETNING AF:
-teori bag de 3 metrics. Skriv at dice er afhængig af volumen men nem at forstå men ikke super brugbar. I stedet er HD95 og MSD tilsammen rimelig brugbar til at beskrive performance af netværkne.
 Increased variance on the dice boxplot may be caused by tumor volumes differing?
 
-HD95: a distance metric that measures the maximum of the minimum distances between the predicted segmentation and the ground truth at the 95th percentile.
+Hausdorf distance 95th percentile (HD95): a distance metric that measures the maximum of the minimum distances between the predicted segmentation and the ground truth at the 95th percentile.
 
-MSD: This tell us how much, on average, the surface varies between the segmentation and the GT.
+Mean surface distance (MSD): This tell us how much, on average, the surface varies between the segmentation and the GT.
 
-DICE: The Dice coefficient is a measure of the similarity between two sets, A and B. The coefficient ranges from 0 to 1, where 1 indicates that the two sets are identical, and 0 indicates that the two sets have no overlap
+DICE: The Dice coefficient is a measure of the similarity between two sets, A and B. The coefficient ranges from 0 to 1, where 1 indicates that the two sets are identical, and 0 indicates that the two sets have no overlap. 
+
+DICE is very dependent on volume and therefore might be a somewhat useless metric, but it is an easy metric to understand compared to MSD and HD95. MSD and HD95 is a better way to actually compare how good a model is performing, so we decided to include all three. 
 
 ## Segmenting recurrence MR scans
 The goal for Task812_RECURRENCE... is to segment the recurrence tumors. When segmenting a recurrence tumor there are som different clinical definitions of when to include the cavity and when not to which is hard for a network to learn. Therefore we have finetuned the network on MR scans where the cavity is allways excluded, which is different from the segmentations of t2 scans. In the figure below an example of a segmentation of a recurrence tumor can be seen.
+So the increased variance on the dice boxplot may be caused by tumor volumes differing.
 
   <p align="center">
   <img src="readme_images/recurrence_segmentation.png" width=30% />
