@@ -21,10 +21,7 @@ The goal is to be able to predict whether or not a recurrence will have a distan
 
 
 # GTV segmentation | nnUNet
-1: kort introduktion
-snak med Jasper om dette afsnit
-vi vil opnå en mere præcis segmentering af tumorer. This will be used as a step to train recurrence pattern prediction?
-We want to train models that are able to segment t2 MR scans (Which is the scans taken after the Tumor has been removed, so we can segement the cavity for radio therapy) and recurrence MR scans.
+The goal is to train models that are able to segment tumors on planning MR scans (T2 scans) and MR scans with recurrence tumors.
 
 ## Data
 Number of available and suitable images are:
@@ -41,6 +38,8 @@ Number of available and suitable images are:
 </div>
 *: RECURRENCE_DIALATED_CAVITY_EXCLUDED_GBM is the data for RECURRENCE 
 
+
+t2 MR scans (Which is the scans taken after the Tumor has been removed, so we can segement the cavity for radio therapy) and recurrence MR scans.
 what is T2 mr scan
 what is ...
 definition of gtv
