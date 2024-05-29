@@ -44,7 +44,7 @@ The recurrence data is a scans of a recurring tumor where special deliniations m
 
   <p align="center">
     <img src="readme_images/recurrence_segmentation.png" width=25% />
-      <img src="readme_images/ANOUK_recurrence_prediction.png" width=25% />
+      <img src="readme_images/t2_segmentation.png" width=25% />
   </p>
   
 
