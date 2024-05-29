@@ -229,4 +229,4 @@ _Confusion matrix showing results from the final model on the test set_
 
 # Conclusion
 In conclusion, this project has laid a solid foundation for predicting GBM recurrence patterns through advanced segmentation and radiomics. 
-Although our current prediction accuracies still need improvement, the methods and insights we've developed provide a strong foundation for future progress, enabling researchers to come to refine these techniques in an effort to one day provide enhanced personalized treatment strategies and improved clinical outcomes for GBM patients.
+Although our current prediction accuracies still need improvement, the methods developed and insights gained provide a strong foundation for future progress, enabling researchers to come to refine these techniques in an effort to one day provide enhanced personalized treatment strategies and improved clinical outcomes for GBM patients.
