@@ -6,7 +6,7 @@ In this project, the goal is to analyze and predict recurrence patterns in patie
 * Combined: There are both local **and** distant tumors.
 
   <p align="center">
-  <img src="readme_images/rad_near_far_tumor.png" width=40% />
+  <img src="readme_images/rad_near_far_tumor.png" width=50% />
   </p>
 _Example of recurrence types. Red area is original tumor while green area is the recurrence. The left image shows local recurrence while right image shows a distant recurrence._
 
