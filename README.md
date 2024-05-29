@@ -199,6 +199,7 @@ A relative high significance level should be set, otherwise no features will be 
 <img src="readme_images/features_after_mannwhitney_test.png" width=100% />
 </p>
 
+_Boxplot of the 3 features' values for each class._
 ## Predict using logistic regression
 We use logistic regression to classify whether or not a patient will have a local or distant recurrence, based on the features we have selected from the previous section. We run logistic regression on different models with combinations of the selected features, to see which model performs the best. This can be somewhat time-consuming for a lot of features. We split the data into a train and test set. We do not achieve a prediction accuracy that is higher than what we can classify as random. Furthermore, it does not seem from the box plots that the data is separable by a logistic regression curve.
 
