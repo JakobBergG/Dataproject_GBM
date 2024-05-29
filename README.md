@@ -1,4 +1,23 @@
 # Introduction
+In this project, the goal is to analyze and predict recurrence patterns in patients with glioblastoma (GBM) - the most aggressive form of brain cancer, with a median survival time of only 15 months. The treatment consists of maximal tumor resection (removal) followed by chemotherapy and radiotherapy. For the majority of patients, the tumor will eventually recur. The recurrence can be local, distant, or combined (both local and distant) and varies between patients. The primary objective of this project is to expand an existing pipeline to predict these recurrence patterns based on data from 650 patients. This is particularly relevant because in the case of local recurrence, intensifying radiation given at the original tumor site can be considered to achieve better clinical outcomes, as opposed to a larger general treatment area in the case of distant recurrence.
+
+* Local: The recurrent tumor overlaps with the earlier removed tumor.
+* Distant: The recurrent tumor does **not** overlap with the earlier removed tumor.
+* Combined: There are both local **and** distant tumors.
+
+  <p align="center">
+  <img src="readme_images/rad_near_far_tumor.png" width=50% />
+  </p>
+_Example of recurrence types. Red area is original tumor while green area is the recurrence. The left image shows local recurrence while right image shows a distant recurrence._
+
+**GTV segmentation with nnUNet**
+
+To assist in improving the prediction process, automatic segmentation of the gross tumor volume  (GTV, i.e. the tumor)  at the planning phase and time of recurrence is conducted. This means less need for manual clinical delineations (manually segmenting the GTV) of both planning and recurrence, and means automatic classification of ground truth needed for training the prediction models. It also allows automatic information retrieval of how much radiation the tumor residue recieved during radiotherapy and also how much the area of the recurrent tumor recieved, which can be included in the prediction model to provide better results.
+An already established pipeline segments GTVs from the planning phase images, however this project has improved such segmentation network while also implementing a network capable of segmenting the recurrent tumors.
+
+**Radiomics**
+
+Prediction will be made by extracting textural and shape-based quantitative metrics (radiomic features) from the ring around the GTV in the MR taken in connection with planning of radiotherapy. The features will be used to train a logistic regression model and also an ADABoost classifier.
 
 # GTV segmentation | nnUNet
 1: kort introduktion
@@ -36,7 +55,7 @@ compare models
 The goal for Task812_RECURRENCE... is to segment the recurrence tumors. When segmenting a recurrence tumor there are som different clinical definitions of when to include the cavity and when not to which is hard for a network to learn. Therefore we have finetuned the network on MR scans where the cavity is allways excluded, which is different from the segmentations of t2 scans. In the figure below an example of a segmentation of a recurrence tumor can be seen.
 
   <p align="center">
-  <img src="readme_images/recurrence_segmentation.png" width=50% />
+  <img src="readme_images/recurrence_segmentation.png" width=30% />
   </p>
   
 To segment the recurrence MR scans the newtork generated from Task806_ANOUK_GBM was finetuned on a training set consisting of XXX MR scans (XXX training cases and XXX test cases).
@@ -44,44 +63,32 @@ To segment the recurrence MR scans the newtork generated from Task806_ANOUK_GBM 
 through experimenting a learning rate of 1e-6 was determined best suitable for finetuning the network. in the figure below a progression curve from one of the folds can be seen.
 
   <p align="center">
-  <img src="readme_images/progress_t812_f_3.png" width=50% />
+  <img src="readme_images/progress_t812_f_3.png" width=40% />
   </p>
 
-# Results
+## Results
 After finetuning the network it can be seen that the cavity is now excluded from the segmentations. (see figure below)
 <p align="center">
-  <img src="readme_images/RECURRENCE_recurrence_prediction.PNG" />
-    <img src="readme_images/ANOUK_recurrence_prediction.png" />
+  <img src="readme_images/RECURRENCE_recurrence_prediction.PNG" width=25% />
+    <img src="readme_images/ANOUK_recurrence_prediction.png" width=25% />
 </p>
-4.1: finetuning anouk to recurrence definition
-4.1.1:
-compare models.
-
-
-
-
-# Radiomics
-Glioblastoma (GBM) is generally expected to reoccurs after removal of the tumor. The recurrent tumor(s) can be:
-* Local: The recurrent tumor overlaps with the earlier removed tumor.
-* Distant: The recurrent tumor does **not** overlap with the earlier removed tumor.
-* Combined: There are both local **and** distant tumors.
-
-  <p align="center">
-  <img src="readme_images/rad_near_far_tumor.png" width=50% />
-  </p>
 
 The performance of the network is:
   <p align="center">
   <img src="readme_images/RECURRENCE_on_RECURRENCE_edit.jpg" width=50% />
   </p>
 
+
+
+
+# Radiomics
 **Goal:** Be able to predict whether or not a recurrence will have a distant tumor.
 
 This is important as being able to predict if a recurrent tumor is distant or not, may allow treatment during radiotherapy to focus on a concentrated area around the removed tumor in the case of only local recurrence, 
 or a broader radiation area in the case of a distant recurrence.
 
 Prediction will be made by extracting textural, shape-based and statistical features about the ring (sphere) around the gross tumor volume (GTV, i.e. the tumor) in the MR scan made during planning of radiotherapy.
-The features are then used to fit a logistic regression model and used to train an ADABoost classifer.
+The features are then used to fit a logistic regression model and also used to train an ADABoost classifer.
 
 **Process:**
 * Create CTV ring
@@ -94,10 +101,10 @@ The features are then used to fit a logistic regression model and used to train 
 Number of available and suitable images are:
 <div align="center">
   
-| Type     | Amount |
-|----------|--------|
-| Local    | 274    |
-| Distant  | 115    |
+| Type         | Amount |
+|--------------|--------|
+| Local        | 274    |
+| Distant      | 115    |
 | **Total**    | 389    | 
 
 </div>
@@ -138,8 +145,7 @@ e.g. Max and mean of voxel intensities_
 
 **Totalling 107 features.**
   
-_The matrices are essentially textural features describing properties of the local distribu-
-tion of the gray levels within the ROI based on co-occurrence of gray levels, consecutive
+_The matrices are essentially textural features describing properties of the local distribution of the gray levels within the ROI based on co-occurrence of gray levels, consecutive
 sequence of pixels or zones with the same gray level. The intensity of a pixel or voxel is
 also called a grey level or grey tone_
 
@@ -178,3 +184,5 @@ First, we try to make ADABoost select the most important features, based on cros
 <p align="center">
 <img src="readme_images/confusion_matrix_adaboost.png" width=50% />
 </p>
+
+# Conclusion
