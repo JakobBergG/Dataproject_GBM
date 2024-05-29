@@ -228,4 +228,4 @@ _The Gini importance for each of the included features in the final model_
 _Confusion matrix showing results from the final model on the test set_
 
 # Conclusion
-???
+In conclusion, this project has laid a solid foundation for predicting GBM recurrence patterns through advanced segmentation and radiomics. While current prediction accuracies indicate room for improvement, the methodologies and insights gained pave the way for future advancements, ultimately aiming to enhance personalized treatment strategies and improve clinical outcomes for GBM patients.
