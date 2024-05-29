@@ -75,7 +75,7 @@ we wanted to see if finetuning this model to a specific hospital would result in
   <p align="center">
   <img src="readme_images/Task806_ANOUK_GBM_vs_Task809_OUH_GBM_on_OUH_edit.jpg" width=50% />
   </p>
-
+In the above boxplot where we compare the base ANOUK network to OUH finetuned network at appears that it is performing slightly worse. And therefore thsi finetuning wasn't worth it.
 
 
   <p align="center">
