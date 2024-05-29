@@ -192,7 +192,7 @@ sequence of pixels or zones with the same gray level. The intensity of a pixel o
 also called a grey level or grey tone_
 
 ## Feature selection
-We use the Mann-Whitney U test (also called the Wilcoxon rank-sum test) to decide which features to use on the time 2 data. Here we take each feature for all of the patients, and conduct the Mann-Whitney test on the 2 classes. If we do not have a significant p-value, we do not take the feature into account. It should be noted that we have equal number in the first class, as we have in the second class. This is important for both the selection and the prediction. To exclude multicollinearity we use the pearson's cross-correlation to test, and test weither the correlation is over 0.9. If it is, we exclude one of the features to remove the cross-correlation. 
+We use the Mann-Whitney U test (also called the Wilcoxon rank-sum test) to decide which features to use on the time 2 data (planning phase). Here we take each feature for all of the patients, and conduct the Mann-Whitney test on the 2 classes. If we do not have a significant p-value, we do not take the feature into account. It should be noted that we have equal number in the first class, as we have in the second class. This is important for both the selection and the prediction. To exclude multicollinearity we use the pearson's cross-correlation to test, and test whether the correlation is over 0.9. If it is, we exclude one of the features to remove the cross-correlation. 
 
 A relative high significance level should be set, otherwise no features will be selected. When testing with a significance level of 20\% we get the following features: _Shape flatness, Minimum voxel gray level, GLDM: Small Dependence Low Gray Level Emphasis_
 <p align="center">
@@ -200,8 +200,9 @@ A relative high significance level should be set, otherwise no features will be 
 </p>
 
 ## Predict using logistic regression
-We use logistic regression to classify whether or not a patient will have a local or distant recurrence, based on the features we have selected from the previous section. We run logistic regression on different combinations of the index, to see which ones match the best. This can be somewhat time-consuming for a lot of indices. We split the data into a train and test set. We do not achieve a prediction accuracy that is higher than what we can classify as random. Furthermore, it does not seem from the box plots that the data is separable by a logistic regression curve.
-48% accuracy.
+We use logistic regression to classify whether or not a patient will have a local or distant recurrence, based on the features we have selected from the previous section. We run logistic regression on different models with combinations of the selected features, to see which model performs the best. This can be somewhat time-consuming for a lot of features. We split the data into a train and test set. We do not achieve a prediction accuracy that is higher than what we can classify as random. Furthermore, it does not seem from the box plots that the data is separable by a logistic regression curve.
+
+The best performing model uses all 3 features retrieved in the feature selection section accuracy of 48% on the test set.
 
 <p align="center">
 <img src="readme_images/confusion_matrix_logistic_regression.png" width=50% />
@@ -209,22 +210,18 @@ We use logistic regression to classify whether or not a patient will have a loca
 
 
 ## Predict using ADABoost
-The ADABoost classifier can be seen as a more all-in-one solution to the classification problem. The solution we have implemented is as follows.
+The ADABoost classifier can be seen as a more all-in-one solution to the classification problem. The solution we have implemented is as follows:
 
-First, we try to make ADABoost select the most important features, based on cross-validation. We train a new model on each of the folds we have, and get the features that is most important for ADABoost in making its prediction. We then average the importance over all of the folds and then use the top most important features. We then run ADABoost for the selected features, fit the data on a train test and then we predict on a test set. We do not observe values of anything worth writing home about, as the accuracy usually hovers around 55\%.
+When fitting an ADABoost classifier, it calculates the (gini) importance of each feature. Using 5-fold cross-validation we train a new model on each of the folds we have, and get the features that is most important for ADABoost in making its prediction. We then average the importance over all of the folds and then use the top most important features. By testing on how many features to include, we found that a model using 4 features performed the best, however only with an accuracy of 50% on test set. Including features: _Shape: Sphericity, glszm: Gray Level Non-Uniformity', ngtdm: Contrast, Shape: Surface-Volume Ratio_.
 
 <p align="center">
 <img src="readme_images/Feature_importance.png" width=50% />
 </p>
-
-'original_shape_Sphericity', 'original_glszm_GrayLevelNonUniformity', 'original_ngtdm_Contrast', 'original_shape_SurfaceVolumeRatio'
-
-
-
-4 features, 50%
+_The Gini importance for each of the included features in the final model_
 
 <p align="center">
 <img src="readme_images/confusion_matrix_adaboost.png" width=50% />
 </p>
+_Confusion matrix showing results from the final model on the test set_
 
 # Conclusion
