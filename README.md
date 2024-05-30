@@ -143,8 +143,7 @@ It can be seen that the finetuning of the ANOUK network has been very successful
 # Radiomics
 **Goal:** Be able to predict whether or not a recurrence will have a distant tumor.
 
-This is important as being able to predict if a recurrent tumor is distant or not, may allow treatment during radiotherapy to focus on a concentrated area around the removed tumor in the case of only local recurrence, 
-or a broader radiation area in the case of a distant recurrence.
+This is important as being able to predict if a recurrent tumor is distant or not, may allow treatment during radiotherapy to focus on a concentrated area around the removed tumor in the case of only local recurrence, or a broader radiation area in the case of a distant recurrence.
 
 The prediction will be made by extracting textural, shape-based, and statistical features about the ring (sphere) around the gross tumor volume (GTV, i.e. the tumor) in the MR scan made during planning of radiotherapy.
 The features are then used to fit a logistic regression model and also used to train an AdaBoost classifier.
@@ -160,14 +159,14 @@ The features are then used to fit a logistic regression model and also used to t
 The number of available and suitable images are:
 <div align="center">
   
-| Type         | Amount |
+| Class        | Amount |
 |--------------|--------|
 | Local        | 274    |
 | Distant      | 115    |
 | **Total**    | 389    | 
 
 </div>
-Recurrences for all images are classified by a single doctor. The tumor is segmented by various doctors in their respective hospital. 
+Note that the _distant_ class consists of patients with distant recurrence and patients combined recurrence. Recurrences for all images are classified by a single doctor. The tumor is segmented by various doctors in their respective hospital.
 
 ## Creating the CTV ring
 Creating the CTV ring needs the following resources:
