@@ -102,7 +102,7 @@ In the below boxplot we compare the base ANOUK network to the CUH finetuned netw
   </p>
 When finetuning to CUH it looks as if the performance has increased after finetuning, since we get slightly lower values across MSD and Hausdorf and an improved dice.
 
-These results were expected since the deliniatinons the tumors in the MR scans of the OUH and CUH data sets were not made with focus on model training. 
+A worse performance of the finetuned networks was expected since the deliniatinons of the tumors in the OUH and CUH data sets were more noisy and not made with focus on model training. 
 The increased variance on the dice boxplot may be caused by tumor volumes differing since the metric is very volume dependent. 
 
 
