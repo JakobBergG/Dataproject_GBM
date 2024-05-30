@@ -16,7 +16,7 @@ gt_folder = "E:/Jasper/nnUNet/nnUNet_raw_data/Task812_RECURRENCE_DIALETED_CAVITY
 output_folder = f"D:/GBM/GBM_predictions/Task806_ANOUK_GBM_on_RECURRENCE"
 
 #######
-# evaluate network
+# make predictions
 
 command = ["nnUNet_predict", "-i", input_folder, "-o", output_folder, "-t",
                 str(task_id), "-f", "0", "-tr", "nnUNetTrainerV2", "-m",
@@ -24,6 +24,7 @@ command = ["nnUNet_predict", "-i", input_folder, "-o", output_folder, "-t",
 subprocess.run(command)
 
 
+# compute the metrics (will be saved as a summary.json file)
 REF = "E:/Jasper/nnUNet/nnUNet_raw_data/Task812_RECURRENCE_DIALETED_CAVITY_EXCLUDED_GBM/labelsTs"
 PRED = "D:/GBM/GBM_predictions/Task806_ANOUK_GBM_on_RECURRENCE"
 L = (1,)
