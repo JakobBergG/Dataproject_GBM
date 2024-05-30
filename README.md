@@ -161,12 +161,13 @@ The number of available and suitable images are:
   
 | Class        | Amount |
 |--------------|--------|
-| Local        | 274    |
-| Distant      | 115    |
+| Only local        | 274    |
+| Has distant      | 115    |
 | **Total**    | 389    | 
 
 </div>
-Note that the _distant_ class consists of patients with distant recurrence and patients combined recurrence. Recurrences for all images are classified by a single doctor. The tumor is segmented by various doctors in their respective hospital.
+
+Note that the _Has distant_ class consists of patients with the distant recurrence type _and_ patients with the combined recurrence type. Recurrences for all images are classified by a single doctor. The tumor is segmented by various doctors in their respective hospital.
 
 ## Creating the CTV ring
 Creating the CTV ring needs the following resources:
@@ -179,8 +180,8 @@ The CTV is the GTV with some margin, here: 2 cm.
 **Process of creating the ring:**
 1. The largest lesion (i.e. tumor) is kept. The image can contain small parts of tumor, which will mess with the extraction of meaningful radiomic features, thus all lesser tumors are removed.
 2. The area of the GTV is dilated (enlarged) by 2x2x1 cm. (This can be interpreted as dragging a sphere around the circumference of the GTV)
-3. Keep the intersection of the dilated GTV and the brain mask; this ensures that the dilated GTV does not cross the anatomical boundary (i.e. the skull). Now we have CTV seen in image B.
-4. The non-dilated GTV is removed from the CTV, resulting in a ring (hollow sphere) around the GTV. The final CTV ring can be seen in image C.
+3. Keep the intersection of the dilated GTV and the brain mask; this ensures that the dilated GTV does not cross the anatomical boundary (i.e. the skull). Now we have CTV.
+4. The non-dilated GTV is removed from the CTV, resulting in a ring (hollow sphere) around the GTV. The final CTV ring can be seen in image B.
 
 <p align="center">
   <img src="readme_images/rad_GTV.png" />
