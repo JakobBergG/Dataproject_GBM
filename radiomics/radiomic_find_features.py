@@ -1,5 +1,8 @@
 import json
 
+"""
+Script to quickly find the names of features
+"""
 all_radiomic_features_path = "D:\\GBM\\radiomic_results\\feature_output\\time2\\patients_all_features_all_classes.json"
 
 with open(all_radiomic_features_path) as f:
@@ -7,6 +10,6 @@ with open(all_radiomic_features_path) as f:
 
 features = [feature for feature, value in all_radiomic_features["3017"].items()]
 
-indices = [10, 86, 12, 50]
+indices = [1, 24, 69]
 
 print([features[i] for i in indices])

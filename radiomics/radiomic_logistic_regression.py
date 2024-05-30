@@ -1,9 +1,15 @@
 import csv
 import json
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import AdaBoostClassifier
 import matplotlib.pyplot as plt
 import numpy as np
+from sklearn.model_selection import train_test_split
+import itertools
+from imblearn.under_sampling import RandomUnderSampler
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+from sklearn.model_selection import train_test_split
+from scipy.stats import mannwhitneyu, pearsonr
+
 
 journal_path = "D:\\GBM\\radiomic_results\\overview_with_combined.csv"
 all_radiomic_features_path = "D:\\GBM\\radiomic_results\\feature_output\\time2\\patients_all_features_all_classes.json"
@@ -16,127 +22,99 @@ with open(journal_path, newline='', mode="r", encoding="utf-8-sig") as f:
         
         # Now read info for all patients
         for row in rows:
-            tumor_class = int(row[3])
+            Tumor_class = int(row[3])
             study_id = f"{row[1]:>04}" # Pad with 4 zeros
-            journal_info_patients[study_id] = tumor_class
+            journal_info_patients[study_id] = Tumor_class
 
 # LOAD RADIOMIC FEATURES #
 with open(all_radiomic_features_path) as f:
     all_radiomic_features = json.load(f)
 
 # COMBINE #
+# Some of the patients from the csv raised error when calculating radiomic features. (e.g. missing images, non-existent mask)
+# Valid patients only if they are PRESENT IN CSV and HAVE VALID RADIOMIC FEATURES.
 patient_info = {}
 for patient, features in all_radiomic_features.items():
-    patient_info[patient] = {"tumor_class": journal_info_patients[patient],
-                             "features": features} # features is also a Dict
+    patient_info[patient] = {"TumorClass": journal_info_patients[patient],
+                             "features": features} # features is a Dict
 
 
-# PRINT FEATURE DIFFERENCES - OPTIONAL #
-do_print = False
-included_features = ["original_glcm_Contrast", "original_glcm_Correlation", "original_glrlm_RunLengthNonUniformity"]
-if do_print:
-    feature_list_cls0 = []
-    feature_list_cls1 = []
-    for feature in included_features:
-        temp_cls0 = []
-        temp_cls1 = []
-        for patient, info in patient_info.items():
-            if info["tumor_class"] == 0:
-                temp_cls0.append(info["features"][feature])
-            else:
-                temp_cls1.append(info["features"][feature])
-
-        feature_list_cls0.append(temp_cls0)
-        feature_list_cls1.append(temp_cls1)
-
-    fig, axs = plt.subplots(3,2)
-    for i in range(3):
-        axs[i,0].title.set_text(included_features[i] + " Local")
-        axs[i,0].boxplot(feature_list_cls0[i])
-        axs[i,0].grid(axis="y")
-
-        axs[i,1].title.set_text(included_features[i] + " Distant")
-        axs[i,1].boxplot(feature_list_cls1[i])
-        axs[i,1].grid(axis="y")
-        axs[i,1].sharey(axs[i,0])
-    plt.show()
-
-# SET UP DATAFRAME FOR REGRESSION #
-# FIT LOGISTIC REGRESSION #
 
 X = []
 y = []
-EQUAL_GROUPS = False
-if EQUAL_GROUPS:
-    myCounter = 0
-    max_number_of_local = 115
-    for patient, info in patient_info.items():
-        cls = info["tumor_class"]
-        if cls != 2:
-            if myCounter == max_number_of_local and cls == 0:
-                continue
-            X.append([value for _, value in info["features"].items()])
-            y.append(cls)
-            if cls == 0:
-                myCounter += 1
-else:
-    for patient, info in patient_info.items():
-        if info["tumor_class"] != 2:
-            X.append([value for _, value in info["features"].items()])
-            y.append(info["tumor_class"])
 
-data = zip(X, y)
-test_set_size = 20
-train = []
-test = []
-
-cls_counter = {
-    0: 0,
-    1: 0
-}
-for features, label in data:
-    if cls_counter[label] < test_set_size:
-        test.append((features, label))
-        cls_counter[label] += 1
-    else:
-        train.append((features, label))
-
-X, y = zip(*train)
-clf = LogisticRegression()
-clf.fit(X,y)
-
-## Printing results
-format_offset = 25
-class header_col:
-    TITLE = "\033[95m"
-    SUBTITLE = "\033[92m"
-    END = "\033[0m"
+        
+for patient, info in patient_info.items():
+    X.append([value for _, value in info["features"].items()])
+    y.append(info["TumorClass"])
 
 
-number_of_patients = len(y)
-number_of_local = number_of_patients - sum(y)
+def statistical_test(X, y):
+    """
+    Uses the same test as descriped in the paper. Makes the mannwhitney test for
+    each feature and test for a p-value. For the given features we test for correlation
+    and if a correlation surpasses a threshold, we discard one of the features. It 
+    then tries to fit a combination of the features to the logistic regression.
+    This should be made with a stepwise feature selection, but it is not.
+    """
 
-print(header_col.TITLE + "*" * 6 + " TRAIN DATA MODEL " + "*" * 6 + header_col.END)
-print(header_col.SUBTITLE + "*** MODEL INPUT ***" + header_col.END)
-print("Local: ".ljust(format_offset, "-"), number_of_local)
-print("Distant & Combined: ".ljust(format_offset, "-"), (number_of_patients - number_of_local))
-print("Total scans: ".ljust(format_offset, "-"), number_of_patients)
-print("% of total being local: ".ljust(format_offset, "-"), f"{number_of_local / number_of_patients * 100:.1f}%")
+    X, y = np.array(X), np.array(y)
 
-print(header_col.SUBTITLE + "\n*** MODEL PERFORMANCE ***" + header_col.END)
-print("# of local guesses: ".ljust(format_offset, "-"), number_of_patients - sum(clf.predict(X)))
-print("Accuracy: ".ljust(format_offset, "-"), f"{clf.score(X,y) * 100:.1f}%")
+    passed_idx = []
 
-X, y = zip(*test)
-number_of_patients = len(y)
-number_of_local = number_of_patients - sum(y)
-print(header_col.TITLE + "\n" + "*" * 6 + " TEST DATA MODEL " + "*" * 6 + header_col.END)
-print(header_col.SUBTITLE + "*** MODEL INPUT ***" + header_col.END)
-print("Local: ".ljust(format_offset, "-"), number_of_local)
-print("Distant & Combined: ".ljust(format_offset, "-"), (number_of_patients - number_of_local))
-print("Total scans: ".ljust(format_offset, "-"), number_of_patients)
-print("% of total being local: ".ljust(format_offset, "-"), f"{number_of_local / number_of_patients * 100:.1f}%")
+    for i in range(X.shape[1]):
 
-print(header_col.SUBTITLE + "\n*** MODEL PERFORMANCE ***" + header_col.END)
-print("# of local guesses: ".ljust(format_offset, "-"), number_of_patients - sum(clf.predict(X)))
-print("Accuracy: ".ljust(format_offset, "-"), f"{clf.score(X,y) * 100:.1f}%")
+        class_0 = [variable for variable, target in zip(X[:, i], y) if target == 0]
+        class_1 = [variable for variable, target in zip(X[:, i], y) if target == 1]
+        _, pnorm = mannwhitneyu(class_0, class_1)
+
+        if pnorm <= 0.20:
+            print(_, pnorm)
+            print(i)
+            passed_idx.append(i)
+    
+    #checking for cross cor
+    removed_list = []        
+    
+    for indexes in list(itertools.combinations(passed_idx, 2)):
+        results = pearsonr(X[:, indexes[0]], X[:, indexes[1]])
+
+        if results.correlation > 0.9:
+            print(f"Correlation between {indexes} is to high, discarding the second feature")
+            removed_list.append(indexes[1])
+
+    passed_idx = [idx for idx in passed_idx if idx not in removed_list]
+
+    rus = RandomUnderSampler(random_state=42)
+    X, y = rus.fit_resample(X, y)
+
+        
+    X_train_test, X_val, y_train_test, y_val = train_test_split(X, y, random_state=42)
+
+    for indexes in list(itertools.chain(*[itertools.combinations(passed_idx, i) for i in range(1, len(passed_idx)+1)])):
+        clf = LogisticRegression(max_iter=1000)
+
+
+        try:
+            clf.fit(X_train_test[:, indexes], y_train_test)
+            y_pred = clf.predict(X_val[:, indexes])
+            print(sum(y_pred == y_val) / len(y_val))
+
+            if len(indexes) == 3:
+                cm = confusion_matrix(y_val, y_pred, labels=clf.classes_)
+
+                disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=clf.classes_)
+
+                # Plot the confusion matrix
+                disp.plot(cmap=plt.cm.Blues)
+
+                plt.title(f"Confusion Matrix for the logistic regression with {len(indexes)} features")
+                plt.show()
+
+                print(indexes)
+
+        except:
+            print(f"Fitting the model with following indexes failed {indexes}, moving on...")
+    
+
+statistical_test(X, y)

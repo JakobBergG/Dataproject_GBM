@@ -3,7 +3,7 @@ import numpy as np
 import os
 """
 The clinical delineation of the GTV has different dimensions and voxel spacings than the MR scan and brain mask.
-This is because the MR and brain mask has been throuhgh the pipeline that automatically resamples the images to a common spacing, 
+This is because the MR and brain mask has been through the pipeline that automatically resamples the images to a common spacing, 
 while the clinical delineations have different spacings depending on the location from where it was delineated.
 """
 
