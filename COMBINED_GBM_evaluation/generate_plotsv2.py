@@ -107,15 +107,15 @@ metrics_to_plot = ["Avg. Surface Distance", "Hausdorff Distance 95", "Dice"]
 
 summary_file1 = "D:/GBM/GBM_predictions/Task806_ANOUK_GBM/summary.json"
 summary_file2 = "D:/GBM/GBM_predictions/Task811_CUH_GBM/summary.json"
-summary_file4 = "D:/GBM/GBM_predictions/Task809_OUH_GBM/summary.json"
 summary_file3 = "D:/GBM/GBM_predictions/Task812_RECURRENCE_DIALETED_CAVITY_EXCLUDED_GBM_ensemble/summary.json"
-
-summary_files_to_compare = [summary_file1, summary_file3]
+summary_file4 = "D:/GBM/GBM_predictions/Task809_OUH_GBM/summary.json"
+summary_file5 = "D:/GBM/GBM_predictions/Task806_ANOUK_GBM_on_RECURRENCE/summary.json"
+summary_files_to_compare = [summary_file5, summary_file3]
 #[summary_file1, summary_file2]
 hospital_identifier = "RECURRENCE"
 
 # Do predictions on recurrence using ANOUK
-generate_boxplot(metrics_to_plot, summary_files_to_compare, hospital_identifier, showfliers=True)
+generate_boxplot(metrics_to_plot, summary_files_to_compare, hospital_identifier, showfliers=False)
 #generate_single_model_boxplot(summary_file1, metrics_to_plot, ["ANOUK", "OUH", "CUH"], showfliers= False)
 
 
