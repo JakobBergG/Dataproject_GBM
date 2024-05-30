@@ -37,7 +37,7 @@ Number of available and suitable images are:
 
 </div>
 *: RECURRENCE_DIALATED_CAVITY_EXCLUDED_GBM is the data for RECURRENCE 
-
+AUH, OUH and CUH MR scans have been deliniated less acurately 
 The specific scans used for the segmentation training is the T2 MR scans which are the scans taken after the tumor was removed. The segmentations should include the cavity.
 
 The recurrence data are scans of recurring tumors which are deliniated by Anouk. In the recurrence scans the cavity is allways excluded in the deliniation. Below can be seen a deliniation of a recurrence scan (left) and a t2 mr scan (right).
@@ -51,7 +51,7 @@ For further details of the data, take a look at the old readme file: old_readme_
 ## Segmenting T2 MR scans (planning MR scan)
 
 
-Our goal was to segment tumors on MR scans. We've had different data sets available, since the tumors on the MR scans in the Anouk dataset was delineated with focus on training models for tumor segmentation in contrast to the data sets from AUH, OUH and CUH where there were clinical deliniation from different doctors (not as precise). We trained a network only on the data from Anouk as baseline network to do transfer learning from so we could explore the possibility to finetune a network to each different hospital. 
+Our goal was to segment tumors on planning MR scans. We've had different data sets available, since the tumors on the MR scans in the ANOUK dataset was delineated with focus on training models for tumor segmentation in contrast to the data sets from AUH, OUH and CUH where there were clinical deliniation from different doctors (not as precise). We trained a network only on the data from Anouk as baseline network to do transfer learning from so we could explore the possibility to finetune a network to each different hospital. 
 Since finetuning was our end goal we only used one fold from the ANOUK network (165 training and 42 validation cases), the model was trained for 1500 epochs. In the figure below a progression curve can be seen:
   <p align="center">
   <img src="readme_images/progression_ANOUK_f0.png" width=50% />
