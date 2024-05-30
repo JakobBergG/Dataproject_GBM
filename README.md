@@ -153,7 +153,7 @@ The features are then used to fit a logistic regression model and also used to t
 * Extract features from MR using the ring as a region of interest
 * Feature selection
 * Prediction using logistic regression
-* Prediction using ADABoost
+* Prediction using AdaBoost
 
 ## Data
 The number of available and suitable images are:
@@ -220,7 +220,7 @@ _Boxplot of the 3 features' values for each class._
 ## Predict using logistic regression
 An equal amount of images in both classes is ensured by randomly sampling a number of images from the _local_ recurrence class matching the amount of images in the lesser class, _distant_.
 
-We use logistic regression to classify whether or not a patient will have a local or distant recurrence, based on the features we have selected from the previous section. We run logistic regression on different models with combinations of the selected features, to see which model performs the best. This can be somewhat time-consuming for a lot of features. We split the data into a train and test set. We do not achieve a prediction accuracy that is higher than what we can classify as random. Furthermore, it does not seem from the box plots that the data is separable by a logistic regression curve.
+We use logistic regression to classify whether or not a patient will have a local or distant recurrence, based on the 3 features selected in the previous section.  We split the data into a train and test set, and run logistic regression on different models with combinations of the selected features, to see which model performs the best. This can be somewhat time-consuming for a lot of features. We do not achieve a prediction accuracy that is higher than what we can classify as random. However this is expected as it does not seem from the box plots in the earlier section that the data is separable by a logistic regression curve; There seems to be no difference between the classes.
 
 The best-performing model uses all 3 features retrieved in the feature selection section with an accuracy of 48% on the test set.
 
@@ -230,10 +230,10 @@ The best-performing model uses all 3 features retrieved in the feature selection
 
 _Confusion matrix showing results from the final model on the test set_
 
-## Predict using ADABoost
+## Predict using AdaBoost
 The AdaBoost classifier can be seen as a more all-in-one solution to the classification problem. The solution we have implemented is as follows:
 
-When fitting an AdaBoost classifier, it calculates the (gini) importance of each feature. Using 5-fold cross-validation we train a new model on each of the folds we have and get the features that is most important for ADABoost in making its prediction. We then average the importance over all of the folds and then use the top most important features. By testing on how many features to include, we found that a model using 4 features performed the best, however only with an accuracy of 50% on the test set. Including features: _Shape: Sphericity, glszm: Gray Level Non-Uniformity', ngtdm: Contrast, Shape: Surface-Volume Ratio_.
+When fitting an AdaBoost classifier, it calculates the (gini) importance of each feature. Using 5-fold cross-validation we train a new model on each of the folds we have and get the features that is most important for AdaBoost in making its prediction. We then average the importance over all of the folds and gain the most important features. By testing on how many features to include, we found that a model using the 4 best features performed the best, however only with an accuracy of 50% on the test set. Including features: _Shape: Sphericity, glszm: Gray Level Non-Uniformity', ngtdm: Contrast, Shape: Surface-Volume Ratio_.
 
 <p align="center">
 <img src="readme_images/Feature_importance.png" width=50% />
@@ -309,7 +309,7 @@ _Find patients that have been manually classified by Anouk and have valid MR sca
 
 * `radiomic_ADABoost_regression.py`
 
-_Fit the ADABoost classifier, and do prediction of recurrence types_
+_Fit the AdaBoost classifier, and do prediction of recurrence types_
 
 * `radiomic_combine_feature_sets.py`
 
