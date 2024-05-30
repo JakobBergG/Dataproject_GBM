@@ -47,7 +47,7 @@ The recurrence data are scans of recurring tumors which are deliniated by Anouk.
       <img src="readme_images/t2_segmentation.png" width=25% />
   </p>
   
-For further details of the data, take a look at the old readme file.
+For further details of the data, take a look at the old readme file: old_readme_file.md
 ## Segmenting T2 MR scans (planning MR scan)
 
 
