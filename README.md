@@ -1,3 +1,6 @@
+_**Note:** This project builds upon and expands an earlier project and its repository made by data science students from AU in 2023. For the readme file for their project, see: `old_readme_file.md`._
+_See the bottom of the new readme file (this one) for an overview of the new python scripts developed during the current project._
+
 # Introduction
 In this project, the goal is to analyze and predict recurrence patterns in patients with glioblastoma (GBM) - the most aggressive form of brain cancer, with a median survival time of only 15 months. The treatment consists of maximal tumor resection (removal) followed by chemotherapy and radiotherapy. For the majority of patients, the tumor will eventually recur. The recurrence can be local, distant, or combined (both local and distant) and varies between patients. The primary objective of this project is to expand an existing pipeline to predict these recurrence patterns based on data from 389 patients. This is particularly relevant because in the case of local recurrence, intensifying radiation given at the original tumor site can be considered to achieve better clinical outcomes, as opposed to a larger general treatment area in the case of distant recurrence.
 
@@ -60,7 +63,7 @@ To interpret the progression curves and the evalutation boxplots the following m
 
 Hausdorf distance 95th percentile (HD95): A distance metric that measures the maximum of the minimum distances between the predicted segmentation and the ground truth at the 95th percentile.
 
-Mean surface distance (MSD): This tells us how much, on average, the surface varies between the segmentation and the GT.
+Mean surface distance (MSD): This tells us how much, on average, the surface varies between the segmentation and the ground truth.
 
 DICE: The Dice coefficient is a measure of the similarity between two sets, A and B. The coefficient ranges from 0 to 1, where 1 indicates that the two sets are identical, and 0 indicates that the two sets have no overlap. 
 
@@ -245,3 +248,8 @@ _Confusion matrix showing results from the final model on the test set_
 # Conclusion
 In conclusion, this project has laid a solid foundation for predicting GBM recurrence patterns through advanced segmentation and radiomics. 
 Although our current prediction accuracies still need improvement, the methods developed and insights gained provide a strong foundation for future progress, enabling researchers to come to refine these techniques in an effort to one day provide enhanced personalized treatment strategies and improved clinical outcomes for GBM patients.
+
+---
+
+# Appendix: Overview of python scripts developed during the project
+## Radiomics
