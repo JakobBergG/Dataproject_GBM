@@ -120,7 +120,7 @@ The goal for Task812_RECURRENCE_DIALATED_CAVITY_EXCLUDED_GBM is to segment the r
   </p>
   
 To segment the recurrence MR scans the newtork generated from Task806_ANOUK_GBM was finetuned on a training set consisting of 39 MR scans (31 training cases and 8 test cases).
-5 fold cross validation was used in the training to optimize the models performance. When segmenting a recurrence tumor an ensemble was created from the 5 folds. The ensemble prediction is created by averaging the 5 probability maps (one for each model). ####MAYBE PUT IN A FIGUE OF 5 probability maps####.
+5 fold cross validation was used in the training to optimize the models performance. When segmenting a recurrence tumor an ensemble was created from the 5 folds. The ensemble prediction is created by averaging the 5 probability maps (one for each model).
 through experimenting a learning rate of 1e-6 was determined best suitable for finetuning the network. in the figure below a progression curve from one of the folds can be seen.
 
   <p align="center">
@@ -134,6 +134,10 @@ After finetuning the network it can be seen that the cavity is now excluded from
     <img src="readme_images/ANOUK_recurrence_prediction.png" width=25% />
 </p>
 The left figure is the prediction from the finetued network and the rigth figure is the prediction from the ANOUK network.
+Below is an illustration of the ensemble prediction from the RECURRENCE network:
+  <p align="center">
+  <img src="readme_images/ensemble.png" width=50% />
+  </p>
 
 Below is a figure illustrating the finetuned network compared to the original ANOUK network.
   <p align="center">
