@@ -139,8 +139,7 @@ Below is a figure illustrating the finetuned network compared to the original AN
   <img src="readme_images/Task806_ANOUK_GBM_on_RECURRENCE_vs_Task812_RECURRENCE_DIALETED_CAVITY_EXCLUDED_GBM_ensemble_on_RECURRENCE_edit.jpg" width=50% />
   </p>
 
-
-
+It can be seen that the finetuning of the ANOUK network has been very sucessful.
 
 # Radiomics
 **Goal:** Be able to predict whether or not a recurrence will have a distant tumor.
