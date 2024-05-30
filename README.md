@@ -38,16 +38,16 @@ Number of available and suitable images are:
 </div>
 *: RECURRENCE_DIALATED_CAVITY_EXCLUDED_GBM is the data for RECURRENCE 
 
-The specific scans used for the segmentation training is the t2 MR scans which is the scans taken after the tumor was removed, so we can segement the cavity for radio therapy
+The specific scans used for the segmentation training is the T2 MR scans which are the scans taken after the tumor was removed. The segmentations should include the cavity.
 
-The recurrence data is a scans of a recurring tumor where special deliniations made by Anouk where the cavity is excluded, so the model doesn't include that in the segmentation. below can be seen a deliniation of a recurrence scan (left) and a t2 mr scan (right).
+The recurrence data are scans of recurring tumors which are deliniated by Anouk. In the recurrence scans the cavity is allways excluded in the deliniation. Below can be seen a deliniation of a recurrence scan (left) and a t2 mr scan (right).
 
   <p align="center">
     <img src="readme_images/recurrence_segmentation.png" width=25% />
       <img src="readme_images/t2_segmentation.png" width=25% />
   </p>
   
-
+For further details of the data, take a look at the old readme file.
 ## Segmenting T2 MR scans (planning MR scan)
 
 
