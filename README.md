@@ -129,7 +129,7 @@ After finetuning the network it can be seen that the cavity is now excluded from
     <img src="readme_images/ANOUK_recurrence_prediction.png" width=25% />
 </p>
 
-The performance of the network is:
+Below is a figure illustrating the finetuned network compared to the original ANOUK network.
   <p align="center">
   <img src="readme_images/RECURRENCE_on_RECURRENCE_edit.jpg" width=50% />
   </p>
