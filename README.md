@@ -41,11 +41,11 @@ Number of available and suitable images are:
 | RECURRENCE*  | 31       | 8    |
 
 </div>
-*: RECURRENCE_DIALATED_CAVITY_EXCLUDED_GBM is the data for RECURRENCE 
-AUH, OUH and CUH MR scans have been deliniated less acurately 
+*: RECURRENCE_DIALATED_CAVITY_EXCLUDED_GBM is the data for RECURRENCE. 
+AUH, OUH and CUH MR scans have been deliniated less acurately.
 The specific scans used for the segmentation training is the T2 MR scans which are the scans taken after the tumor was removed. The segmentations should include the cavity.
 
-The recurrence data are scans of recurring tumors which are deliniated by Anouk. In the recurrence scans the cavity is allways excluded in the deliniation. Below can be seen a deliniation of a recurrence scan (left) and a t2 mr scan (right).
+The recurrence data are scans of recurring tumors which are deliniated by Anouk. In the recurrence scans the cavity is allways excluded in the deliniation. Below can be seen a deliniation of a recurrence scan (left) and a T2 mr scan (right).
 
   <p align="center">
     <img src="readme_images/recurrence_segmentation.png" width=25% />
@@ -58,7 +58,7 @@ For further details of the data, take a look at the old readme file: old_readme_
 
 To interpret the progression curves and the evalutation boxplots the following metrics are used. 
 
-Hausdorf distance 95th percentile (HD95): a distance metric that measures the maximum of the minimum distances between the predicted segmentation and the ground truth at the 95th percentile.
+Hausdorf distance 95th percentile (HD95): A distance metric that measures the maximum of the minimum distances between the predicted segmentation and the ground truth at the 95th percentile.
 
 EVENTUELT: INDSÆT FORMEL OG FIGUR?
 
@@ -68,7 +68,7 @@ SAMME EVENTUELT?
 DICE: The Dice coefficient is a measure of the similarity between two sets, A and B. The coefficient ranges from 0 to 1, where 1 indicates that the two sets are identical, and 0 indicates that the two sets have no overlap. 
 SAMME EVENTUELT?
 
-DICE is very dependent on volume and therefore might be a somewhat useless metric, but it is an easy metric to understand compared to MSD and HD95. MSD and HD95 is a better way to actually compare how good a model is performing, so we decided to include all three. 
+DICE is very dependent on volume and therefore can be a somewhat misleading metric, but it is an easy metric to understand compared to MSD and HD95. MSD and HD95 is a better way to actually compare how good a model is performing, so we decided to include all three. 
 
 ## Segmenting T2 MR scans (planning MR scan)
 
