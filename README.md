@@ -60,13 +60,9 @@ To interpret the progression curves and the evalutation boxplots the following m
 
 Hausdorf distance 95th percentile (HD95): A distance metric that measures the maximum of the minimum distances between the predicted segmentation and the ground truth at the 95th percentile.
 
-EVENTUELT: INDSÆT FORMEL OG FIGUR?
-
 Mean surface distance (MSD): This tells us how much, on average, the surface varies between the segmentation and the GT.
-SAMME EVENTUELT?
 
 DICE: The Dice coefficient is a measure of the similarity between two sets, A and B. The coefficient ranges from 0 to 1, where 1 indicates that the two sets are identical, and 0 indicates that the two sets have no overlap. 
-SAMME EVENTUELT?
 
 DICE is very dependent on volume and therefore can be a somewhat misleading metric, but it is an easy metric to understand compared to MSD and HD95. MSD and HD95 is a better way to actually compare how good a model is performing, so we decided to include all three. 
 
@@ -84,7 +80,7 @@ https://github.com/MIC-DKFZ/nnUNet/tree/nnunetv1
 
 
 In the following 3 boxplots it can be seen how the different networks (ANOUK, OUH-finetuning, CUH-finetuning) perform on different test sets. We have chosen not to include AUH since there is an overlap between the test and training data between ANOUK and AUH data patientwise.
-In the below boxplot it can be seen how the single model, ANOUK-network performs on different testsets: ANOUK data's own test set, OUH's testset and CUH's test set.
+In the below boxplot it can be seen how the single model, ANOUK-network performs on different testsets: ANOUK data's own test set, OUH's testset and CUH's test set. (The green triangle on the boxplots denotes the mean)
   <p align="center">
   <img src="readme_images/ANOUK_on_ANOUK_OUH_CUH_edit.jpg" width=50% />
   </p> 
@@ -136,11 +132,10 @@ Below is an illustration of the ensemble prediction from the RECURRENCE network:
 
 Below is a figure illustrating the finetuned network compared to the original ANOUK network.
   <p align="center">
-  <img src="readme_images/RECURRENCE_on_RECURRENCE_edit.jpg" width=50% />
+  <img src="readme_images/Task806_ANOUK_GBM_on_RECURRENCE_vs_Task812_RECURRENCE_DIALETED_CAVITY_EXCLUDED_GBM_ensemble_on_RECURRENCE_edit.jpg" width=50% />
   </p>
 
-
-
+It can be seen that the finetuning of the ANOUK network has been very sucessful.
 
 # Radiomics
 **Goal:** Be able to predict whether or not a recurrence will have a distant tumor.
