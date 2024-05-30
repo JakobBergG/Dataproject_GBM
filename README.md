@@ -264,4 +264,75 @@ The COMBINED_GBM_training folder consists of the below files:
 * `generate_stripped_hospitals.py`
 * `reslice_images.py`
 
+_All the above files are used in combination to generate the raw data file for the task: Task805_COMBINED_GBM. See [nnUNet | Dataset Conversion](https://github.com/MIC-DKFZ/nnUNet/blob/nnunetv1/documentation/dataset_conversion.md) for the specific format of the data. By combining all the data in one task the network architecture used in all the models can be determined and all the data can be preprocessed the same to make fine tuning possible._
+
+The folder also contains the following files:
+* `run_over_night_1.py`
+* `run_over_night_2.py`
+* `run_training_Task805_GPU_1.py`
+* `run_training_Task806_GPU_0.py`
+* `run_training_Task808_GPU_0.py`
+* `run_training_Task809_GPU_0.py`
+* `run_training_Task810_GPU_1.py`
+* `run_training_Task812_GPU_1.py`
+
+_The files above are used to train and finetune the networks.
+The files run_over_night_1 and 2 also contain some code used for prediction and evaluation of the networks._
+
+The COMBINED_GBM_evaluation folder contains the following files:
+* `RECURRENCE_GBM_ensemble.py`
+
+_The above file contains code used to create ensemble predictions from the networks created by the 5 fold cross validation. (This code was only used for testing - the code used to get the actual ensemble predictions on the RECURRENCE test set is in the run_over_night files._
+
+* `generate_metrics.py`
+
+_This file was used to compute the MSD, HD and HD95 metrics using the folder containing the ground truth and the predictions. This file is not used anymore since nnUNet have a function for this used in run_evaluate_folder.py._
+
+* `eval_network.py` & `run_evaluate_folder.py`
+
+_The files above are used to make predictions from networks and evaluating the network by computing many different metrics and saving them in a summary.json file._
+
+* `generate_plots.py` & `generate_plotsv2.py`
+
+_The files above are used to create boxplots to compare different models performance on test set by using the summary.json files._*
+
+* `plot_npz.py`
+  
+_The file above is used to plot the probability maps used in the ensemble predictions on the RECURRENCE data._
 ## Radiomics
+All relevant files used in radiomics can be found in folder: `radiomics`
+* `available_patients.py`
+
+_Find patients that have been manually classified by Anouk and have valid MR scans_
+
+* `radiomic_ADABoost_regression.py`
+
+_Fit the ADABoost classifier, and do prediction of recurrence types_
+
+* `radiomic_combine_feature_sets.py`
+
+_Combine the dataset of patients having local or distant recurrence with the dataset of combined recurrences (both a local and distant recurrence)._
+
+* `radiomic_display_feature_differences.py`
+
+_Display boxplots of feature values between the two classes. These are the boxplots seen in the readme._
+
+* `radiomic_extraction.py`
+
+_Script to extract radiomic features from MR scans using the CTV ring._
+
+* `radiomic_find_features.py`
+
+_A minor script to find the names of features according to their indices._
+
+* `radiomic_get_masks.py`
+
+_Create the CTV ring, as described in the readme._
+
+* `radiomic_logistic_regression.py`
+
+_Fit the data to the logistic regression model, and  do prediction of recurrence types._
+
+* `radiomic_resampling.py`
+
+_Resample GTV delineation to same pixel spacing as MR scan. See the file for more info._
