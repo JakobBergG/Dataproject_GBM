@@ -79,11 +79,11 @@ To interpret the progression curve, see under the chapter Model Training at the 
 https://github.com/MIC-DKFZ/nnUNet/tree/nnunetv1
 
 
-In the following 3 boxplots it can be seen how the different networks (ANOUK, OUH-finetuning, CUH-finetuning) perform different test sets. We have chosen not to include AUH since there is an overlap between the test and training data between ANOUK and AUH data patientwise.
+In the following 3 boxplots it can be seen how the different networks (ANOUK, OUH-finetuning, CUH-finetuning) perform on different test sets. We have chosen not to include AUH since there is an overlap between the test and training data between ANOUK and AUH data patientwise.
   <p align="center">
   <img src="readme_images/ANOUK_on_ANOUK_OUH_CUH_edit.jpg" width=50% />
   </p>
-  In the above boxplot you can see how the single model, ANOUK-network performs on different testsets: ANOUK data's own test set, OUH's testset and CUH's test set.
+  In the above boxplot it can be seen how the single model, ANOUK-network performs on different testsets: ANOUK data's own test set, OUH's testset and CUH's test set.
 we wanted to see if finetuning this model to a specific hospital would result in greater results. It can be seen that the ANOUK model performs significantly worse on the OUH and CUH test set, which is expected because of the noisy clinical deliniations of the OUH and CUH MR scans.
 In the two boxplots below the performance of the two finetuned networks can be seen. The two networks was the original ANOUK network finetuned with a learning rate of 1e-6 for 350 epoch on a single fold in the 5 fold cross validation.
 
@@ -93,15 +93,18 @@ In the two boxplots below the performance of the two finetuned networks can be s
   </p>
   
 NOTE: FIND DET MR SCAN DER FUCKER MEAN OG VIS SEGMENTERINGERNE.
-In the above boxplot where we compare the base ANOUK network to OUH finetuned network at appears that it is performing slightly worse. And therefore thsi finetuning wasn't worth it.
+In the above boxplot where we compare the base ANOUK network to the OUH finetuned network, it appears that it is performing slightly worse. And therefore this finetuning wasn't succesful.
 
 
   <p align="center">
   <img src="readme_images/Task806_ANOUK_GBM_vs_Task811_CUH_GBM_on_CUH_edit.jpg" width=50% />
   </p>
-When finetuning to CUH it looks as if the performance has increased after finetuning, since we get slightly lower values across all metrics.
+When finetuning to CUH it looks as if the performance has increased after finetuning, since we get slightly lower values across MSD and Hausdorf and an improved dice.
 
-Increased variance on the dice boxplot may be caused by tumor volumes differing?
+
+These results were expected since the deliniatinons were not made with focus on model training. 
+The increased variance on the dice boxplot may be caused by tumor volumes differing since the metric is very volume dependent. 
+
 
 
 ## Segmenting recurrence MR scans
