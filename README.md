@@ -41,11 +41,11 @@ Number of available and suitable images are:
 | RECURRENCE*  | 31       | 8    |
 
 </div>
-*: RECURRENCE_DIALATED_CAVITY_EXCLUDED_GBM is the data for RECURRENCE 
-AUH, OUH and CUH MR scans have been deliniated less acurately 
+*: RECURRENCE_DIALATED_CAVITY_EXCLUDED_GBM is the data for RECURRENCE. 
+AUH, OUH and CUH MR scans have been deliniated less acurately.
 The specific scans used for the segmentation training is the T2 MR scans which are the scans taken after the tumor was removed. The segmentations should include the cavity.
 
-The recurrence data are scans of recurring tumors which are deliniated by Anouk. In the recurrence scans the cavity is allways excluded in the deliniation. Below can be seen a deliniation of a recurrence scan (left) and a t2 mr scan (right).
+The recurrence data are scans of recurring tumors which are deliniated by Anouk. In the recurrence scans the cavity is allways excluded in the deliniation. Below can be seen a deliniation of a recurrence scan (left) and a T2 mr scan (right).
 
   <p align="center">
     <img src="readme_images/recurrence_segmentation.png" width=25% />
@@ -58,7 +58,7 @@ For further details of the data, take a look at the old readme file: old_readme_
 
 To interpret the progression curves and the evalutation boxplots the following metrics are used. 
 
-Hausdorf distance 95th percentile (HD95): a distance metric that measures the maximum of the minimum distances between the predicted segmentation and the ground truth at the 95th percentile.
+Hausdorf distance 95th percentile (HD95): A distance metric that measures the maximum of the minimum distances between the predicted segmentation and the ground truth at the 95th percentile.
 
 EVENTUELT: INDSÆT FORMEL OG FIGUR?
 
@@ -68,46 +68,41 @@ SAMME EVENTUELT?
 DICE: The Dice coefficient is a measure of the similarity between two sets, A and B. The coefficient ranges from 0 to 1, where 1 indicates that the two sets are identical, and 0 indicates that the two sets have no overlap. 
 SAMME EVENTUELT?
 
-DICE is very dependent on volume and therefore might be a somewhat useless metric, but it is an easy metric to understand compared to MSD and HD95. MSD and HD95 is a better way to actually compare how good a model is performing, so we decided to include all three. 
+DICE is very dependent on volume and therefore can be a somewhat misleading metric, but it is an easy metric to understand compared to MSD and HD95. MSD and HD95 is a better way to actually compare how good a model is performing, so we decided to include all three. 
 
 ## Segmenting T2 MR scans (planning MR scan)
 
 
-Our goal was to segment tumors on planning MR scans. We've had different data sets available, since the tumors on the MR scans in the ANOUK dataset was delineated with focus on training models for tumor segmentation in contrast to the data sets from AUH, OUH and CUH where there were clinical deliniation from different doctors (not as precise). We trained a network only on the data from Anouk as baseline network to do transfer learning from so we could explore the possibility to finetune a network to each hospital. 
-Since finetuning was our end goal we only used one fold from the ANOUK network (165 training and 42 validation cases), the model was trained for 1500 epochs. In the figure below a progression curve can be seen:
+Our goal was to segment tumors on planning MR scans. We've had different data sets available, since the tumors on the MR scans in the ANOUK dataset was delineated with focus on training models for tumor segmentation in contrast to the data sets from AUH, OUH and CUH where there were clinical deliniation from different doctors (not as precise). We trained a network only on the data from Anouk as baseline network to do transfer learning from so we could explore the possibility to finetune a network to each hospital. The ANOUK network is trained on 165 training cases (with 42 validation cases) for 1500 epochs. In the figure below a progression curve can be seen:
   <p align="center">
   <img src="readme_images/progression_ANOUK_f0.png" width=50% />
   </p>
 
-The green curve is a rough estimate of the dice metric.
+The green curve is a rough estimate of the dice metric. The blue and red curve are the loos on respectively the training and validation set.
 To interpret the progression curve, see under the chapter Model Training at the page:
 https://github.com/MIC-DKFZ/nnUNet/tree/nnunetv1
 
 
 In the following 3 boxplots it can be seen how the different networks (ANOUK, OUH-finetuning, CUH-finetuning) perform on different test sets. We have chosen not to include AUH since there is an overlap between the test and training data between ANOUK and AUH data patientwise.
+In the below boxplot it can be seen how the single model, ANOUK-network performs on different testsets: ANOUK data's own test set, OUH's testset and CUH's test set.
   <p align="center">
   <img src="readme_images/ANOUK_on_ANOUK_OUH_CUH_edit.jpg" width=50% />
-  </p>
-  In the above boxplot it can be seen how the single model, ANOUK-network performs on different testsets: ANOUK data's own test set, OUH's testset and CUH's test set.
-we wanted to see if finetuning this model to a specific hospital would result in greater results. It can be seen that the ANOUK model performs significantly worse on the OUH and CUH test set, which is expected because of the noisy clinical deliniations of the OUH and CUH MR scans.
-In the two boxplots below the performance of the two finetuned networks can be seen. The two networks was the original ANOUK network finetuned with a learning rate of 1e-6 for 350 epoch on a single fold in the 5 fold cross validation.
-
-  (POSSIBLE REFERENCE TO JASPER PAPER!!!)
+  </p> 
+It can be seen that the ANOUK model performs significantly worse on the OUH and CUH test set, which is expected because of the inconsistent clinical deliniations of the OUH and CUH MR scans. Therefore it is investigated if finetuning the ANOUK model to a specific hospital would result in better results.
+In the two boxplots below the performance of the two finetuned networks can be seen. The two networks Task809_OUH_GBM and Task011_CUH_GBM are finetuned using the original ANOUK network on the OUH and CUH data sets with a learning rate of 1e-6 for 350 epochs.
+In the below boxplot we compare the base ANOUK network to the OUH finetuned network:
   <p align="center">
   <img src="readme_images/Task806_ANOUK_GBM_vs_Task809_OUH_GBM_on_OUH_edit.jpg" width=50% />
   </p>
   
-NOTE: FIND DET MR SCAN DER FUCKER MEAN OG VIS SEGMENTERINGERNE.
-In the above boxplot where we compare the base ANOUK network to the OUH finetuned network, it appears that it is performing slightly worse. And therefore this finetuning wasn't succesful.
-
-
+It appears that it is performing slightly worse. And therefore this finetuning wasn't succesful.
+In the below boxplot we compare the base ANOUK network to the CUH finetuned network:
   <p align="center">
   <img src="readme_images/Task806_ANOUK_GBM_vs_Task811_CUH_GBM_on_CUH_edit.jpg" width=50% />
   </p>
 When finetuning to CUH it looks as if the performance has increased after finetuning, since we get slightly lower values across MSD and Hausdorf and an improved dice.
 
-
-These results were expected since the deliniatinons were not made with focus on model training. 
+A worse performance of the finetuned networks was expected since the deliniatinons of the tumors in the OUH and CUH data sets were more inconsistent and not made with focus on model training. 
 The increased variance on the dice boxplot may be caused by tumor volumes differing since the metric is very volume dependent. 
 
 
@@ -120,7 +115,7 @@ The goal for Task812_RECURRENCE_DIALATED_CAVITY_EXCLUDED_GBM is to segment the r
   </p>
   
 To segment the recurrence MR scans the newtork generated from Task806_ANOUK_GBM was finetuned on a training set consisting of 39 MR scans (31 training cases and 8 test cases).
-5 fold cross validation was used in the training to optimize the models performance. When segmenting a recurrence tumor an ensemble was created from the 5 folds. The ensemble prediction is created by averaging the 5 probability maps (one for each model). ####MAYBE PUT IN A FIGUE OF 5 probability maps####.
+5 fold cross validation was used in the training to optimize the models performance. When segmenting a recurrence tumor an ensemble was created from the 5 folds. The ensemble prediction is created by averaging the 5 probability maps (one for each model).
 through experimenting a learning rate of 1e-6 was determined best suitable for finetuning the network. in the figure below a progression curve from one of the folds can be seen.
 
   <p align="center">
@@ -134,6 +129,10 @@ After finetuning the network it can be seen that the cavity is now excluded from
     <img src="readme_images/ANOUK_recurrence_prediction.png" width=25% />
 </p>
 The left figure is the prediction from the finetued network and the rigth figure is the prediction from the ANOUK network.
+Below is an illustration of the ensemble prediction from the RECURRENCE network:
+  <p align="center">
+  <img src="readme_images/ensemble.png" width=100% />
+  </p>
 
 Below is a figure illustrating the finetuned network compared to the original ANOUK network.
   <p align="center">
