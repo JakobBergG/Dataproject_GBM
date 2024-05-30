@@ -211,7 +211,7 @@ also called a grey level or grey tone_
 ## Feature selection
 We use the Mann-Whitney U test (also called the Wilcoxon rank-sum test) to decide which features to use on the time 2 data (planning phase). Here we take each feature for all of the patients and conduct the Mann-Whitney test on the 2 classes. If we do not have a significant p-value, we do not take the feature into account. To exclude multicollinearity we use Pearson's cross-correlation to test if the correlation is over 0.9. If it is, we exclude one of the features to remove the cross-correlation. 
 
-A relatively high significance level should be set, otherwise no features will be selected (no features have significant p-values). When raising the significance level to 20\% we get the following features: _Shape flatness, Minimum voxel gray level, GLDM: Small Dependence Low Gray Level Emphasis_
+A relatively high significance level should be set, otherwise no features will be selected (no features have significant p-value). When raising the significance level to 20\% we get the following features: _Shape flatness, Minimum voxel gray level, GLDM: Small Dependence Low Gray Level Emphasis_
 <p align="center">
 <img src="readme_images/features_after_mannwhitney_test.png" width=100% />
 </p>
@@ -219,6 +219,7 @@ A relatively high significance level should be set, otherwise no features will b
 _Boxplot of the 3 features' values for each class._
 ## Predict using logistic regression
 An equal amount of images in both classes is ensured by randomly sampling a number of images from the _local_ recurrence class matching the amount of images in the lesser class, _distant_.
+
 We use logistic regression to classify whether or not a patient will have a local or distant recurrence, based on the features we have selected from the previous section. We run logistic regression on different models with combinations of the selected features, to see which model performs the best. This can be somewhat time-consuming for a lot of features. We split the data into a train and test set. We do not achieve a prediction accuracy that is higher than what we can classify as random. Furthermore, it does not seem from the box plots that the data is separable by a logistic regression curve.
 
 The best-performing model uses all 3 features retrieved in the feature selection section with an accuracy of 48% on the test set.
