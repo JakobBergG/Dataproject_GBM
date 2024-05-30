@@ -78,7 +78,7 @@ Our goal was to segment tumors on planning MR scans. We've had different data se
   <img src="readme_images/progression_ANOUK_f0.png" width=50% />
   </p>
 
-The green curve is a rough estimate of the dice metric.
+The green curve is a rough estimate of the dice metric. The blue and red curve are the loos on respectively the training and validation set.
 To interpret the progression curve, see under the chapter Model Training at the page:
 https://github.com/MIC-DKFZ/nnUNet/tree/nnunetv1
 
