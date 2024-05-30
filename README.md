@@ -51,9 +51,11 @@ For further details of the data, take a look at the old readme file: old_readme_
 
 ## Metrics
 
+To interpret the progression curves and the evalutation boxplots the following metrics are used. 
+
 Hausdorf distance 95th percentile (HD95): a distance metric that measures the maximum of the minimum distances between the predicted segmentation and the ground truth at the 95th percentile.
 
-Mean surface distance (MSD): This tell us how much, on average, the surface varies between the segmentation and the GT.
+Mean surface distance (MSD): This tells us how much, on average, the surface varies between the segmentation and the GT.
 
 DICE: The Dice coefficient is a measure of the similarity between two sets, A and B. The coefficient ranges from 0 to 1, where 1 indicates that the two sets are identical, and 0 indicates that the two sets have no overlap. 
 
