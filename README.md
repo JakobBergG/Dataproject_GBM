@@ -13,9 +13,9 @@ In this project, the goal is to analyze and predict recurrence patterns in patie
   </p>
 _Example of recurrence types. Red area is the original tumor while the green area is the recurrence. The left image shows local recurrence while right image shows a distant recurrence._
 
-**General tumor volume (GTV) segmentation with nnUNet**
+**Gross tumor volume segmentation with nnUNet**
 
-To assist in improving the prediction process, automatic segmentation of the gross tumor volume  (GTV, i.e. the tumor)  at the planning phase and time of recurrence is conducted. This means less need for manual clinical delineations (manually segmenting the GTV) of both planning and recurrence and means automatic classification of ground truth needed for training the prediction models. It also allows automatic information retrieval of how much radiation the tumor residue received during radiotherapy and also how much the area of the recurrent tumor received, which can be included in the prediction model to provide better results.
+To assist in improving the prediction process, automatic segmentation of the gross tumor volume (GTV, i.e. the tumor)  at the planning phase and time of recurrence is conducted. This means less need for manual clinical delineations (manually segmenting the GTV) of both planning and recurrence and means automatic classification of ground truth needed for training the prediction models. It also allows automatic information retrieval of how much radiation the tumor residue received during radiotherapy and also how much the area of the recurrent tumor received, which can be included in the prediction model to provide better results.
 An already established pipeline segments GTVs from the planning phase images, however, this project has improved such segmentation network while also implementing a network capable of segmenting the recurrent tumors.
 
 **Radiomics**
@@ -251,5 +251,17 @@ Although our current prediction accuracies still need improvement, the methods d
 
 ---
 
-# Appendix: Overview of Python scripts developed during the project
+# Appendix: Developed python scripts
+## GTV segmentation | nnUNet
+The relevant files are in the folders: `COMBINED_GBM_training` and `COMBINED_GBM_evaluation`.
+The COMBINED_GBM_training folder consists of the below files:
+* `generate_data_anouk.py`
+* `generate_data_hospitals.py`
+* `generate_data_recurrence.py`
+* `generate_data_recurrence_dialated.py`
+* `generate_dataset_json.py`
+* `generate_raw_data.py`
+* `generate_stripped_hospitals.py`
+* `reslice_images.py`
+
 ## Radiomics
