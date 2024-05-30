@@ -108,15 +108,14 @@ The increased variance on the dice boxplot may be caused by tumor volumes differ
 
 
 ## Segmenting recurrence MR scans
-The goal for Task812_RECURRENCE... is to segment the recurrence tumors. When segmenting a recurrence tumor there are som different clinical definitions of when to include the cavity and when not to which is hard for a network to learn. Therefore we have finetuned the network on MR scans where the cavity is allways excluded, which is different from the segmentations of t2 scans. In the figure below an example of a segmentation of a recurrence tumor can be seen.
-So the increased variance on the dice boxplot may be caused by tumor volumes differing.
+The goal for Task812_RECURRENCE_DIALATED_CAVITY_EXCLUDED_GBM is to segment the recurrence tumors. When segmenting a recurrence tumor there are some clinical definitions of when to include the cavity and when not to, which is hard for a network to learn. Therefore we have finetuned the network on MR scans where the cavity is always excluded, which is different from the segmentations of t2 scans. In the figure below an example of a segmentation of a recurrence tumor can be seen.
 
   <p align="center">
   <img src="readme_images/recurrence_segmentation.png" width=30% />
   </p>
   
-To segment the recurrence MR scans the newtork generated from Task806_ANOUK_GBM was finetuned on a training set consisting of XXX MR scans (XXX training cases and XXX test cases).
-5 fold cross validation was used in the training to optimize the models performance. When segmenting a recurrence tumor an ensemble is created from the 5 folds (maybe this sentence can be written better). The ensemble prediction is created by averagin the 5 probability maps (one for each model). MAYBE PUT IN A FIGUE OF 5 probability maps.
+To segment the recurrence MR scans the newtork generated from Task806_ANOUK_GBM was finetuned on a training set consisting of 39 MR scans (31 training cases and 8 test cases).
+5 fold cross validation was used in the training to optimize the models performance. When segmenting a recurrence tumor an ensemble was created from the 5 folds. The ensemble prediction is created by averaging the 5 probability maps (one for each model). ####MAYBE PUT IN A FIGUE OF 5 probability maps####.
 through experimenting a learning rate of 1e-6 was determined best suitable for finetuning the network. in the figure below a progression curve from one of the folds can be seen.
 
   <p align="center">
