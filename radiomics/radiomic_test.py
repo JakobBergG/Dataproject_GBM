@@ -1,4 +1,7 @@
 import json
+"""
+Simple script to quickly find the names of features corresponding to their indices in the json.
+"""
 
 all_radiomic_features_path = "D:\\GBM\\radiomic_results\\feature_output\\time2\\patients_all_features_all_classes.json"
 
