@@ -89,7 +89,7 @@ In the following 3 boxplots it can be seen how the different networks (ANOUK, OU
   </p>
   In the above boxplot it can be seen how the single model, ANOUK-network performs on different testsets: ANOUK data's own test set, OUH's testset and CUH's test set.
 we wanted to see if finetuning this model to a specific hospital would result in greater results. It can be seen that the ANOUK model performs significantly worse on the OUH and CUH test set, which is expected because of the noisy clinical deliniations of the OUH and CUH MR scans.
-In the two boxplots below the performance of the two finetuned networks can be seen. The two networks Task809_OUG_GBM and Task011_CUH_GBM are finetuned using the original ANOUK network with a learning rate of 1e-6 for 350 epochs.
+In the two boxplots below the performance of the two finetuned networks can be seen. The two networks Task809_OUG_GBM and Task011_CUH_GBM are finetuned using the original ANOUK network on the OUH and CUH data sets with a learning rate of 1e-6 for 350 epochs.
 
   (POSSIBLE REFERENCE TO JASPER PAPER!!!)
   <p align="center">
