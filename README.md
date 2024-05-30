@@ -95,7 +95,6 @@ In the two boxplots below the performance of the two finetuned networks can be s
   <img src="readme_images/Task806_ANOUK_GBM_vs_Task809_OUH_GBM_on_OUH_edit.jpg" width=50% />
   </p>
   
-NOTE: FIND DET MR SCAN DER FUCKER MEAN OG VIS SEGMENTERINGERNE.
 In the above boxplot where we compare the base ANOUK network to the OUH finetuned network, it appears that it is performing slightly worse. And therefore this finetuning wasn't succesful.
 
 
