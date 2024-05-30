@@ -136,7 +136,7 @@ After finetuning the network it can be seen that the cavity is now excluded from
 The left figure is the prediction from the finetued network and the rigth figure is the prediction from the ANOUK network.
 Below is an illustration of the ensemble prediction from the RECURRENCE network:
   <p align="center">
-  <img src="readme_images/ensemble.png" width=75% />
+  <img src="readme_images/ensemble.png" width=100% />
   </p>
 
 Below is a figure illustrating the finetuned network compared to the original ANOUK network.
