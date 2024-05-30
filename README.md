@@ -88,7 +88,7 @@ In the below boxplot it can be seen how the single model, ANOUK-network performs
   <p align="center">
   <img src="readme_images/ANOUK_on_ANOUK_OUH_CUH_edit.jpg" width=50% />
   </p> 
-It can be seen that the ANOUK model performs significantly worse on the OUH and CUH test set, which is expected because of the inconsisten clinical deliniations of the OUH and CUH MR scans. Therefore it is investigated if finetuning the ANOUK model to a specific hospital would result in better results.
+It can be seen that the ANOUK model performs significantly worse on the OUH and CUH test set, which is expected because of the inconsistent clinical deliniations of the OUH and CUH MR scans. Therefore it is investigated if finetuning the ANOUK model to a specific hospital would result in better results.
 In the two boxplots below the performance of the two finetuned networks can be seen. The two networks Task809_OUH_GBM and Task011_CUH_GBM are finetuned using the original ANOUK network on the OUH and CUH data sets with a learning rate of 1e-6 for 350 epochs.
 In the below boxplot we compare the base ANOUK network to the OUH finetuned network:
   <p align="center">
@@ -102,7 +102,7 @@ In the below boxplot we compare the base ANOUK network to the CUH finetuned netw
   </p>
 When finetuning to CUH it looks as if the performance has increased after finetuning, since we get slightly lower values across MSD and Hausdorf and an improved dice.
 
-A worse performance of the finetuned networks was expected since the deliniatinons of the tumors in the OUH and CUH data sets were more inconsisten and not made with focus on model training. 
+A worse performance of the finetuned networks was expected since the deliniatinons of the tumors in the OUH and CUH data sets were more inconsistent and not made with focus on model training. 
 The increased variance on the dice boxplot may be caused by tumor volumes differing since the metric is very volume dependent. 
 
 
