@@ -84,10 +84,11 @@ https://github.com/MIC-DKFZ/nnUNet/tree/nnunetv1
 
 
 In the following 3 boxplots it can be seen how the different networks (ANOUK, OUH-finetuning, CUH-finetuning) perform on different test sets. We have chosen not to include AUH since there is an overlap between the test and training data between ANOUK and AUH data patientwise.
+In the above boxplot it can be seen how the single model, ANOUK-network performs on different testsets: ANOUK data's own test set, OUH's testset and CUH's test set.
   <p align="center">
   <img src="readme_images/ANOUK_on_ANOUK_OUH_CUH_edit.jpg" width=50% />
-  </p>
-  In the above boxplot it can be seen how the single model, ANOUK-network performs on different testsets: ANOUK data's own test set, OUH's testset and CUH's test set. It can be seen that the ANOUK model performs significantly worse on the OUH and CUH test set, which is expected because of the noisy clinical deliniations of the OUH and CUH MR scans. Therefore it is investigated if finetuning the ANOUK model to a specific hospital would result in better results.
+  </p> 
+It can be seen that the ANOUK model performs significantly worse on the OUH and CUH test set, which is expected because of the noisy clinical deliniations of the OUH and CUH MR scans. Therefore it is investigated if finetuning the ANOUK model to a specific hospital would result in better results.
 In the two boxplots below the performance of the two finetuned networks can be seen. The two networks Task809_OUG_GBM and Task011_CUH_GBM are finetuned using the original ANOUK network on the OUH and CUH data sets with a learning rate of 1e-6 for 350 epochs.
 
   <p align="center">
