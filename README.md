@@ -59,9 +59,9 @@ For further details of the data, take a look at the old readme file: `old_readme
 
 ## Metrics
 
-To interpret the progression curves and the evaluation boxplots the following metrics are used. 
+To interpret the progression curves and the evaluation boxplots the following metrics are used:
 
-Hausdorf distance 95th percentile (HD95): A distance metric that measures the maximum of the minimum distances between the predicted segmentation and the ground truth at the 95th percentile.
+- Hausdorf distance 95th percentile (HD95): A distance metric that measures the maximum of the minimum distances between the predicted segmentation and the ground truth at the 95th percentile.
 
 Mean surface distance (MSD): This tells us how much, on average, the surface varies between the segmentation and the ground truth.
 
