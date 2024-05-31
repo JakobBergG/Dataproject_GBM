@@ -337,4 +337,4 @@ _Fit the data to the logistic regression model, and  do prediction of recurrence
 
 * `radiomic_resampling.py`
 
-_Resample GTV delineation to same pixel spacing as MR scan. See the file for more info._
+_Resample GTV delineation to same voxel spacing as MR scan. See the file for more info._
