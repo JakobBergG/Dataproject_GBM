@@ -167,7 +167,7 @@ The number of available and suitable images are:
 
 </div>
 
-Note that the _Has distant_ class consists of patients with the distant recurrence type _and_ patients with the combined recurrence type. Recurrences for all images are classified by a single doctor. The tumor is segmented by various doctors in their respective hospital.
+Note that the _Has distant_ class consists of patients with the distant recurrence type _and_ patients with the combined recurrence type. Recurrence type for all images are classified by a single doctor. The tumor is segmented by various doctors in their respective hospital.
 
 ## Creating the CTV ring
 Creating the CTV ring needs the following resources:
