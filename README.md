@@ -233,7 +233,7 @@ _Confusion matrix showing results from the final model on the test set. Label 0 
 ## Predict using AdaBoost
 The AdaBoost classifier can be seen as a more all-in-one solution to the classification problem. The solution we have implemented is as follows:
 
-All features are included during training. When fitting an AdaBoost classifier, it calculates the (gini) importance of each feature. Using 5-fold cross-validation we train a new model on each of the folds we have and get the features that is most important for AdaBoost in making its prediction. We then average the importance over all of the folds for each feature and thus gain the most important features. By testing on how many features to include, we found that a model using the 4 best features performed the best, however only with an accuracy of 50% on the test set. Including features: _Shape: Sphericity, glszm: Gray Level Non-Uniformity', ngtdm: Contrast, Shape: Surface-Volume Ratio_.
+All features are included during training. When fitting an AdaBoost classifier, it calculates the (gini) importance of each feature. Using 5-fold cross-validation we train a new model on each of the folds we have and get the features that is most important for AdaBoost in making its prediction. We then average the importance over all of the folds for each feature and thus gain the most important features. By predicting on the test data with different amounts of features, we found that a model using the 4 best features performed the best, however only with an accuracy of 50% on the test set. Including features: _Shape: Sphericity, glszm: Gray Level Non-Uniformity, ngtdm: Contrast, Shape: Surface-Volume Ratio_.
 
 <p align="center">
 <img src="readme_images/Feature_importance.png" width=50% />
