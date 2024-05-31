@@ -41,14 +41,14 @@ The number of available and suitable images are:
 | AUH          | xxx      | xx   |
 | OUH          | 130      | 32   |
 | CUH          | 156      | 39   |
-| RECURRENCE*  | 31       | 8    |
+| RECURRENCE  | 31       | 8    |
 
 </div>
-*: RECURRENCE_DIALATED_CAVITY_EXCLUDED_GBM is the data for RECURRENCE. 
-AUH, OUH and CUH MR scans have been delineated less accurately.
-The specific scans used for the segmentation training is the T2 MR scans which are the scans taken after the tumor was removed. The segmentations should include the cavity.
+The ANOUK data set consists of T2 images from AUH delineated by a single doctor, with special focus on precise delineation for model training. 
+The AUH, OUH and CUH data sets contains T2 MR scans with clinical deliniations made by different doctors during cancer treatment and are therefore delineated less accurately.
+The scans used in T2 (planning of radiotherapy) are the scans taken after the tumor was removed. The segmentations are of the GTV, therefore including the cavity.
 
-The recurrence data are scans of recurring tumors which are delineated by Anouk. In the recurrence scans the cavity is always excluded in the delineation. Below can be seen a delineation of a recurrence scan (left) and a T2 mr scan (right).
+The recurrence data are scans of recurring tumors which are delineated by Anouk. In the recurrence scans the cavity is always excluded in the delineation. Below can be seen a delineation of a recurrence scan (left) and a T2 MR scan (right).
 
   <p align="center">
     <img src="readme_images/recurrence_segmentation.png" width=25% />
