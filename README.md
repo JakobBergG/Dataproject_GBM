@@ -107,7 +107,7 @@ The increased variance on the dice boxplot may be caused by the predicted tumor 
 
 
 ## Segmenting recurrence MR scans
-The goal for Task812_RECURRENCE_DIALATED_CAVITY_EXCLUDED_GBM is to segment the recurrence tumors. When segmenting a recurrence tumor there are some clinical definitions of when to include the cavity and when not to, which is hard for a network to learn. Therefore we have finetuned the network on MR scans where the cavity is always excluded, which is different from the segmentations of t2 scans. In the figure below an example of a segmentation of a recurrence tumor can be seen.
+The goal for Task812_RECURRENCE_DIALATED_CAVITY_EXCLUDED_GBM is to segment the recurrence tumors. When segmenting a recurrence tumor there are some clinical definitions of when to include the cavity and when not to, which is hard for a network to learn. Therefore we have finetuned the ANOUK network on recurrence MR scans where the cavity is always excluded, which is different from the segmentations of T2 scans. In the figure below an example of a segmentation of a recurrence tumor can be seen.
 
   <p align="center">
   <img src="readme_images/recurrence_segmentation.png" width=30% />
