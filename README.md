@@ -38,7 +38,7 @@ The number of available and suitable images are:
 | Type         | Training | Test |
 |--------------|----------|------|
 | ANOUK        | 207      | 52   |
-| AUH          | xxx      | xx   |
+| AUH          | 77         | 19   |
 | OUH          | 130      | 32   |
 | CUH          | 156      | 39   |
 | RECURRENCE  | 31       | 8    |
