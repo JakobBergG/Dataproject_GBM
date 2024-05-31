@@ -228,7 +228,7 @@ The best-performing model uses all 3 features retrieved in the feature selection
 <img src="readme_images/confusion_matrix_logistic_regression.png" width=50% />
 </p>
 
-_Confusion matrix showing results from the final model on the test set_
+_Confusion matrix showing results from the final model on the test set. Label 0 is local, and label 1 is distant._
 
 ## Predict using AdaBoost
 The AdaBoost classifier can be seen as a more all-in-one solution to the classification problem. The solution we have implemented is as follows:
