@@ -279,7 +279,7 @@ The folder also contains the following files:
 * `run_training_Task812_GPU_1.py`
 
 _The files above are used to train and finetune the networks.
-The files run_over_night_1 and 2 also contain some code used for prediction and evaluation of the networks._
+The files run_over_night_1 and run_over_night_2 also contain some code used for prediction and evaluation of the networks._
 
 The COMBINED_GBM_evaluation folder contains the following files:
 * `RECURRENCE_GBM_ensemble.py`
