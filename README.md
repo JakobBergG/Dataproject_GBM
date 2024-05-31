@@ -209,7 +209,7 @@ sequences of pixels, or zones with the same gray level. The intensity of a pixel
 also called a grey level or grey tone._
 
 ## Feature selection
-We use the Mann-Whitney U test (also called the Wilcoxon rank-sum test) to decide which features to use on the time 2 data (planning phase). Here we take each feature for all of the patients and conduct the Mann-Whitney test on the 2 classes. If we do not have a significant p-value, we do not take the feature into account. To exclude multicollinearity we use Pearson's cross-correlation to test if the correlation is over 0.9. If it is, we exclude one of the features to remove the cross-correlation. 
+We use the Mann-Whitney U test (also called the Wilcoxon rank-sum test) to decide which features to use on the T2 data (planning phase). Here we take each feature for all of the patients and conduct the Mann-Whitney test on the 2 classes. If we do not have a significant p-value, we do not take the feature into account. To exclude multicollinearity we use Pearson's cross-correlation to test if the correlation is over 0.9. If it is, we exclude one of the features to remove the cross-correlation. 
 
 A relatively high significance level should be set, otherwise no features will be selected (no features have significant p-value). When raising the significance level to 20\% we get the following features: _Shape flatness, Minimum voxel gray level, GLDM: Small Dependence Low Gray Level Emphasis_
 <p align="center">
