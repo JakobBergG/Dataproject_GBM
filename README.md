@@ -133,7 +133,7 @@ Below is an illustration of the ensemble prediction from the RECURRENCE network:
   <img src="readme_images/ensemble.png" width=100% />
   </p>
 
-Below is a figure illustrating the finetuned network compared to the original ANOUK network.
+Below is a figure illustrating performance on the recurrence test set of the finetuned network (right) compared to the original ANOUK network (left).
   <p align="center">
   <img src="readme_images/Task806_ANOUK_GBM_on_RECURRENCE_vs_Task812_RECURRENCE_DIALETED_CAVITY_EXCLUDED_GBM_ensemble_on_RECURRENCE_edit.jpg" width=50% />
   </p>
