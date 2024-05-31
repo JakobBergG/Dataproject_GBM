@@ -2,6 +2,7 @@ _**Note:** This project builds upon and expands an earlier project and its repos
 _See the bottom of the new readme file (this one) for an overview of the new Python scripts developed during the current project._
 
 # Introduction
+_By: Alexander Caning, Jakob Berg Gøttsche, Lucas Bjerre Rasmussen, Lucas Mørup Rasmussen_
 In this project, the goal is to analyze and predict recurrence patterns in patients with glioblastoma (GBM) - the most aggressive form of brain cancer, with a median survival time of only 15 months. The treatment consists of maximal tumor resection (removal) followed by chemotherapy and radiotherapy. For the majority of patients, the tumor will eventually recur. The recurrence can be local, distant, or combined (both local and distant) and varies between patients. The primary objective of this project is to expand an existing pipeline to predict these recurrence patterns based on data from 389 patients. This is particularly relevant because in the case of local recurrence, intensifying radiation given at the original tumor site can be considered to achieve better clinical outcomes, as opposed to a larger general treatment area in the case of distant recurrence.
 
 * Local: The recurrent tumor overlaps with the earlier removed tumor.
