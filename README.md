@@ -296,7 +296,7 @@ _The files above are used to make predictions from networks and evaluating the n
 
 * `generate_plots.py` & `generate_plotsv2.py`
 
-_The files above are used to create boxplots to compare different models performance on test set by using the summary.json files._*
+_The files above are used to create boxplots to compare different models performance on test set by using the summary.json files._
 
 * `plot_npz.py`
   
