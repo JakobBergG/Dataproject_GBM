@@ -74,7 +74,7 @@ DICE is very dependent on volume and therefore can be a somewhat misleading metr
 
 Our goal was to segment tumors on planning MR scans. We've had different data sets available since the tumors on the MR scans in the ANOUK dataset were delineated with focus on training models for tumor segmentation in contrast to the data sets from AUH, OUH, and CUH where there was clinical delineation from different doctors (not as precise). We trained a network only on the data from Anouk as a baseline network to do transfer learning from, so we could explore the possibility of finetuning a network to each hospital. The ANOUK network is trained on 165 training cases (with 42 validation cases) for 1500 epochs. In the figure below a progression curve can be seen:
   <p align="center">
-  <img src="readme_images/progression_ANOUK_f0.png" width=50% />
+  <img src="readme_images/progression_ANOUK_f0.png" width=75% />
   </p>
 
 The green curve is a rough estimate of the dice metric. The blue and red curves are the loos on respectively the training and validation set.
