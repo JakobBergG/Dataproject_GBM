@@ -239,13 +239,13 @@ All features are included during training. When fitting an AdaBoost classifier, 
 <img src="readme_images/Feature_importance.png" width=50% />
 </p>
 
-_The Gini importance for each of the included features in the final model_
+_The Gini importance for each of the included features in the final model._
 
 <p align="center">
 <img src="readme_images/confusion_matrix_adaboost.png" width=50% />
 </p>
 
-_Confusion matrix showing results from the final model on the test set_
+_Confusion matrix showing results from the final model on the test set._
 
 # Conclusion
 In conclusion, this project has laid a solid foundation for predicting GBM recurrence patterns through advanced segmentation and radiomics. 
