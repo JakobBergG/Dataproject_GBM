@@ -266,7 +266,7 @@ The COMBINED_GBM_training folder consists of the below files:
 * `generate_stripped_hospitals.py`
 * `reslice_images.py`
 
-_All the above files are used in combination to generate the raw data file for the task: Task805_COMBINED_GBM. See [nnUNet | Dataset Conversion](https://github.com/MIC-DKFZ/nnUNet/blob/nnunetv1/documentation/dataset_conversion.md) for the specific format of the data. By combining all the data in one task the network architecture used in all the models can be determined and all the data can be preprocessed the same to make fine tuning possible._
+_All the above files are used in combination to generate the raw data file for the task: Task805_COMBINED_GBM. See [nnUNet | Dataset Conversion](https://github.com/MIC-DKFZ/nnUNet/blob/nnunetv1/documentation/dataset_conversion.md) for the specific format of the data. By combining all the data in one task the network architecture used in all the models can be determined and all the data can be preprocessed the same to make finetuning possible._
 
 The folder also contains the following files:
 * `run_over_night_1.py`
