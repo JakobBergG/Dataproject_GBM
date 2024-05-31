@@ -115,7 +115,7 @@ The goal for Task812_RECURRENCE_DIALATED_CAVITY_EXCLUDED_GBM is to segment the r
   
 To segment the recurrence MR scans the network generated from Task806_ANOUK_GBM was finetuned on a training set consisting of 39 MR scans (31 training cases and 8 test cases).
 5 fold cross-validation was used in the training to optimize the model's performance. When segmenting a recurrence tumor an ensemble was created from the 5 folds. The ensemble prediction is created by averaging the 5 probability maps (one for each model).
-through experimenting a learning rate of 1e-6 was determined best suitable for finetuning the network. in the figure below a progression curve from one of the folds can be seen.
+Through experimenting a learning rate of 1e-6 was determined best suitable for finetuning the network. in the figure below a progression curve from one of the folds can be seen.
 
   <p align="center">
   <img src="readme_images/progress_t812_f_3.png" width=75% />
