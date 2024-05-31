@@ -180,7 +180,7 @@ The CTV is the GTV with some margin, here: 2 cm.
 **Process of creating the ring:**
 1. The largest lesion (i.e. tumor) is kept. The image can contain small parts of tumor, which will mess with the extraction of meaningful radiomic features, thus all lesser tumors are removed.
 2. The area of the GTV is dilated (enlarged) by 2x2x1 cm. (This can be interpreted as dragging a sphere around the circumference of the GTV)
-3. Keep the intersection of the dilated GTV and the brain mask; this ensures that the dilated GTV does not cross the anatomical boundary (i.e. the skull). Now we have CTV.
+3. Keep the intersection of the dilated GTV and the brain mask; this ensures that the dilated GTV does not cross the anatomical boundary (i.e. the skull). Now we have the CTV.
 4. The non-dilated GTV is removed from the CTV, resulting in a ring (hollow sphere) around the GTV. The final CTV ring can be seen in image B below.
 
 <p align="center">
