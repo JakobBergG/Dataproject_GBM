@@ -24,7 +24,7 @@ The goal is to be able to predict whether or not a recurrence will have a distan
 
 
 # GTV segmentation | nnUNet
-The goal is to train models that can segment tumors on planning MR scans (T2 scans) and MR scans with recurrence tumors. ###Furthermore find out if models should be created specifically to each different hospital.###
+The goal is to train models that can segment tumors on planning MR scans (T2 scans) and MR scans with recurrence tumors. Furthermore find out if models should be created specifically to each different hospital.
 This resulted in the following models/networks:
 - Task806_ANOUK_GBM (Also referenced as ANOUK network)
 - Task809_OUH_GBM (finetuned ANOUK network on OUH data)
