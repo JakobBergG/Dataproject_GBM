@@ -82,7 +82,7 @@ To interpret the progression curve, see under the chapter Model Training at the 
 https://github.com/MIC-DKFZ/nnUNet/tree/nnunetv1_
 
 
-In the following 3 boxplots, it can be seen how the different networks (ANOUK, OUH-finetuning, CUH-finetuning) perform on different test sets. We have chosen not to include AUH since there is an overlap between the test and training data between ANOUK and AUH data patientwise.
+In the following figures, it can be seen how the different networks (ANOUK, OUH-finetuning, CUH-finetuning) perform on different test sets. We have chosen not to include AUH since there is an overlap between the test and training data between ANOUK and AUH data patientwise.
 In the below boxplot, it can be seen how the single model, ANOUK-network performs on different test sets: ANOUK data's own test set, OUH's test set, and CUH's test set. (The green triangle on the boxplots denotes the mean)
   <p align="center">
   <img src="readme_images/ANOUK_on_ANOUK_OUH_CUH_edit.jpg" width=50% />
