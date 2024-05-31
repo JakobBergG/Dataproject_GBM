@@ -118,7 +118,7 @@ To segment the recurrence MR scans the network generated from Task806_ANOUK_GBM 
 through experimenting a learning rate of 1e-6 was determined best suitable for finetuning the network. in the figure below a progression curve from one of the folds can be seen.
 
   <p align="center">
-  <img src="readme_images/progress_t812_f_3.png" width=40% />
+  <img src="readme_images/progress_t812_f_3.png" width=75% />
   </p>
 
 ## Results
