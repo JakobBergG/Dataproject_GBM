@@ -24,12 +24,12 @@ The goal is to be able to predict whether or not a recurrence will have a distan
 
 
 # GTV segmentation | nnUNet
-The goal is to train models that can segment tumors on planning MR scans (T2 scans) and MR scans with recurrence tumors. Furthermore find out if models should be created specifically to each different hospital.
+The goal is to train models that can segment tumors on planning MR scans (T2 scans) and MR scans with recurrence tumors. Furthermore find out if models should be created specifically for each different hospital.
 This resulted in the following models/networks:
-- Task806_ANOUK_GBM (Also referenced as ANOUK network)
-- Task809_OUH_GBM (finetuned ANOUK network on OUH data)
-- Task811_CUH_GBM (finetuned ANOUK network on CUH data)
-- Task812_RECURRENCE_DIALATED_CAVITY_EXCLUDED_GBM (Also referenced as RECURRENCE network)
+- Task806_ANOUK_GBM (Also referenced to as ANOUK network)
+- Task809_OUH_GBM (Finetuned ANOUK network on OUH data)
+- Task811_CUH_GBM (Finetuned ANOUK network on CUH data)
+- Task812_RECURRENCE_DIALATED_CAVITY_EXCLUDED_GBM (Also referenced to as RECURRENCE network)
 
 ## Data
 The number of available and suitable images are:
