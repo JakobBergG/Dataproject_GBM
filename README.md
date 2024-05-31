@@ -48,7 +48,7 @@ The ANOUK data set consists of T2 images from AUH delineated by a single doctor,
 The AUH, OUH and CUH data sets contains T2 MR scans with clinical deliniations made by different doctors during cancer treatment and are therefore delineated less accurately.
 The scans used in T2 (planning of radiotherapy) are the scans taken after the tumor was removed. The segmentations are of the GTV, therefore including the cavity.
 
-The recurrence data are scans of recurring tumors which are delineated by Anouk. In the recurrence scans the cavity is always excluded in the delineation. Below can be seen a delineation of a recurrence scan (left) and a T2 MR scan (right).
+The recurrence data are scans of recurring tumors which are delineated by the same doctor as the ANOUK data set, also with focus on precise delineations for model training. In the recurrence scans the cavity is always excluded in the delineation. Below can be seen a delineation of a recurrence scan (left) and a T2 MR scan (right).
 
   <p align="center">
     <img src="readme_images/recurrence_segmentation.png" width=25% />
