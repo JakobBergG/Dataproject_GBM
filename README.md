@@ -26,10 +26,10 @@ The goal is to be able to predict whether or not a recurrence will have a distan
 # GTV segmentation | nnUNet
 The goal is to train models that can segment tumors on planning MR scans (T2 scans) and MR scans with recurrence tumors. Furthermore find out if models should be created specifically for each different hospital.
 This resulted in the following models/networks:
-- Task806_ANOUK_GBM (Also referenced to as ANOUK network)
-- Task809_OUH_GBM (Finetuned ANOUK network on OUH data)
-- Task811_CUH_GBM (Finetuned ANOUK network on CUH data)
-- Task812_RECURRENCE_DIALATED_CAVITY_EXCLUDED_GBM (Also referenced to as RECURRENCE network)
+- Task806_ANOUK_GBM (Also referred to as ANOUK network)
+- Task809_OUH_GBM (Finetuned ANOUK network on OUH data; also referred to as OUH-fintuned)
+- Task811_CUH_GBM (Finetuned ANOUK network on CUH data; also referred to as CUH-fintuned)
+- Task812_RECURRENCE_DIALATED_CAVITY_EXCLUDED_GBM (Also referred to as RECURRENCE network)
 
 ## Data
 The number of available and suitable images are:
@@ -72,14 +72,14 @@ DICE is very dependent on volume and therefore can be a somewhat misleading metr
 ## Segmenting T2 MR scans (planning MR scan)
 
 
-Our goal was to segment tumors on planning MR scans. We've had different data sets available since the tumors on the MR scans in the ANOUK dataset were delineated with focus on training models for tumor segmentation in contrast to the data sets from AUH, OUH, and CUH where there was clinical delineation from different doctors (not as precise). We trained a network only on the data from Anouk as a baseline network to do transfer learning from, so we could explore the possibility of finetuning a network to each hospital. The ANOUK network is trained on 165 training cases (with 42 validation cases) for 1500 epochs. In the figure below a progression curve can be seen:
+Our goal was to segment tumors on planning MR scans. We've had different data sets available since the tumors on the MR scans in the ANOUK dataset were delineated with focus on training models for tumor segmentation in contrast to the data sets from AUH, OUH, and CUH where there were clinical delineations from different doctors (not as precise). We trained a network only on the data from ANOUK as a baseline network to do transfer learning from, so we could explore the possibility of finetuning a network to each hospital. The ANOUK network is trained on 165 training cases (with 42 validation cases) for 1500 epochs. In the figure below a progression curve of the training can be seen:
   <p align="center">
   <img src="readme_images/progression_ANOUK_f0.png" width=75% />
   </p>
 
-The green curve is a rough estimate of the dice metric. The blue and red curves are the loos on respectively the training and validation set.
+_Progression curve of training network Task806_ANOUK_GBM. The green curve is a rough estimate of the dice metric. The blue and red curves are the loss on the training and validation set respectively.
 To interpret the progression curve, see under the chapter Model Training at the page:
-https://github.com/MIC-DKFZ/nnUNet/tree/nnunetv1
+https://github.com/MIC-DKFZ/nnUNet/tree/nnunetv1_
 
 
 In the following 3 boxplots, it can be seen how the different networks (ANOUK, OUH-finetuning, CUH-finetuning) perform on different test sets. We have chosen not to include AUH since there is an overlap between the test and training data between ANOUK and AUH data patientwise.
