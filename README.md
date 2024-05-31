@@ -55,7 +55,7 @@ The recurrence data are scans of recurring tumors which are delineated by the sa
       <img src="readme_images/t2_segmentation.png" width=25% />
   </p>
 
-For further details of the data, take a look at the old readme file: old_readme_file.md
+For further details of the data, take a look at the old readme file: `old_readme_file.md`
 
 ## Metrics
 
