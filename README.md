@@ -11,7 +11,7 @@ In this project, the goal is to analyze and predict recurrence patterns in patie
   <p align="center">
   <img src="readme_images/rad_near_far_tumor.png" width=50% />
   </p>
-_Example of recurrence types. Red area is the original tumor while the green area is the recurrence. The left image shows local recurrence while right image shows a distant recurrence._
+_Example of recurrence types. The red area is the original tumor while the green area is the recurrence. The left image shows local recurrence while the right image shows a distant recurrence._
 
 **Gross tumor volume segmentation with nnUNet**
 
@@ -45,10 +45,10 @@ The number of available and suitable images are:
 
 </div>
 The ANOUK data set consists of T2 images from AUH delineated by a single doctor, with special focus on precise delineation for model training. 
-The AUH, OUH and CUH data sets contains T2 MR scans with clinical deliniations made by different doctors during cancer treatment and are therefore delineated less accurately.
+The AUH, OUH, and CUH data sets contain T2 MR scans with clinical delineations made by different doctors during cancer treatment and are therefore delineated less accurately.
 The scans used in T2 (planning of radiotherapy) are the scans taken after the tumor was removed. The segmentations are of the GTV, therefore including the cavity.
 
-The recurrence data are scans of recurring tumors which are delineated by the same doctor as the ANOUK data set, also with focus on precise delineations for model training. In the recurrence scans the cavity is always excluded in the delineation. Below can be seen a delineation of a recurrence scan (left) and a T2 MR scan (right).
+The recurrence data are scans of recurring tumors which are delineated by the same doctor as the ANOUK data set, also with a focus on precise delineations for model training. In the recurrence scans the cavity is always excluded in the delineation. Below can be seen a delineation of a recurrence scan (left) and a T2 MR scan (right).
 
   <p align="center">
     <img src="readme_images/recurrence_segmentation.png" width=25% />
@@ -72,13 +72,13 @@ DICE is very dependent on volume and therefore can be a somewhat misleading metr
 ## Segmenting T2 MR scans (planning MR scan)
 
 
-Our goal was to segment tumors on planning MR scans. We've had different data sets available since the tumors on the MR scans in the ANOUK dataset were delineated with focus on training models for tumor segmentation in contrast to the data sets from AUH, OUH, and CUH where there were clinical delineations from different doctors (not as precise). We trained a network only on the data from ANOUK as a baseline network to do transfer learning from, so we could explore the possibility of finetuning a network to each hospital. The ANOUK network is trained on 165 training cases (with 42 validation cases) for 1500 epochs. In the figure below a progression curve of the training can be seen:
+Our goal was to segment tumors on planning MR scans. We've had different data sets available since the tumors on the MR scans in the ANOUK dataset were delineated with a focus on training models for tumor segmentation in contrast to the data sets from AUH, OUH, and CUH where there were clinical delineations from different doctors (not as precise). We trained a network only on the data from ANOUK as a baseline network to do transfer learning from, so we could explore the possibility of finetuning a network to each hospital. The ANOUK network is trained on 165 training cases (with 42 validation cases) for 1500 epochs. In the figure below a progression curve of the training can be seen:
   <p align="center">
   <img src="readme_images/progression_ANOUK_f0.png" width=75% />
   </p>
 
 _Progression curve of training network Task806_ANOUK_GBM. The green curve is a rough estimate of the dice metric. The blue and red curves are the loss on the training and validation set respectively.
-To interpret the progression curve, see under the chapter Model Training at the page:
+To interpret the progression curve, see under the chapter Model Training on the page:
 https://github.com/MIC-DKFZ/nnUNet/tree/nnunetv1_
 
 
@@ -145,7 +145,7 @@ It can be seen that the finetuning of the ANOUK network has been very successful
 
 This is important as being able to predict if a recurrent tumor is distant or not, may allow treatment during radiotherapy to focus on a concentrated area around the removed tumor in the case of only local recurrence, or a broader radiation area in the case of a distant recurrence.
 
-The prediction will be made by extracting textural, shape-based, and statistical features about the ring (sphere) around the gross tumor volume (GTV, i.e. the tumor) in the MR scan made during planning of radiotherapy.
+The prediction will be made by extracting textural, shape-based, and statistical features about the ring (sphere) around the gross tumor volume (GTV, i.e. the tumor) in the MR scan made during the planning of radiotherapy.
 The features are then used to fit a logistic regression model and also used to train an AdaBoost classifier.
 
 **Process:**
@@ -167,7 +167,7 @@ The number of available and suitable images are:
 
 </div>
 
-Note that the _Has distant_ class consists of patients with the distant recurrence type _and_ patients with the combined recurrence type. Recurrence type for all images are classified by a single doctor. The tumor is segmented by various doctors in their respective hospital.
+Note that the _Has distant_ class consists of patients with the distant recurrence type _and_ patients with the combined recurrence type. Recurrence types for all images are classified by a single doctor. The tumor is segmented by various doctors in their respective hospitals.
 
 ## Creating the CTV ring
 Creating the CTV ring needs the following resources:
@@ -218,9 +218,9 @@ A relatively high significance level in the Mann-Whitney test should be set, oth
 
 _Boxplot of the 3 features' values for each class._
 ## Predict using logistic regression
-An equal amount of images in both classes is ensured by randomly sampling a number of images from the _local_ recurrence class matching the amount of images in the lesser class, _distant_.
+An equal amount of images in both classes is ensured by randomly sampling several images from the _local_ recurrence class matching the amount of images in the lesser class, _distant_.
 
-We use logistic regression to classify whether or not a patient will have a local or distant recurrence, based on the 3 features selected in the previous section.  We split the data into a train and test set, and run logistic regression on different models with combinations of the selected features, to see which model performs the best. This can be somewhat time-consuming for a lot of features. We do not achieve a prediction accuracy that is higher than what we can classify as random. However this is expected as it does not seem from the box plots in the earlier section that the data is separable by a logistic regression curve; There seems to be no difference between the classes.
+We use logistic regression to classify whether or not a patient will have a local or distant recurrence, based on the 3 features selected in the previous section.  We split the data into a train and test set, and run logistic regression on different models with combinations of the selected features, to see which model performs the best. This can be somewhat time-consuming for a lot of features. We do not achieve a prediction accuracy that is higher than what we can classify as random. However, this is expected as it does not seem from the box plots in the earlier section that the data is separable by a logistic regression curve; There seems to be no difference between the classes.
 
 The best-performing model uses all 3 features retrieved in the feature selection section with an accuracy of 48% on the test set.
 
@@ -284,11 +284,11 @@ The files run_over_night_1 and run_over_night_2 also contain some code used for 
 The COMBINED_GBM_evaluation folder contains the following files:
 * `RECURRENCE_GBM_ensemble.py`
 
-_The above file contains code used to create ensemble predictions from the networks created by the 5 fold cross validation. (This code was only used for testing - the code used to get the actual ensemble predictions on the RECURRENCE test set is in the run_over_night files._
+_The above file contains code used to create ensemble predictions from the networks created by the 5-fold cross-validation. (This code was only used for testing - the code used to get the actual ensemble predictions on the RECURRENCE test set is in the run_over_night files._
 
 * `generate_metrics.py`
 
-_This file was used to compute the MSD, HD and HD95 metrics using the folder containing the ground truth and the predictions. This file is not used anymore since nnUNet have a function for this used in run_evaluate_folder.py._
+_This file was used to compute the MSD, HD, and HD95 metrics using the folder containing the ground truth and the predictions. This file is not used anymore since nnUNet has a function for this used in run_evaluate_folder.py._
 
 * `eval_network.py` & `run_evaluate_folder.py`
 
@@ -296,13 +296,13 @@ _The files above are used to make predictions from networks and evaluating the n
 
 * `generate_plots.py` & `generate_plotsv2.py`
 
-_The files above are used to create boxplots to compare different models performance on test set by using the summary.json files._
+_The files above are used to create boxplots to compare different models' performance on test sets by using the summary.json files._
 
 * `plot_npz.py`
   
 _The file above is used to plot the probability maps used in the ensemble predictions on the RECURRENCE data._
 ## Radiomics
-All relevant files used in radiomics can be found in folder: `radiomics`
+All relevant files used in radiomics can be found in the folder: `radiomics`
 * `available_patients.py`
 
 _Find patients that have been manually classified by Anouk and have valid MR scans_
@@ -333,8 +333,8 @@ _Create the CTV ring, as described in the readme._
 
 * `radiomic_logistic_regression.py`
 
-_Fit the data to the logistic regression model, and  do prediction of recurrence types._
+_Fit the data to the logistic regression model, and do prediction of recurrence types._
 
 * `radiomic_resampling.py`
 
-_Resample GTV delineation to same voxel spacing as MR scan. See the file for more info._
+_Resample GTV delineation to the same voxel spacing as the MR scan. See the file for more info._
