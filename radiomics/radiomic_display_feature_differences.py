@@ -33,9 +33,10 @@ for patient, features in all_radiomic_features.items():
                              "features": features} # features is also a Dict
 
 # PRINTING #
-do_print = False
-included_features = ['original_shape_Flatness', 'original_firstorder_Minimum', 'original_gldm_SmallDependenceLowGrayLevelEmphasis'] # From own tests
+do_print = True
+# included_features = ['original_shape_Flatness', 'original_firstorder_Minimum', 'original_gldm_SmallDependenceLowGrayLevelEmphasis'] # From own tests
 # included_features = ["original_glcm_Contrast", "original_glcm_Correlation", "original_glrlm_RunLengthNonUniformity"] # From paper
+included_features = ["original_shape_Flatness"]
 if do_print:
     
     feature_list_cls0 = []
@@ -52,19 +53,21 @@ if do_print:
         feature_list_cls0.append(temp_cls0)
         feature_list_cls1.append(temp_cls1)
 
-    fig, axs = plt.subplots(3,2)
-    column_titles = ["Local", "Distant"]
-    for ax, col_title in zip(axs[0], column_titles):
-        ax.set_title(col_title)
+    plt.title(included_features[0])
+    plt.scatter(feature_list_cls0[0] + feature_list_cls1[0], [0] * len(feature_list_cls0[0]) + [1] * len(feature_list_cls1[0]), alpha=0.25)
+    # fig, axs = plt.subplots(len(included_features),2)
+    # column_titles = ["Local", "Distant"]
+    # for ax, col_title in zip(axs[0], column_titles):
+    #     ax.set_title(col_title)
 
-    for ax, feature in zip(axs[:,0], included_features):
-        ax.set_ylabel(feature, size="large")
+    # for ax, feature in zip(axs[:,0], included_features):
+    #     ax.set_ylabel(feature, size="large")
 
-    for i in range(3):
-        axs[i,0].boxplot(feature_list_cls0[i])
-        axs[i,0].grid(axis="y")
+    # for i in range(len(included_features)):
+    #     axs[i,0].boxplot(feature_list_cls0[i])
+    #     axs[i,0].grid(axis="y")
 
-        axs[i,1].boxplot(feature_list_cls1[i])
-        axs[i,1].grid(axis="y")
-        axs[i,1].sharey(axs[i,0])
+    #     axs[i,1].boxplot(feature_list_cls1[i])
+    #     axs[i,1].grid(axis="y")
+    #     axs[i,1].sharey(axs[i,0])
     plt.show()

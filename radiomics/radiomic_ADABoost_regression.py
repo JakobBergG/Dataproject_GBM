@@ -75,7 +75,7 @@ def train_and_predict(X, y, total_amount_features = 3):
 
     for train_index, test_index in kf.split(X_train_test):
 
-        print(train_index, test_index)
+        # print(train_index, test_index)
         #take the train data indicies and get it from the data
         X_train, X_test = X_train_test[train_index], X_train_test[test_index]
         y_train, y_test = y_train_test[train_index], y_train_test[test_index]
@@ -94,13 +94,16 @@ def train_and_predict(X, y, total_amount_features = 3):
 
     mean_feature_importances = np.mean(all_feature_importances, axis=0)
 
+    print("Mean Feature Importances:\n", mean_feature_importances)
     #get the mean of the accuracy
     accurary = np.mean(accurary)
 
     sorted_features = np.argsort(mean_feature_importances)[::-1]
+    
+    print("Top 3:", mean_feature_importances[sorted_features[:3]])
 
-    print(sorted_features)
-    print(accurary)
+    # print(sorted_features)
+    # print(accurary)
 
     for i in range(1, min(len(sorted_features), total_amount_features)):
         print("-------------")
@@ -113,7 +116,7 @@ def train_and_predict(X, y, total_amount_features = 3):
         X_data = np.array(X)
 
         X_data= X_data[:, top_indicies]
-
+        
         #Split the data into train+test and val
         X_train_test, X_val, y_train_test, y_val = train_test_split(X_data, y, random_state=42)
 
@@ -142,6 +145,7 @@ def train_and_predict(X, y, total_amount_features = 3):
 
             feature_importances = clf.feature_importances_
 
+            print("4 Feature Model Importances:", feature_importances)
             # Get the feature names
             feature_names = ['original_shape_Sphericity', 'original_glszm_GrayLevelNonUniformity', 'original_shape_SurfaceVolumeRatio', 'original_glcm_JointEntropy']
 
@@ -163,4 +167,4 @@ def train_and_predict(X, y, total_amount_features = 3):
 
         print("-------------")
 
-train_and_predict(X, y, total_amount_features=20)
+train_and_predict(X, y, total_amount_features=10)

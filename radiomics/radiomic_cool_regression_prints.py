@@ -4,6 +4,9 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import AdaBoostClassifier
 import matplotlib.pyplot as plt
 import numpy as np
+from sklearn.model_selection import train_test_split
+from imblearn.under_sampling import RandomUnderSampler
+from sklearn.model_selection import cross_val_score
 
 journal_path = "D:\\GBM\\radiomic_results\\overview_with_combined.csv"
 all_radiomic_features_path = "D:\\GBM\\radiomic_results\\feature_output\\time2\\patients_all_features_all_classes.json"
@@ -66,44 +69,23 @@ if do_print:
 
 X = []
 y = []
-EQUAL_GROUPS = False
-if EQUAL_GROUPS:
-    myCounter = 0
-    max_number_of_local = 115
-    for patient, info in patient_info.items():
-        cls = info["tumor_class"]
-        if cls != 2:
-            if myCounter == max_number_of_local and cls == 0:
-                continue
-            X.append([value for _, value in info["features"].items()])
-            y.append(cls)
-            if cls == 0:
-                myCounter += 1
-else:
-    for patient, info in patient_info.items():
-        if info["tumor_class"] != 2:
-            X.append([value for _, value in info["features"].items()])
-            y.append(info["tumor_class"])
+for patient, info in patient_info.items():
+    X.append([value for _, value in info["features"].items()])
+    y.append(info["tumor_class"])
 
-data = zip(X, y)
-test_set_size = 20
-train = []
-test = []
+print("Total available scans:", len(X))
 
-cls_counter = {
-    0: 0,
-    1: 0
-}
-for features, label in data:
-    if cls_counter[label] < test_set_size:
-        test.append((features, label))
-        cls_counter[label] += 1
-    else:
-        train.append((features, label))
+rus = RandomUnderSampler()
+X, y = rus.fit_resample(X, y)
 
-X, y = zip(*train)
-clf = LogisticRegression()
-clf.fit(X,y)
+print("Available after undersampling:", len(X))
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, stratify=y)
+
+clf = LogisticRegression(max_iter=1000)
+# clf = AdaBoostClassifier(algorithm="SAMME")
+clf.fit(X_train,y_train)
+
 
 ## Printing results
 format_offset = 25
@@ -113,8 +95,8 @@ class header_col:
     END = "\033[0m"
 
 
-number_of_patients = len(y)
-number_of_local = number_of_patients - sum(y)
+number_of_patients = len(y_train)
+number_of_local = number_of_patients - sum(y_train)
 
 print(header_col.TITLE + "*" * 6 + " TRAIN DATA MODEL " + "*" * 6 + header_col.END)
 print(header_col.SUBTITLE + "*** MODEL INPUT ***" + header_col.END)
@@ -124,12 +106,12 @@ print("Total scans: ".ljust(format_offset, "-"), number_of_patients)
 print("% of total being local: ".ljust(format_offset, "-"), f"{number_of_local / number_of_patients * 100:.1f}%")
 
 print(header_col.SUBTITLE + "\n*** MODEL PERFORMANCE ***" + header_col.END)
-print("# of local guesses: ".ljust(format_offset, "-"), number_of_patients - sum(clf.predict(X)))
-print("Accuracy: ".ljust(format_offset, "-"), f"{clf.score(X,y) * 100:.1f}%")
+print("# of local guesses: ".ljust(format_offset, "-"), number_of_patients - sum(clf.predict(X_train)))
+print("Accuracy: ".ljust(format_offset, "-"), f"{clf.score(X_train,y_train) * 100:.1f}%")
 
-X, y = zip(*test)
-number_of_patients = len(y)
-number_of_local = number_of_patients - sum(y)
+
+number_of_patients = len(y_test)
+number_of_local = number_of_patients - sum(y_test)
 print(header_col.TITLE + "\n" + "*" * 6 + " TEST DATA MODEL " + "*" * 6 + header_col.END)
 print(header_col.SUBTITLE + "*** MODEL INPUT ***" + header_col.END)
 print("Local: ".ljust(format_offset, "-"), number_of_local)
@@ -138,5 +120,5 @@ print("Total scans: ".ljust(format_offset, "-"), number_of_patients)
 print("% of total being local: ".ljust(format_offset, "-"), f"{number_of_local / number_of_patients * 100:.1f}%")
 
 print(header_col.SUBTITLE + "\n*** MODEL PERFORMANCE ***" + header_col.END)
-print("# of local guesses: ".ljust(format_offset, "-"), number_of_patients - sum(clf.predict(X)))
-print("Accuracy: ".ljust(format_offset, "-"), f"{clf.score(X,y) * 100:.1f}%")
+print("# of local guesses: ".ljust(format_offset, "-"), number_of_patients - sum(clf.predict(X_test)))
+print("Accuracy: ".ljust(format_offset, "-"), f"{clf.score(X_test,y_test) * 100:.1f}%")

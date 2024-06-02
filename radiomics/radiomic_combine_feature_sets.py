@@ -1,11 +1,8 @@
-import csv
 import json
-from sklearn.linear_model import LogisticRegression
-import matplotlib.pyplot as plt
-import numpy as np
+
 """
 The script simply combines the datasets of features for patients having:
-- Distant recurrence
+- Local or distant recurrences
 - Combined recurrence (Both a local and a distant recurrence)
 
 Finally writes the features of the combined groups to a json file. 
