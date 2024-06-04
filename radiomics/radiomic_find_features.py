@@ -10,6 +10,6 @@ with open(all_radiomic_features_path) as f:
 
 features = [feature for feature, value in all_radiomic_features["3017"].items()]
 
-indices = [1, 24, 69]
+indices = (65, 66, 76)
 
 print([features[i] for i in indices])

@@ -51,7 +51,7 @@ for patient, info in patient_info.items():
 
 def statistical_test(X, y):
     """
-    Uses the same test as descriped in the paper. Makes the mannwhitney test for
+    Uses the same test as described in the paper. Makes the mannwhitney test for
     each feature and test for a p-value. For the given features we test for correlation
     and if a correlation surpasses a threshold, we discard one of the features. It 
     then tries to fit a combination of the features to the logistic regression.

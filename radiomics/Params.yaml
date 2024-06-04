@@ -1,6 +1,8 @@
-#featureClass: # Features to extract. See pyradiomics available features in documentation.
-    #glrlm: [RunLengthNonUniformity]
-    #glcm: [Contrast, Correlation]
+# Settings given to the pyradiomics feature extractor upon initialization. 
+# See pyradiomics documentation for further details.
 
 setting:
-    correctMask: True # SOME images have 'Geometry mismatch error'. This fixes it, but we should consider investigating why the error happens. Error does not happen for patient 0361
+    correctMask: True 
+# Some images have 'Geometry mismatch error'. 
+# This error has been fixed, but the setting will be kept enabled, 
+# to prevent potential issues with other images in the future.
